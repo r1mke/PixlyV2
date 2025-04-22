@@ -1,0 +1,6 @@
+@Pixly.API_HostAddress = http://localhost:5029
+
+GET {{Pixly.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
