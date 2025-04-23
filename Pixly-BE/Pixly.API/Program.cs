@@ -1,11 +1,20 @@
+using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
+using Pixly.API.Exstensions;
+using Pixly.Models.Database;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
+Env.Load();
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddApplicationServices(builder.Configuration);
+
 
 var app = builder.Build();
 
