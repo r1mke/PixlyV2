@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Pixly.Models.Database
 {
@@ -13,5 +8,14 @@ namespace Pixly.Models.Database
             : base(options)
         {
         }
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<Photo> Photos { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<PhotoTag> PhotoTags { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
     }
 }

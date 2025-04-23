@@ -45,7 +45,7 @@ $RECYCLE.BIN/
 node_modules/
 
 ## dotnet watch
-**/Properties/launchSettings.json
+
 
 ## .NET Core tooling
 project.lock.json
