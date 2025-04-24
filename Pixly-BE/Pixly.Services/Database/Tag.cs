@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Pixly.Models.Database
+namespace Pixly.Services.Database
 {
     public class Tag
     {

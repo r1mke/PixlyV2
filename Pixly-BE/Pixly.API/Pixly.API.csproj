@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Pixly.Models\Pixly.Models.csproj" />
+    <ProjectReference Include="..\Pixly.Services\Pixly.Services.csproj" />
   </ItemGroup>
 
 </Project>

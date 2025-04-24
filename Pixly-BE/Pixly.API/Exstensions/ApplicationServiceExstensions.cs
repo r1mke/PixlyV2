@@ -1,7 +1,6 @@
 ﻿using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
-using Pixly.Models.Database;
-
+using Pixly.Services.Database;
 namespace Pixly.API.Exstensions
 {
     public static class ApplicationServiceExstensions
