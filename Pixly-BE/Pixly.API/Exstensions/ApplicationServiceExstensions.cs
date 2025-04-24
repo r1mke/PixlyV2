@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using Pixly.Models.Database;
 
 namespace Pixly.API.Exstensions
@@ -7,11 +8,12 @@ namespace Pixly.API.Exstensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            var connectionString = Env.GetString("DB_CONNECTION_STRING");
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(config["DB_CONNECTION_STRING"])
+                options.UseSqlServer(connectionString)
             );
 
-            
+
 
             return services;
         }

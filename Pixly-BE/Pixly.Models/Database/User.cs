@@ -24,6 +24,7 @@ namespace Pixly.Models.Database
 
         public DateTime? DateOfBirth { get; set; }
         public string? State { get; set; }
+        public bool? isDeleted { get; set; }
 
         public ICollection<Photo> Photos { get; set; } = new List<Photo>();
 
