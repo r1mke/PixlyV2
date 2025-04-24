@@ -4,7 +4,7 @@ namespace Pixly.Models.Database
 {
     public class Tag
     {
-        public int Id { get; set; }
+        public int TagId { get; set; }
 
         [Required]
         public string Name { get; set; }
