@@ -1,6 +1,5 @@
 using DotNetEnv;
 using Pixly.API.Exstensions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
