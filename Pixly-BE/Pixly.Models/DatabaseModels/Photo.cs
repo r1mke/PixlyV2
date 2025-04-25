@@ -1,0 +1,30 @@
+﻿namespace Pixly.Models.DatabaseModels
+{
+    public class Photo
+    {
+
+        public string Title { get; set; }
+
+        public string? Description { get; set; }
+
+        public string? Url { get; set; }
+
+        public int? Width { get; set; }
+
+        public int? Height { get; set; }
+
+        public long? FileSize { get; set; }
+
+        public DateTime UploadedAt { get; set; }
+
+        public int UserId { get; set; }
+
+        public string? State { get; set; }
+
+        public int ViewCount { get; set; }
+
+        public int LikeCount { get; set; }
+
+        public string? Orientation { get; set; }
+    }
+}

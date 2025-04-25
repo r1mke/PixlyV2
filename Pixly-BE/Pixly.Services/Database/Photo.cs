@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Pixly.Models.Database
+namespace Pixly.Services.Database
 {
     public class Photo
     {
@@ -11,7 +11,7 @@ namespace Pixly.Models.Database
 
         public string? Description { get; set; }
 
-        [Required]
+
         public string? Url { get; set; }
 
         public string? PublicId { get; set; }

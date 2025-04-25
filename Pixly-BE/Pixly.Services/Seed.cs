@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pixly.Models.Database;
+using Pixly.Services.Database;
 
-namespace Pixly.Models
+namespace Pixly.Services
 {
     public static class DataSeed
     {

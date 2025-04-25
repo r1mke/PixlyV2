@@ -1,8 +1,5 @@
 using DotNetEnv;
-using Microsoft.EntityFrameworkCore;
 using Pixly.API.Exstensions;
-using Pixly.Models.Database;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

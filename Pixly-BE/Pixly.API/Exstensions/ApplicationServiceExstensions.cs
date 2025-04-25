@@ -1,7 +1,9 @@
 ﻿using DotNetEnv;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Pixly.Models.Database;
-
+using Pixly.Services.Database;
+using Pixly.Services.Interfaces;
+using Pixly.Services.Services;
 namespace Pixly.API.Exstensions
 {
     public static class ApplicationServiceExstensions
@@ -13,7 +15,8 @@ namespace Pixly.API.Exstensions
                 options.UseSqlServer(connectionString)
             );
 
-
+            services.AddMapster();
+            services.AddTransient<IPhotoService, PhotoService>();
 
             return services;
         }

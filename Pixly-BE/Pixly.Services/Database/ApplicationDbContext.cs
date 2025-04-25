@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Pixly.Models.Database
+namespace Pixly.Services.Database
 {
     public class ApplicationDbContext : DbContext
     {

@@ -1,4 +1,4 @@
-﻿namespace Pixly.Models.Database
+﻿namespace Pixly.Services.Database
 {
     public class UserRole
     {
