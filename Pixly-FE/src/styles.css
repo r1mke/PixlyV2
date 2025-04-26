@@ -1,1 +1,53 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/*@import "primeng/resources/themes/lara-light-blue/theme.css";
+//@import "primeng/resources/primeng.css"; */
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+:root {
+  --body:#000;
+  --pixly-color:#02A388;
+  --pixly-color-hover:#027d65;
+  --pixly-text-primary-color: #4A4A4A;
+  --pixly-text-primary-color-hover: #191919;
+  --pixly-text-secondary-color: #606060;
+  --pixly-backround-color:#f8f8f8;
+}
+
+button {
+  background-color: var(--pixly-color);
+  color: white;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-weight: 600;
+  border: 0;
+  cursor: pointer;
+  font-size: medium;
+}
+
+button:hover {
+  background-color: var(--pixly-color-hover);
+  transition: 0.5s;
+}
+
+input {
+  border: 1px solid #f8f8f8;
+}
+
+i {
+  font-size: 13px;
+}
+
+
+
+
