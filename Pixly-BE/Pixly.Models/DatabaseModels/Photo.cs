@@ -7,17 +7,20 @@
 
         public string? Description { get; set; }
 
-        public string? Url { get; set; }
+        public string Url { get; set; }
 
-        public int? Width { get; set; }
+        public int Width { get; set; }
 
-        public int? Height { get; set; }
+        public int Height { get; set; }
 
-        public long? FileSize { get; set; }
+        public long FileSize { get; set; }
+        public string Format { get; set; }
 
         public DateTime UploadedAt { get; set; }
 
         public int UserId { get; set; }
+
+        public User? User { get; set; }
 
         public string? State { get; set; }
 
@@ -25,6 +28,6 @@
 
         public int LikeCount { get; set; }
 
-        public string? Orientation { get; set; }
+        public string Orientation { get; set; }
     }
 }

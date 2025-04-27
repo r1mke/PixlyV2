@@ -9,7 +9,7 @@ namespace Pixly.Services.Services
     {
 
         public IMapper Mapper;
-        private readonly ApplicationDbContext _context;
+        protected readonly ApplicationDbContext _context;
 
         public CRUDService(IMapper mapper, ApplicationDbContext context)
         {
@@ -30,7 +30,7 @@ namespace Pixly.Services.Services
             return Mapper.Map<List<TModel>>(list);
         }
 
-        public virtual IQueryable<TDbEntity> AddFilter(IQueryable<TDbEntity> query, TSearch? search)
+        protected virtual IQueryable<TDbEntity> AddFilter(IQueryable<TDbEntity> query, TSearch? search)
         {
             return query;
         }
@@ -47,7 +47,7 @@ namespace Pixly.Services.Services
         {
             TDbEntity entity = Mapper.Map<TDbEntity>(request);
 
-            //BeforeInsert(entity);
+            await BeforeInsert(entity, request);
 
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
@@ -57,7 +57,7 @@ namespace Pixly.Services.Services
             return Mapper.Map<TModel>(entity);
         }
 
-        public virtual void BeforeInsert(TDbEntity entity)
+        protected virtual async Task BeforeInsert(TDbEntity entity, TInsert request)
         {
 
         }
@@ -65,9 +65,8 @@ namespace Pixly.Services.Services
         public async Task<TModel> Update(int id, TUpdate request)
         {
             var entity = await _context.Set<TDbEntity>().FindAsync(id);
-            if (entity == null) return default;
-            Mapper.Map(request, entity);
-            BeforeUpdate(request, entity);
+            if (entity == null) throw new Exception("An error occurred while updating the resource.");
+            await BeforeUpdate(request, entity);
 
             await _context.SaveChangesAsync();
 
@@ -75,7 +74,7 @@ namespace Pixly.Services.Services
 
         }
 
-        public virtual void BeforeUpdate(TUpdate? request, TDbEntity? entity)
+        protected virtual async Task BeforeUpdate(TUpdate? request, TDbEntity? entity)
         {
 
         }
