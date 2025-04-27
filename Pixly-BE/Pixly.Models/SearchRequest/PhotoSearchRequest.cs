@@ -3,5 +3,6 @@
     public class PhotoSearchRequest
     {
         public string? Title { get; set; }
+        public bool? IsUserIncluded { get; set; }
     }
 }
