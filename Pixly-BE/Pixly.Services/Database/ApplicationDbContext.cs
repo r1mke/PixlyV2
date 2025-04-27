@@ -22,6 +22,11 @@ namespace Pixly.Services.Database
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Tag>()
+             .HasIndex(t => t.Name)
+             .IsUnique()
+             .HasDatabaseName("IX_Tag_Name");
+
             DataSeed.Seed(modelBuilder);
         }
     }

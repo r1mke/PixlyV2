@@ -17,6 +17,7 @@
         public string? State { get; set; }
         public int ViewCount { get; set; } = 0;
         public int LikeCount { get; set; } = 0;
+        public int DownloadCount { get; set; } = 0;
         public string Orientation { get; set; }
         public bool IsDeleted { get; set; } = false;
         public ICollection<PhotoTag> PhotoTags { get; set; } = new List<PhotoTag>();
