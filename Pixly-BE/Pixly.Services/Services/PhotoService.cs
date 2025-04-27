@@ -4,6 +4,7 @@ using Pixly.Models.InsertRequest;
 using Pixly.Models.SearchRequest;
 using Pixly.Models.UpdateRequest;
 using Pixly.Services.Database;
+using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
 namespace Pixly.Services.Services
 
@@ -19,11 +20,30 @@ namespace Pixly.Services.Services
 
         }
 
-        public override IQueryable<Database.Photo> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
+        protected override IQueryable<Database.Photo> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
         {
             if (!string.IsNullOrWhiteSpace(search?.Title))
             {
-                query = query.Where(x => x.Title.StartsWith(search.Title));
+                query = query.Where(x => x.Title.Contains(search.Title) ||
+                                    x.PhotoTags.Any(t => t.Tag.Name.StartsWith(search.Title)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(search?.Orientation))
+            {
+                query = query.Where(x => x.Orientation == search.Orientation);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search?.Size))
+            {
+                switch (search.Size)
+                {
+                    case "Large":
+                        query = query.Where(x => x.FileSize > 8 * 1024 * 1024); break;
+                    case "Medium":
+                        query = query.Where(x => x.FileSize >= 5 * 1024 * 1024 && x.FileSize <= 8 * 1024 * 1024); break;
+                    case "Small":
+                        query = query.Where(x => x.FileSize < 5 * 1024 * 1024); break;
+                }
             }
 
             if (search.IsUserIncluded == true)
@@ -31,14 +51,26 @@ namespace Pixly.Services.Services
                 query = query.Include(p => p.User);
             }
 
+            if (!string.IsNullOrWhiteSpace(search?.Sorting))
+            {
+                if (search.Sorting == "Popular")
+                {
+                    query = query.OrderByDescending(x => x.LikeCount + x.DownloadCount);
+                }
+                if (search.Sorting == "New")
+                {
+                    query = query.OrderByDescending(x => x.UploadedAt);
+                }
+            }
+
             return query;
         }
 
-        public override async Task BeforeInsert(Database.Photo entity, PhotoInsertRequest request)
+        protected override async Task BeforeInsert(Database.Photo entity, PhotoInsertRequest request)
         {
             var user = await _context.Users.FindAsync(request.UserId);
             if (user == null) throw new Exception("Korisnik ne postoji");
-            //ValidImageFormat.IsImageValid(request.File);
+            ValidImageFormat.IsImageValid(request.File);
             entity = await _cloudinary.UploadImageAsync(request.File, "Pixly", entity);
 
             entity.User = user;
@@ -52,7 +84,7 @@ namespace Pixly.Services.Services
             }
         }
 
-        public override async Task BeforeUpdate(PhotoUpdateRequest? request, Database.Photo? entity)
+        protected override async Task BeforeUpdate(PhotoUpdateRequest? request, Database.Photo? entity)
         {
             var user = await _context.Users.FindAsync(entity.UserId);
             if (user == null) throw new Exception("Korisnik ne postoji");

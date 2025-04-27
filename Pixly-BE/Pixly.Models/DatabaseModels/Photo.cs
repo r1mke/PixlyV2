@@ -27,6 +27,7 @@
         public int ViewCount { get; set; }
 
         public int LikeCount { get; set; }
+        public int DownloadCount { get; set; }
 
         public string Orientation { get; set; }
     }

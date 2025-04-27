@@ -3,6 +3,10 @@
     public class PhotoSearchRequest
     {
         public string? Title { get; set; }
+        public string? Orientation { get; set; }
+        public string? Size { get; set; }
         public bool? IsUserIncluded { get; set; }
+        public string? Sorting { get; set; }
+
     }
 }
