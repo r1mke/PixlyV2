@@ -161,7 +161,57 @@ namespace Pixly.Services.Services
             entity.User = user;
         }
 
+        public async Task<Models.DatabaseModels.Like> LikePhoto(int photoId, int userId)
+        {
+            var photo = await _context.Photos.FindAsync(photoId);
+            if (photo == null)
+                return null;
 
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return null;
+
+            var existingLike = await _context.Likes
+                .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == userId);
+
+            if (existingLike != null)
+                return null;
+
+            Like entity = new Like
+            {
+                PhotoId = photoId,
+                UserId = userId,
+                LikedAt = DateTime.UtcNow
+            };
+
+            await _context.Likes.AddAsync(entity);
+            photo.LikeCount++;
+
+            await _context.SaveChangesAsync();
+
+            return Mapper.Map<Models.DatabaseModels.Like>(entity);
+        }
+
+        public async Task<string> UnlikePhoto(int photoId, int userId)
+        {
+            var photo = await _context.Photos.FindAsync(photoId);
+            if (photo == null)
+                return null;
+            var like = await _context.Likes
+                .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == userId);
+
+            if (like == null)
+                return null;
+
+            _context.Likes.Remove(like);
+
+            if (photo.LikeCount > 0)
+                photo.LikeCount--;
+
+            await _context.SaveChangesAsync();
+
+            return "Uspjesno";
+        }
     }
 }
 
