@@ -20,6 +20,26 @@ namespace Pixly.Services.Services
 
         }
 
+
+        protected override void AddFilterToSingleEntity(Database.Photo photo)
+        {
+            TransformEntity(photo);
+        }
+
+        private void TransformEntity(Database.Photo photo)
+        {
+            string transformation = photo.Url.ToLower() switch
+            {
+                "portrait" => "c_fit,w_1080,h_1620,f_auto,q_auto:good",
+                "square" => "c_fit,w_1200,h_1200,f_auto,q_auto:good",
+                "landscape" => "c_fit,w_1620,h_1080,f_auto,q_auto:good",
+                _ => "c_fit,w_1600,h_1200,f_auto,q_auto:good"
+            };
+
+            photo.Url = TransformUrl(photo.Url, transformation);
+
+        }
+
         protected override IQueryable<Database.Photo> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
         {
             if (!string.IsNullOrWhiteSpace(search?.Title))
@@ -64,6 +84,41 @@ namespace Pixly.Services.Services
             }
 
             return query;
+        }
+
+        protected override Task<PagedList<Models.DatabaseModels.Photo>> AddTransformation(PagedList<Models.DatabaseModels.Photo> photos, PhotoSearchRequest search)
+        {
+            TransformEntities(photos);
+
+            return Task.FromResult(photos);
+
+        }
+
+        private void TransformEntities(PagedList<Models.DatabaseModels.Photo> list)
+        {
+            foreach (var photo in list)
+            {
+                string transformation = photo.Orientation.ToLower() switch
+                {
+                    "portrait" => $"c_fit,w_{300},h_{450},f_auto,q_auto",
+                    "square" => $"c_fit,w_{350},h_{350},f_auto,q_auto",
+                    "landscape" => $"c_fit,w_{450},h_{300},f_auto,q_auto",
+                    _ => "c_fill,w_350,h_300,f_auto,q_auto"
+                };
+
+                photo.Url = TransformUrl(photo.Url, transformation);
+            }
+        }
+
+        private string TransformUrl(string url, string transformation)
+        {
+            if (string.IsNullOrEmpty(url))
+                return url;
+
+            int uploadIndex = url.IndexOf("upload/");
+            if (uploadIndex == -1) return url;
+
+            return url.Substring(0, uploadIndex + 7) + transformation + "/" + url.Substring(uploadIndex + 7);
         }
 
         protected override async Task BeforeInsert(Database.Photo entity, PhotoInsertRequest request)
