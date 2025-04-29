@@ -5,6 +5,6 @@ namespace Pixly.Services.Interfaces
     public interface ICloudinaryService
     {
         Task<Database.Photo> UploadImageAsync(IFormFile file, string folder, Database.Photo entity);
-        string UploadProfilePhoto(IFormFile file);
+        Task<string> UploadProfilePhoto(IFormFile file);
     }
 }

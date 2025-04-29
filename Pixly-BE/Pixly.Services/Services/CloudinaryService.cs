@@ -42,7 +42,7 @@ namespace Pixly.Services.Services
             return entity;
         }
 
-        public string UploadProfilePhoto(IFormFile file)
+        public async Task<string> UploadProfilePhoto(IFormFile file)
         {
             var uploadParams = new ImageUploadParams
             {
@@ -60,7 +60,7 @@ namespace Pixly.Services.Services
                 .FetchFormat("auto")
             };
 
-            var uploadResult = _cloudinary.Upload(uploadParams);
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
             if (uploadResult.StatusCode != HttpStatusCode.OK)
                 throw new Exception("Greška prilikom slanja profilne slike na Cloudinary");

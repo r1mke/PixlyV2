@@ -1,6 +1,7 @@
-﻿namespace Pixly.Models.SearchRequest
+﻿using Pixly.Models.Pagination;
+namespace Pixly.Models.SearchRequest
 {
-    public class PhotoSearchRequest
+    public class PhotoSearchRequest : PaginationParams
     {
         public string? Title { get; set; }
         public string? Orientation { get; set; }

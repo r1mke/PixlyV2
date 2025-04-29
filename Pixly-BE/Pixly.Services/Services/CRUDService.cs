@@ -1,11 +1,12 @@
 ﻿using MapsterMapper;
-using Microsoft.EntityFrameworkCore;
+using Pixly.Models.Pagination;
 using Pixly.Services.Database;
+using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
 
 namespace Pixly.Services.Services
 {
-    public class CRUDService<TModel, TSearch, TInsert, TUpdate, TDbEntity> : ICRUDService<TModel, TSearch, TInsert, TUpdate> where TDbEntity : class where TSearch : class where TInsert : class where TUpdate : class
+    public class CRUDService<TModel, TSearch, TInsert, TUpdate, TDbEntity> : ICRUDService<TModel, TSearch, TInsert, TUpdate> where TDbEntity : class where TSearch : PaginationParams where TInsert : class where TUpdate : class
     {
 
         public IMapper Mapper;
@@ -17,17 +18,25 @@ namespace Pixly.Services.Services
             _context = context;
         }
 
-        public async Task<List<TModel>> GetPaged(TSearch search)
+        public async Task<PagedList<TModel>> GetPaged(TSearch search)
         {
-            List<TModel> result = new List<TModel>();
-
             var query = _context.Set<TDbEntity>().AsQueryable();
 
             query = AddFilter(query, search);
 
-            var list = await query.ToListAsync();
+            var modelQuery = query.Select(x => Mapper.Map<TModel>(x));
 
-            return Mapper.Map<List<TModel>>(list);
+            var result = await PagedList<TModel>.CreateAsync(modelQuery, search.PageNumber, search.PageSize);
+
+            var transformatedResult = await AddTransformation(result, search);
+
+            return transformatedResult;
+
+        }
+
+        protected virtual async Task<PagedList<TModel>> AddTransformation(PagedList<TModel> result, TSearch search)
+        {
+            throw new NotImplementedException();
         }
 
         protected virtual IQueryable<TDbEntity> AddFilter(IQueryable<TDbEntity> query, TSearch? search)
@@ -39,8 +48,13 @@ namespace Pixly.Services.Services
         {
             var entity = await _context.Set<TDbEntity>().FindAsync(id);
             if (entity == null) return default;
-
+            AddFilterToSingleEntity(entity);
             return Mapper.Map<TModel>(entity);
+        }
+
+        protected virtual void AddFilterToSingleEntity(TDbEntity entity)
+        {
+
         }
 
         public async Task<TModel> Insert(TInsert request)
