@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Pixly.API.Exstensions;
 using Pixly.Services.Interfaces;
 
 namespace Pixly.API.Controllers
@@ -16,11 +17,19 @@ namespace Pixly.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TModel>>> GetPaged([FromQuery] TSearch search)
+        public async Task<IActionResult> GetPaged([FromQuery] TSearch search)
         {
-            var result = await _service.GetPaged(search);
+            var pagedResult = await _service.GetPaged(search);
 
-            return Ok(result);
+            Response.AddPaginationHeader(
+                pagedResult.CurrentPage,
+                pagedResult.PageSize,
+                pagedResult.TotalCount,
+                pagedResult.TotalPages
+                );
+
+
+            return Ok(pagedResult);
         }
 
         [HttpGet("{id}")]

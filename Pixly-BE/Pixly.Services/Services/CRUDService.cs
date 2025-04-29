@@ -34,9 +34,9 @@ namespace Pixly.Services.Services
 
         }
 
-        protected virtual async Task<PagedList<TModel>> AddTransformation(PagedList<TModel> result, TSearch search)
+        protected virtual Task<PagedList<TModel>> AddTransformation(PagedList<TModel> result, TSearch search)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(result);
         }
 
         protected virtual IQueryable<TDbEntity> AddFilter(IQueryable<TDbEntity> query, TSearch? search)
@@ -92,5 +92,7 @@ namespace Pixly.Services.Services
         {
 
         }
+
+
     }
 }
