@@ -42,6 +42,12 @@ namespace Pixly.Services.Services
 
         protected override IQueryable<Database.Photo> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
         {
+            if (!string.IsNullOrWhiteSpace(search?.Username))
+            {
+                query = query.Where(x => x.User.Username == search.Username);
+            }
+
+
             if (!string.IsNullOrWhiteSpace(search?.Title))
             {
                 query = query.Where(x => x.Title.Contains(search.Title) ||
