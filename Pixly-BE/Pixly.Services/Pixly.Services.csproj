@@ -27,8 +27,4 @@
     <ProjectReference Include="..\Pixly.Models\Pixly.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
-
 </Project>
