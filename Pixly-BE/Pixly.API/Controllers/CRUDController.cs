@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pixly.API.Exstensions;
+using Pixly.Models.DTOs;
+using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
 
 namespace Pixly.API.Controllers
@@ -17,7 +19,7 @@ namespace Pixly.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPaged([FromQuery] TSearch search)
+        public async Task<ActionResult<ApiResponse<PagedList<TModel>>>> GetPaged([FromQuery] TSearch search)
         {
             var pagedResult = await _service.GetPaged(search);
 
@@ -28,35 +30,34 @@ namespace Pixly.API.Controllers
                 pagedResult.TotalPages
                 );
 
-
-            return Ok(pagedResult);
+            return this.ApiSuccess(pagedResult);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TModel>> GetById(int id)
+        public async Task<ActionResult<ApiResponse<TModel>>> GetById(int id)
         {
             var result = await _service.GetById(id);
 
-            if (result == null) return NotFound();
-            return Ok(result);
+            if (result == null) return this.ApiNotFound<TModel>($"Resource with ID {id} not found");
+            return this.ApiSuccess(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<TModel>> Insert(TInsert request)
+        public async Task<ActionResult<ApiResponse<TModel>>> Insert(TInsert request)
         {
             var result = await _service.Insert(request);
 
-            if (result == null) return BadRequest("Failed to create the resource.");
-            return Ok(result);
+            if (result == null) return this.ApiBadRequest<TModel>();
+            return this.ApiSuccess(result);
         }
 
         [HttpPatch("id")]
-        public async Task<ActionResult<TModel>> Update(int id, TUpdate request)
+        public async Task<ActionResult<ApiResponse<TModel>>> Update(int id, TUpdate request)
         {
             var result = await _service.Update(id, request);
 
-            if (result == null) return BadRequest("Failed to create the resource.");
-            return Ok(result);
+            if (result == null) return this.ApiBadRequest<TModel>();
+            return this.ApiSuccess(result);
         }
     }
 }
