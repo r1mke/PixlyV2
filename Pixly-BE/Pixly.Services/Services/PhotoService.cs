@@ -9,7 +9,7 @@ using Pixly.Services.Interfaces;
 namespace Pixly.Services.Services
 
 {
-    public class PhotoService : CRUDService<Models.DatabaseModels.Photo, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest, Database.Photo>, IPhotoService
+    public class PhotoService : CRUDService<Models.DTOs.Photo, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest, Database.Photo>, IPhotoService
     {
 
 
@@ -92,7 +92,7 @@ namespace Pixly.Services.Services
             return query;
         }
 
-        protected override Task<PagedList<Models.DatabaseModels.Photo>> AddTransformation(PagedList<Models.DatabaseModels.Photo> photos, PhotoSearchRequest search)
+        protected override Task<PagedList<Models.DTOs.Photo>> AddTransformation(PagedList<Models.DTOs.Photo> photos, PhotoSearchRequest search)
         {
             TransformEntities(photos);
 
@@ -100,7 +100,7 @@ namespace Pixly.Services.Services
 
         }
 
-        private void TransformEntities(PagedList<Models.DatabaseModels.Photo> list)
+        private void TransformEntities(PagedList<Models.DTOs.Photo> list)
         {
             foreach (var photo in list)
             {
@@ -161,7 +161,7 @@ namespace Pixly.Services.Services
             entity.User = user;
         }
 
-        public async Task<Models.DatabaseModels.Like> LikePhoto(int photoId, int userId)
+        public async Task<Models.DTOs.Like> LikePhoto(int photoId, int userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
             if (photo == null)
@@ -189,7 +189,7 @@ namespace Pixly.Services.Services
 
             await _context.SaveChangesAsync();
 
-            return Mapper.Map<Models.DatabaseModels.Like>(entity);
+            return Mapper.Map<Models.DTOs.Like>(entity);
         }
 
         public async Task<string> UnlikePhoto(int photoId, int userId)

@@ -7,7 +7,7 @@ using Pixly.Services.Interfaces;
 namespace Pixly.API.Controllers
 {
 
-    public class PhotoController : CRUDController<Models.DatabaseModels.Photo, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest>
+    public class PhotoController : CRUDController<Models.DTOs.Photo, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest>
     {
         public PhotoController(IPhotoService service) : base(service)
         {
