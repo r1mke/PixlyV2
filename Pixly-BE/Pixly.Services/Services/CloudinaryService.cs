@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
+using Pixly.Services.Exceptions;
 using Pixly.Services.Interfaces;
 using System.Net;
 
@@ -30,7 +31,7 @@ namespace Pixly.Services.Services
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
             if (uploadResult.StatusCode != HttpStatusCode.OK)
-                throw new Exception("Greška prilikom slanja slike na Cloudinary");
+                throw new ExternalServiceException("Error sending image to Cloudinary");
 
             entity.Url = uploadResult.SecureUrl.AbsoluteUri;
             entity.Width = uploadResult.Width;
@@ -63,7 +64,7 @@ namespace Pixly.Services.Services
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
             if (uploadResult.StatusCode != HttpStatusCode.OK)
-                throw new Exception("Greška prilikom slanja profilne slike na Cloudinary");
+                throw new ExternalServiceException("Error sending image to Cloudinary");
 
             return uploadResult.SecureUrl.AbsoluteUri;
         }

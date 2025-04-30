@@ -4,6 +4,7 @@ using Pixly.Models.InsertRequest;
 using Pixly.Models.SearchRequest;
 using Pixly.Models.UpdateRequest;
 using Pixly.Services.Database;
+using Pixly.Services.Exceptions;
 using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
 namespace Pixly.Services.Services
@@ -40,10 +41,15 @@ namespace Pixly.Services.Services
 
         }
 
-        protected override IQueryable<Database.Photo> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
+        protected override async Task<IQueryable<Photo>> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
         {
+
             if (!string.IsNullOrWhiteSpace(search?.Username))
             {
+                if (await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == search.Username.ToLower()) == null)
+                    throw new NotFoundException($"User with username {search.Username} not found");
+
+
                 query = query.Where(x => x.User.Username == search.Username);
             }
 
@@ -130,7 +136,8 @@ namespace Pixly.Services.Services
         protected override async Task BeforeInsert(Database.Photo entity, PhotoInsertRequest request)
         {
             var user = await _context.Users.FindAsync(request.UserId);
-            if (user == null) throw new Exception("Korisnik ne postoji");
+            if (user == null) throw new NotFoundException($"User with ID {request.UserId} not found");
+
             ValidImageFormat.IsImageValid(request.File);
             entity = await _cloudinary.UploadImageAsync(request.File, "Pixly", entity);
 
@@ -148,7 +155,7 @@ namespace Pixly.Services.Services
         protected override async Task BeforeUpdate(PhotoUpdateRequest? request, Database.Photo? entity)
         {
             var user = await _context.Users.FindAsync(entity.UserId);
-            if (user == null) throw new Exception("Korisnik ne postoji");
+            if (user == null) throw new NotFoundException($"User with ID {entity.UserId} not found");
 
             if (!string.IsNullOrWhiteSpace(request.Title))
             {
@@ -165,11 +172,12 @@ namespace Pixly.Services.Services
         {
             var photo = await _context.Photos.FindAsync(photoId);
             if (photo == null)
-                return null;
+                throw new NotFoundException($"Photo with ID {photoId} not found");
 
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
-                return null;
+                throw new NotFoundException($"User with ID {userId} not found");
+
 
             var existingLike = await _context.Likes
                 .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == userId);
@@ -177,7 +185,7 @@ namespace Pixly.Services.Services
             if (existingLike != null)
                 return null;
 
-            Like entity = new Like
+            Database.Like entity = new Database.Like
             {
                 PhotoId = photoId,
                 UserId = userId,
@@ -192,16 +200,14 @@ namespace Pixly.Services.Services
             return Mapper.Map<Models.DTOs.Like>(entity);
         }
 
-        public async Task<string> UnlikePhoto(int photoId, int userId)
+        public async Task<Models.DTOs.Like> UnlikePhoto(int photoId, int userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
             if (photo == null)
-                return null;
+                throw new NotFoundException($"Photo with ID {photoId} not found");
+
             var like = await _context.Likes
                 .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == userId);
-
-            if (like == null)
-                return null;
 
             _context.Likes.Remove(like);
 
@@ -210,7 +216,7 @@ namespace Pixly.Services.Services
 
             await _context.SaveChangesAsync();
 
-            return "Uspjesno";
+            return Mapper.Map<Models.DTOs.Like>(like);
         }
     }
 }

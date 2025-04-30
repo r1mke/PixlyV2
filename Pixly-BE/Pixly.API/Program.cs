@@ -1,5 +1,7 @@
 using DotNetEnv;
 using Pixly.API.Exstensions;
+using Pixly.API.Filters;
+using Pixly.Services.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationFilterAttribute>();
+});
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -21,6 +32,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseErrorHandling();
+
 
 app.UseHttpsRedirection();
 

@@ -17,12 +17,19 @@ namespace Pixly.Services.Services
             Mapper = mapper;
             _context = context;
         }
+        public async Task<TModel> GetById(int id)
+        {
+            var entity = await _context.Set<TDbEntity>().FindAsync(id);
+            if (entity == null) return default;
+            AddFilterToSingleEntity(entity);
+            return Mapper.Map<TModel>(entity);
+        }
 
         public async Task<PagedList<TModel>> GetPaged(TSearch search)
         {
             var query = _context.Set<TDbEntity>().AsQueryable();
 
-            query = AddFilter(query, search);
+            query = await AddFilter(query, search);
 
             var modelQuery = query.Select(x => Mapper.Map<TModel>(x));
 
@@ -33,30 +40,6 @@ namespace Pixly.Services.Services
             return transformatedResult;
 
         }
-
-        protected virtual Task<PagedList<TModel>> AddTransformation(PagedList<TModel> result, TSearch search)
-        {
-            return Task.FromResult(result);
-        }
-
-        protected virtual IQueryable<TDbEntity> AddFilter(IQueryable<TDbEntity> query, TSearch? search)
-        {
-            return query;
-        }
-
-        public async Task<TModel> GetById(int id)
-        {
-            var entity = await _context.Set<TDbEntity>().FindAsync(id);
-            if (entity == null) return default;
-            AddFilterToSingleEntity(entity);
-            return Mapper.Map<TModel>(entity);
-        }
-
-        protected virtual void AddFilterToSingleEntity(TDbEntity entity)
-        {
-
-        }
-
         public async Task<TModel> Insert(TInsert request)
         {
             TDbEntity entity = Mapper.Map<TDbEntity>(request);
@@ -71,15 +54,9 @@ namespace Pixly.Services.Services
             return Mapper.Map<TModel>(entity);
         }
 
-        protected virtual async Task BeforeInsert(TDbEntity entity, TInsert request)
-        {
-
-        }
-
         public async Task<TModel> Update(int id, TUpdate request)
         {
             var entity = await _context.Set<TDbEntity>().FindAsync(id);
-            if (entity == null) throw new Exception("An error occurred while updating the resource.");
             await BeforeUpdate(request, entity);
 
             await _context.SaveChangesAsync();
@@ -87,6 +64,29 @@ namespace Pixly.Services.Services
             return Mapper.Map<TModel>(entity);
 
         }
+
+        protected virtual Task<PagedList<TModel>> AddTransformation(PagedList<TModel> result, TSearch search)
+        {
+            return Task.FromResult(result);
+        }
+
+        protected virtual async Task<IQueryable<TDbEntity>> AddFilter(IQueryable<TDbEntity> query, TSearch? search)
+        {
+            return query;
+        }
+
+
+        protected virtual void AddFilterToSingleEntity(TDbEntity entity)
+        {
+
+        }
+
+
+        protected virtual async Task BeforeInsert(TDbEntity entity, TInsert request)
+        {
+
+        }
+
 
         protected virtual async Task BeforeUpdate(TUpdate? request, TDbEntity? entity)
         {
