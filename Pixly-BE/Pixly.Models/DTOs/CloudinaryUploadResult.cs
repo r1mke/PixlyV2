@@ -1,4 +1,4 @@
-﻿namespace Pixly.Models.DatabaseModels
+﻿namespace Pixly.Models.DTOs
 {
     public class CloudinaryUploadResult
     {
