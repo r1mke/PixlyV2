@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Pixly.API.Exstensions;
+using Pixly.Models.DTOs;
 using Pixly.Models.InsertRequest;
 using Pixly.Models.SearchRequest;
 using Pixly.Models.UpdateRequest;
@@ -14,26 +16,23 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPost("{photoId}/like")]
-        public async Task<IActionResult> LikePhoto(int photoId, int userId)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.Like>>> LikePhoto(int photoId, int userId)
         {
             var like = await (_service as IPhotoService).LikePhoto(photoId, userId);
 
             if (like == null)
-                return BadRequest("Nije moguće lajkovati fotografiju");
+                return this.ApiNotFound<Models.DTOs.Like>();
 
-            return Ok(like);
+            return this.ApiSuccess<Models.DTOs.Like>(like);
         }
 
         [HttpDelete("{photoId}/like")]
-        public async Task<IActionResult> UnlikePhoto(int photoId, int userId)
+        public async Task<ActionResult<ApiResponse<object>>> UnlikePhoto(int photoId, int userId)
         {
 
-            var success = await (_service as IPhotoService).UnlikePhoto(photoId, userId);
+            await (_service as IPhotoService).UnlikePhoto(photoId, userId);
 
-            if (success == null)
-                return BadRequest("Nije moguće ukloniti lajk");
-
-            return Ok(new { message = "Lajk uspješno uklonjen" });
+            return this.ApiSuccess<object>(null);
         }
 
     }
