@@ -35,5 +35,24 @@ namespace Pixly.API.Controllers
             return this.ApiSuccess<object>(null);
         }
 
+        [HttpPost("{photoId}/save")]
+        public async Task<ActionResult<ApiResponse<Models.DTOs.Favorite>>> SavePhoto(int photoId, int userId)
+        {
+            var favorite = await (_service as IPhotoService).SavePhoto(photoId, userId);
+
+            if (favorite == null)
+                return this.ApiNotFound<Models.DTOs.Favorite>();
+
+            return this.ApiSuccess<Models.DTOs.Favorite>(favorite);
+        }
+
+        [HttpDelete("{photoId}/save")]
+        public async Task<ActionResult<ApiResponse<object>>> UnsavePhoto(int photoId, int userId)
+        {
+            await (_service as IPhotoService).UnsavePhoto(photoId, userId);
+
+            return this.ApiSuccess<object>(null);
+        }
+
     }
 }
