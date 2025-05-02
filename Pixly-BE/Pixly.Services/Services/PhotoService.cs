@@ -183,7 +183,7 @@ namespace Pixly.Services.Services
                 .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == userId);
 
             if (existingLike != null)
-                return null;
+                throw new ConflictException($"User with ID {userId} alredy like photo with ID {photo.PhotoId}");
 
             Database.Like entity = new Database.Like
             {
@@ -216,6 +216,53 @@ namespace Pixly.Services.Services
 
             await _context.SaveChangesAsync();
 
+        }
+
+        public async Task<Models.DTOs.Favorite> SavePhoto(int photoId, int userId)
+        {
+            var photo = await _context.Photos.FindAsync(photoId);
+            if (photo == null)
+                throw new NotFoundException($"Photo with ID {photoId} not found");
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                throw new NotFoundException($"User with ID {userId} not found");
+
+            var existingFavorite = await _context.Favorites
+                .FirstOrDefaultAsync(f => f.PhotoId == photoId && f.UserId == userId);
+
+            if (existingFavorite != null)
+                throw new ConflictException($"User with ID {userId} alredy save photo with ID {photo.PhotoId}");
+
+            Database.Favorite entity = new Database.Favorite
+            {
+                PhotoId = photoId,
+                UserId = userId,
+                FavoritedAt = DateTime.UtcNow
+            };
+
+            await _context.Favorites.AddAsync(entity);
+
+            await _context.SaveChangesAsync();
+
+            return Mapper.Map<Models.DTOs.Favorite>(entity);
+        }
+
+        public async Task UnsavePhoto(int photoId, int userId)
+        {
+            var photo = await _context.Photos.FindAsync(photoId);
+            if (photo == null)
+                throw new NotFoundException($"Photo with ID {photoId} not found");
+
+            var favorite = await _context.Favorites
+                .FirstOrDefaultAsync(f => f.PhotoId == photoId && f.UserId == userId);
+
+            if (favorite == null)
+                throw new NotFoundException($"Favorite not found");
+
+            _context.Favorites.Remove(favorite);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

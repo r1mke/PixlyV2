@@ -8,7 +8,7 @@ namespace Pixly.Services.Interfaces
     {
         Task<Models.DTOs.Like> LikePhoto(int photoId, int userId);
         Task UnlikePhoto(int photoId, int userId);
-        // Task<Models.DTOs.Favorite> Save(int photoId, int userId);
-        // Task Unsave(int photoId, int userId);
+        Task<Models.DTOs.Favorite> SavePhoto(int photoId, int userId);
+        Task UnsavePhoto(int photoId, int userId);
     }
 }
