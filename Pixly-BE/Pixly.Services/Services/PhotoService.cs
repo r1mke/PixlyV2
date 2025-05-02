@@ -200,7 +200,7 @@ namespace Pixly.Services.Services
             return Mapper.Map<Models.DTOs.Like>(entity);
         }
 
-        public async Task<Models.DTOs.Like> UnlikePhoto(int photoId, int userId)
+        public async Task UnlikePhoto(int photoId, int userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
             if (photo == null)
@@ -216,7 +216,6 @@ namespace Pixly.Services.Services
 
             await _context.SaveChangesAsync();
 
-            return Mapper.Map<Models.DTOs.Like>(like);
         }
     }
 }
