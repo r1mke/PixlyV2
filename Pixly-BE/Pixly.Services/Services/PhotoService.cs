@@ -54,6 +54,28 @@ namespace Pixly.Services.Services
             }
 
 
+            if (search?.isLiked == true && search.Username != null)
+            {
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == search.Username);
+                if (user == null)
+                    throw new NotFoundException($"User with username {search.Username} not found");
+
+                query = query.Where(p => p.Likes.Any(l => l.UserId == user.UserId));
+            }
+
+            if (search?.isSaved == true && search.Username != null)
+            {
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == search.Username);
+                if (user == null)
+                    throw new NotFoundException($"User with username {search.Username} not found");
+
+                query = query.Where(p => p.Favorites.Any(f => f.UserId == user.UserId));
+            }
+
+
+
             if (!string.IsNullOrWhiteSpace(search?.Title))
             {
                 query = query.Where(x => x.Title.Contains(search.Title) ||
