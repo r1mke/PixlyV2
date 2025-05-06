@@ -9,6 +9,8 @@ namespace Pixly.Models.SearchRequest
         public string? Size { get; set; }
         public bool? IsUserIncluded { get; set; }
         public string? Sorting { get; set; }
+        public bool? isLiked { get; set; }
+        public bool? isSaved { get; set; }
 
     }
 }

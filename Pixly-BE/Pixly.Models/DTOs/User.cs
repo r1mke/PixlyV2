@@ -13,9 +13,9 @@
         public string? State { get; set; }
         public bool? isDeleted { get; set; }
 
-        public ICollection<Photo> Photos { get; set; } = new List<Photo>();
+        //public ICollection<Photo> Photos { get; set; } = new List<Photo>();
 
-        public ICollection<Like> Likes { get; set; } = new List<Like>();
+        //public ICollection<Like> Likes { get; set; } = new List<Like>();
 
         //public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
         //public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
