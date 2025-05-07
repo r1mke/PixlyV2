@@ -29,6 +29,10 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             await _context.SaveChangesAsync();
             return Mapper.Map<Models.DTOs.Photo>(entity);
         }
+        public override Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
+        {
+            return Task.FromResult(new List<string>() { nameof(Restore), nameof(Edit), nameof(Delete) });
+        }
 
     }
 }

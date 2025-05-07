@@ -102,19 +102,14 @@ namespace Pixly.API.Controllers
             var result = await (_service as IPhotoService).Restore(id);
             return this.ApiSuccess(result);
         }
-        /*
+
         [HttpGet("{id}/allowed-actions")]
         public async Task<ActionResult<ApiResponse<List<string>>>> GetAllowedActions(int id)
         {
-            var photo = await _service.GetById(id);
-
-            if (photo == null)
-                return this.ApiNotFound<List<string>>($"Photo with ID {id} not found");
-
-            var actions = await (_service as IPhotoService).AllowedActions(photo);
+            var actions = await (_service as IPhotoService).AllowedActions(id);
             return this.ApiSuccess(actions);
         }
-        */
+
 
     }
 }

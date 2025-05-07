@@ -48,5 +48,9 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
                 });
             }
         }
+        public override Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
+        {
+            return Task.FromResult(new List<string>() { nameof(Insert) });
+        }
     }
 }

@@ -71,7 +71,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<List<string>> AllowedActions(Database.Photo enitity)
+        public virtual Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
         {
             throw new ForbiddenException("Method not allowed");
         }
