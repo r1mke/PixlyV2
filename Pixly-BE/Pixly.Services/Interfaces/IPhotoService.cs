@@ -17,6 +17,6 @@ namespace Pixly.Services.Interfaces
         Task<Models.DTOs.Photo> Hide(int id);
         Task<Models.DTOs.Photo> Delete(int id);
         Task<Models.DTOs.Photo> Restore(int id);
-        Task<List<string>> AllowedActions(Database.Photo enitity);
+        Task<List<string>> AllowedActions(int id);
     }
 }

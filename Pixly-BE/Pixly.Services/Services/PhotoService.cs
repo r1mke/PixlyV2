@@ -172,47 +172,58 @@ namespace Pixly.Services.Services
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
-            var result = await state.Submit(id);
+            var result = await state.Approve(id);
             return result;
         }
         public async Task<Models.DTOs.Photo> Reject(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
-            var result = await state.Submit(id);
+            var result = await state.Reject(id);
             return result;
         }
         public async Task<Models.DTOs.Photo> Edit(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
-            var result = await state.Submit(id);
+            var result = await state.Edit(id);
             return result;
         }
         public async Task<Models.DTOs.Photo> Hide(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
-            var result = await state.Submit(id);
+            var result = await state.Hide(id);
             return result;
         }
         public async Task<Models.DTOs.Photo> Delete(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
-            var result = await state.Submit(id);
+            var result = await state.Delete(id);
             return result;
         }
         public async Task<Models.DTOs.Photo> Restore(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
-            var result = await state.Submit(id);
+            var result = await state.Restore(id);
             return result;
         }
-        public Task<List<string>> AllowedActions(Photo enitity)
+        public async Task<List<string>> AllowedActions(int id)
         {
-            throw new NotImplementedException();
+            if (id <= 0)
+            {
+                var state = BasePhotoState.CreateState("initial");
+                return await state.AllowedActions(null);
+            }
+            else
+            {
+                var entity = await GetById(id);
+                if (entity == null) throw new Exception($"Entity with ID {id} not found");
+                var state = BasePhotoState.CreateState(entity.State);
+                return await state.AllowedActions(entity);
+            }
         }
 
         // like
