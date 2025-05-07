@@ -9,6 +9,7 @@ The new version of the Pixly backend brings significant improvements in architec
 - **Consistent API responses** - We've standardized all API responses through the ApiResponse<T> pattern
 - **Intelligent image handling** - Enhanced integration with Cloudinary for optimal display of images of different orientations and sizes
 - **Advanced filtering and sorting** - More flexible system for searching, filtering, and sorting photo collections
+- **State Machine Pattern** - Implementation of a robust state machine for photo lifecycle management
 
 ## 🏗️ Project architecture
 
@@ -40,6 +41,7 @@ Contains data models, DTOs, and search requests. This project is shared between 
 - **Likes**: Ability to mark photos you like
 - **Users**: User account management
 - **Tags**: Organize photos using tags
+- **Photo Workflow**: Complete state management for the photo lifecycle
 
 ## 💡 Benefits of the new design
 
@@ -47,6 +49,7 @@ Contains data models, DTOs, and search requests. This project is shared between 
 - **Less code repetition** - Generic CRUD reduces the amount of code needed for standard operations
 - **Easier maintenance** - Clear separation of responsibilities makes finding and fixing bugs easier
 - **Simple extension** - Adding new entities and APIs requires minimal effort
+- **Predictable behavior** - State machine ensures consistent photo lifecycle management
 
 ### For end users
 - **Faster image loading** - Optimized images depending on device and display context
