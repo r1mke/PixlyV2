@@ -6,7 +6,7 @@ using Pixly.Services.Interfaces;
 
 namespace Pixly.API.Controllers
 {
-    [Route("api/[controller]")]
+
     [ApiController]
     public class CRUDController<TModel, TSearch, TInsert, TUpdate> : ControllerBase
     {

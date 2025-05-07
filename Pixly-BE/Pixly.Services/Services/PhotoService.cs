@@ -7,38 +7,21 @@ using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
 using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
+using Pixly.Services.StateMachines.PhotoStateMachine;
+
 namespace Pixly.Services.Services
 
 {
     public class PhotoService : CRUDService<Models.DTOs.Photo, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest, Database.Photo>, IPhotoService
     {
 
-
+        public BasePhotoState BasePhotoState { get; set; }
         private readonly ICloudinaryService _cloudinary;
-        public PhotoService(IMapper mapper, ApplicationDbContext context, ICloudinaryService cloudinary) : base(mapper, context)
+        public PhotoService(IMapper mapper, ApplicationDbContext context, ICloudinaryService cloudinary, BasePhotoState basePhotoState)
+         : base(mapper, context)
         {
             _cloudinary = cloudinary;
-
-        }
-
-
-        protected override void AddFilterToSingleEntity(Database.Photo photo)
-        {
-            TransformEntity(photo);
-        }
-
-        private void TransformEntity(Database.Photo photo)
-        {
-            string transformation = photo.Url.ToLower() switch
-            {
-                "portrait" => "c_fit,w_1080,h_1620,f_auto,q_auto:good",
-                "square" => "c_fit,w_1200,h_1200,f_auto,q_auto:good",
-                "landscape" => "c_fit,w_1620,h_1080,f_auto,q_auto:good",
-                _ => "c_fit,w_1600,h_1200,f_auto,q_auto:good"
-            };
-
-            photo.Url = TransformUrl(photo.Url, transformation);
-
+            BasePhotoState = basePhotoState;
         }
 
         protected override async Task<IQueryable<Photo>> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
@@ -53,10 +36,8 @@ namespace Pixly.Services.Services
                 query = query.Where(x => x.User.Username == search.Username);
             }
 
-
             if (search?.isLiked == true && search.Username != null)
             {
-
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == search.Username);
                 if (user == null)
                     throw new NotFoundException($"User with username {search.Username} not found");
@@ -73,8 +54,6 @@ namespace Pixly.Services.Services
 
                 query = query.Where(p => p.Favorites.Any(f => f.UserId == user.UserId));
             }
-
-
 
             if (!string.IsNullOrWhiteSpace(search?.Title))
             {
@@ -120,14 +99,29 @@ namespace Pixly.Services.Services
             return query;
         }
 
+        // transformations
+        protected override void AddFilterToSingleEntity(Database.Photo photo)
+        {
+            TransformEntity(photo);
+        }
+        private void TransformEntity(Database.Photo photo)
+        {
+            string transformation = photo.Url.ToLower() switch
+            {
+                "portrait" => "c_fit,w_1080,h_1620,f_auto,q_auto:good",
+                "square" => "c_fit,w_1200,h_1200,f_auto,q_auto:good",
+                "landscape" => "c_fit,w_1620,h_1080,f_auto,q_auto:good",
+                _ => "c_fit,w_1600,h_1200,f_auto,q_auto:good"
+            };
+
+            photo.Url = TransformUrl(photo.Url, transformation);
+
+        }
         protected override Task<PagedList<Models.DTOs.Photo>> AddTransformation(PagedList<Models.DTOs.Photo> photos, PhotoSearchRequest search)
         {
             TransformEntities(photos);
-
             return Task.FromResult(photos);
-
         }
-
         private void TransformEntities(PagedList<Models.DTOs.Photo> list)
         {
             foreach (var photo in list)
@@ -143,7 +137,6 @@ namespace Pixly.Services.Services
                 photo.Url = TransformUrl(photo.Url, transformation);
             }
         }
-
         private string TransformUrl(string url, string transformation)
         {
             if (string.IsNullOrEmpty(url))
@@ -155,41 +148,74 @@ namespace Pixly.Services.Services
             return url.Substring(0, uploadIndex + 7) + transformation + "/" + url.Substring(uploadIndex + 7);
         }
 
-        protected override async Task BeforeInsert(Database.Photo entity, PhotoInsertRequest request)
+        // state machine
+        public override Task<Models.DTOs.Photo> Insert(PhotoInsertRequest request)
         {
-            var user = await _context.Users.FindAsync(request.UserId);
-            if (user == null) throw new NotFoundException($"User with ID {request.UserId} not found");
-
-            ValidImageFormat.IsImageValid(request.File);
-            entity = await _cloudinary.UploadImageAsync(request.File, "Pixly", entity);
-
-            entity.User = user;
-
-            foreach (var tagId in request.TagIds)
-            {
-                entity.PhotoTags.Add(new PhotoTag
-                {
-                    TagId = tagId
-                });
-            }
+            var state = BasePhotoState.CreateState("Initial");
+            return state.Insert(request);
+        }
+        public override async Task<Models.DTOs.Photo> Update(int id, PhotoUpdateRequest request)
+        {
+            var entity = await GetById(id);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.Update(id, request);
+            return result;
+        }
+        public async Task<Models.DTOs.Photo> Submit(int id)
+        {
+            var entity = await GetById(id);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.Submit(id);
+            return result;
+        }
+        public async Task<Models.DTOs.Photo> Approve(int id)
+        {
+            var entity = await GetById(id);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.Submit(id);
+            return result;
+        }
+        public async Task<Models.DTOs.Photo> Reject(int id)
+        {
+            var entity = await GetById(id);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.Submit(id);
+            return result;
+        }
+        public async Task<Models.DTOs.Photo> Edit(int id)
+        {
+            var entity = await GetById(id);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.Submit(id);
+            return result;
+        }
+        public async Task<Models.DTOs.Photo> Hide(int id)
+        {
+            var entity = await GetById(id);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.Submit(id);
+            return result;
+        }
+        public async Task<Models.DTOs.Photo> Delete(int id)
+        {
+            var entity = await GetById(id);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.Submit(id);
+            return result;
+        }
+        public async Task<Models.DTOs.Photo> Restore(int id)
+        {
+            var entity = await GetById(id);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.Submit(id);
+            return result;
+        }
+        public Task<List<string>> AllowedActions(Photo enitity)
+        {
+            throw new NotImplementedException();
         }
 
-        protected override async Task BeforeUpdate(PhotoUpdateRequest? request, Database.Photo? entity)
-        {
-            var user = await _context.Users.FindAsync(entity.UserId);
-            if (user == null) throw new NotFoundException($"User with ID {entity.UserId} not found");
-
-            if (!string.IsNullOrWhiteSpace(request.Title))
-            {
-                entity.Title = request.Title;
-            }
-            if (!string.IsNullOrWhiteSpace(request.Description))
-            {
-                entity.Description = request.Description;
-            }
-            entity.User = user;
-        }
-
+        // like
         public async Task<Models.DTOs.Like> LikePhoto(int photoId, int userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
@@ -221,7 +247,6 @@ namespace Pixly.Services.Services
 
             return Mapper.Map<Models.DTOs.Like>(entity);
         }
-
         public async Task UnlikePhoto(int photoId, int userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
@@ -240,6 +265,7 @@ namespace Pixly.Services.Services
 
         }
 
+        // favorite
         public async Task<Models.DTOs.Favorite> SavePhoto(int photoId, int userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
@@ -269,7 +295,6 @@ namespace Pixly.Services.Services
 
             return Mapper.Map<Models.DTOs.Favorite>(entity);
         }
-
         public async Task UnsavePhoto(int photoId, int userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);

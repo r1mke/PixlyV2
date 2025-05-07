@@ -7,6 +7,7 @@ using Pixly.Services.Cloudinary;
 using Pixly.Services.Database;
 using Pixly.Services.Interfaces;
 using Pixly.Services.Services;
+using Pixly.Services.StateMachines.PhotoStateMachine;
 namespace Pixly.API.Exstensions
 {
     public static class ApplicationServiceExstensions
@@ -36,6 +37,15 @@ namespace Pixly.API.Exstensions
             });
 
             services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddScoped<BasePhotoState>();
+            services.AddScoped<InitialPhotoState>();
+            services.AddScoped<DraftPhotoState>();
+            services.AddScoped<PendingPhotoState>();
+            services.AddScoped<ApprovedPhotoState>();
+            services.AddScoped<HiddenPhotoState>();
+            services.AddScoped<RejectedPhotoState>();
+            services.AddScoped<ReportedPhotoState>();
+            services.AddScoped<DeletedPhotoState>();
 
             return services;
         }
