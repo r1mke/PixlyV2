@@ -23,5 +23,7 @@ namespace Pixly.Models.InsertRequest
         [MinLength(1, ErrorMessage = "At least one tag must be selected.")]
         public List<int> TagIds { get; set; } = new();
 
+        public bool? IsDraft { get; set; }
+
     }
 }

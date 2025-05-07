@@ -24,7 +24,6 @@ namespace Pixly.Services.Services
             AddFilterToSingleEntity(entity);
             return Mapper.Map<TModel>(entity);
         }
-
         public async Task<PagedList<TModel>> GetPaged(TSearch search)
         {
             var query = _context.Set<TDbEntity>().AsQueryable();
@@ -40,21 +39,15 @@ namespace Pixly.Services.Services
             return transformatedResult;
 
         }
-        public async Task<TModel> Insert(TInsert request)
+        public virtual async Task<TModel> Insert(TInsert request)
         {
             TDbEntity entity = Mapper.Map<TDbEntity>(request);
-
             await BeforeInsert(entity, request);
-
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
-
-
-
             return Mapper.Map<TModel>(entity);
         }
-
-        public async Task<TModel> Update(int id, TUpdate request)
+        public virtual async Task<TModel> Update(int id, TUpdate request)
         {
             var entity = await _context.Set<TDbEntity>().FindAsync(id);
             await BeforeUpdate(request, entity);
@@ -64,30 +57,22 @@ namespace Pixly.Services.Services
             return Mapper.Map<TModel>(entity);
 
         }
-
         protected virtual Task<PagedList<TModel>> AddTransformation(PagedList<TModel> result, TSearch search)
         {
             return Task.FromResult(result);
         }
-
         protected virtual async Task<IQueryable<TDbEntity>> AddFilter(IQueryable<TDbEntity> query, TSearch? search)
         {
             return query;
         }
-
-
         protected virtual void AddFilterToSingleEntity(TDbEntity entity)
         {
 
         }
-
-
         protected virtual async Task BeforeInsert(TDbEntity entity, TInsert request)
         {
 
         }
-
-
         protected virtual async Task BeforeUpdate(TUpdate? request, TDbEntity? entity)
         {
 

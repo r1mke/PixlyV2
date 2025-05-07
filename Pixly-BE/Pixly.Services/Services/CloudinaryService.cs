@@ -10,12 +10,10 @@ namespace Pixly.Services.Services
     public class CloudinaryService : ICloudinaryService
     {
         private readonly CloudinaryDotNet.Cloudinary _cloudinary;
-
         public CloudinaryService(CloudinaryDotNet.Cloudinary cloudinary)
         {
             _cloudinary = cloudinary;
         }
-
         public async Task<Database.Photo> UploadImageAsync(IFormFile file, string folder, Database.Photo entity)
         {
 
@@ -42,7 +40,6 @@ namespace Pixly.Services.Services
 
             return entity;
         }
-
         public async Task<string> UploadProfilePhoto(IFormFile file)
         {
             var uploadParams = new ImageUploadParams
@@ -68,7 +65,6 @@ namespace Pixly.Services.Services
 
             return uploadResult.SecureUrl.AbsoluteUri;
         }
-
         private string DetermineOrientation(int? width, int? height)
         {
             if (width == null || height == null)
