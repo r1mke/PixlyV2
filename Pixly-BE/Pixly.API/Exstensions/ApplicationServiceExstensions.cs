@@ -21,6 +21,7 @@ namespace Pixly.API.Exstensions
 
             services.AddMapster();
             services.AddTransient<IPhotoService, PhotoService>();
+            services.AddTransient<ITagService, TagService>();
 
             services.Configure<CloudinarySettings>(options =>
             {
