@@ -12,7 +12,7 @@ using Pixly.Services.StateMachines.PhotoStateMachine;
 namespace Pixly.Services.Services
 
 {
-    public class PhotoService : CRUDService<Models.DTOs.Photo, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest, Database.Photo>, IPhotoService
+    public class PhotoService : CRUDService<Models.DTOs.PhotoDetail, Models.DTOs.PhotoBasic, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest, Database.Photo>, IPhotoService
     {
 
         public BasePhotoState BasePhotoState { get; set; }
@@ -22,6 +22,14 @@ namespace Pixly.Services.Services
         {
             _cloudinary = cloudinary;
             BasePhotoState = basePhotoState;
+        }
+
+        public override async Task<Models.DTOs.PhotoDetail> GetById(int id)
+        {
+            var entity = await _context.Photos.Include(p => p.PhotoTags).ThenInclude(pt => pt.Tag).FirstOrDefaultAsync(p => p.PhotoId == id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not exist");
+            AddFilterToSingleEntity(entity);
+            return Mapper.Map<Models.DTOs.PhotoDetail>(entity);
         }
 
         protected override async Task<IQueryable<Photo>> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
@@ -117,12 +125,12 @@ namespace Pixly.Services.Services
             photo.Url = TransformUrl(photo.Url, transformation);
 
         }
-        protected override Task<PagedList<Models.DTOs.Photo>> AddTransformation(PagedList<Models.DTOs.Photo> photos, PhotoSearchRequest search)
+        protected override Task<PagedList<Models.DTOs.PhotoBasic>> AddTransformation(PagedList<Models.DTOs.PhotoBasic> photos, PhotoSearchRequest search)
         {
             TransformEntities(photos);
             return Task.FromResult(photos);
         }
-        private void TransformEntities(PagedList<Models.DTOs.Photo> list)
+        private void TransformEntities(PagedList<Models.DTOs.PhotoBasic> list)
         {
             foreach (var photo in list)
             {
@@ -149,61 +157,61 @@ namespace Pixly.Services.Services
         }
 
         // state machine
-        public override Task<Models.DTOs.Photo> Insert(PhotoInsertRequest request)
+        public override Task<Models.DTOs.PhotoBasic> Insert(PhotoInsertRequest request)
         {
             var state = BasePhotoState.CreateState("Initial");
             return state.Insert(request);
         }
-        public override async Task<Models.DTOs.Photo> Update(int id, PhotoUpdateRequest request)
+        public override async Task<Models.DTOs.PhotoBasic> Update(int id, PhotoUpdateRequest request)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Update(id, request);
             return result;
         }
-        public async Task<Models.DTOs.Photo> Submit(int id)
+        public async Task<Models.DTOs.PhotoBasic> Submit(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Submit(id);
             return result;
         }
-        public async Task<Models.DTOs.Photo> Approve(int id)
+        public async Task<Models.DTOs.PhotoBasic> Approve(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Approve(id);
             return result;
         }
-        public async Task<Models.DTOs.Photo> Reject(int id)
+        public async Task<Models.DTOs.PhotoBasic> Reject(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Reject(id);
             return result;
         }
-        public async Task<Models.DTOs.Photo> Edit(int id)
+        public async Task<Models.DTOs.PhotoBasic> Edit(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Edit(id);
             return result;
         }
-        public async Task<Models.DTOs.Photo> Hide(int id)
+        public async Task<Models.DTOs.PhotoBasic> Hide(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Hide(id);
             return result;
         }
-        public async Task<Models.DTOs.Photo> Delete(int id)
+        public async Task<Models.DTOs.PhotoBasic> Delete(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Delete(id);
             return result;
         }
-        public async Task<Models.DTOs.Photo> Restore(int id)
+        public async Task<Models.DTOs.PhotoBasic> Restore(int id)
         {
             var entity = await GetById(id);
             var state = BasePhotoState.CreateState(entity.State);

@@ -2,11 +2,11 @@
 
 namespace Pixly.Services.Interfaces
 {
-    public interface ICRUDService<TModel, TSearch, TInsert, TUpdate>
+    public interface ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate>
     {
-        public Task<PagedList<TModel>> GetPaged(TSearch search);
-        public Task<TModel> GetById(int id);
-        public Task<TModel> Insert(TInsert request);
-        public Task<TModel> Update(int id, TUpdate request);
+        public Task<PagedList<TModelBasic>> GetPaged(TSearch search);
+        public Task<TModelDetail> GetById(int id);
+        public Task<TModelBasic> Insert(TInsert request);
+        public Task<TModelBasic> Update(int id, TUpdate request);
     }
 }

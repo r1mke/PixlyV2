@@ -10,26 +10,26 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
         {
         }
 
-        public override async Task<Models.DTOs.Photo> Restore(int id)
+        public override async Task<Models.DTOs.PhotoBasic> Restore(int id)
         {
             var entity = await SetState(id, PhotoState.Approved.ToString());
             await _context.SaveChangesAsync();
-            return Mapper.Map<Models.DTOs.Photo>(entity);
+            return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
-        public override async Task<Models.DTOs.Photo> Delete(int id)
+        public override async Task<Models.DTOs.PhotoBasic> Delete(int id)
         {
             var entity = await SetState(id, PhotoState.Deleted.ToString());
             entity.IsDeleted = true;
             await _context.SaveChangesAsync();
-            return Mapper.Map<Models.DTOs.Photo>(entity);
+            return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
-        public override async Task<Models.DTOs.Photo> Edit(int id)
+        public override async Task<Models.DTOs.PhotoBasic> Edit(int id)
         {
             var entity = await SetState(id, PhotoState.Draft.ToString());
             await _context.SaveChangesAsync();
-            return Mapper.Map<Models.DTOs.Photo>(entity);
+            return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
-        public override Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
+        public override Task<List<string>> AllowedActions(Models.DTOs.PhotoDetail enitity)
         {
             return Task.FromResult(new List<string>() { nameof(Restore), nameof(Edit), nameof(Delete) });
         }

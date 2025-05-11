@@ -10,5 +10,9 @@ namespace Pixly.Models.UpdateRequest
 
         [StringLength(100, ErrorMessage = "Description cannot be longer than 100 characters.")]
         public string? Description { get; set; }
+
+        [Required(ErrorMessage = "At least one tag must be selected.")]
+        [MinLength(1, ErrorMessage = "At least one tag must be selected.")]
+        public List<int> TagIds { get; set; } = new();
     }
 }

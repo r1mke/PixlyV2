@@ -35,43 +35,43 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             _cloudinary = cloudinary;
             _context = context;
         }
-        public virtual Task<Models.DTOs.Photo> Insert(PhotoInsertRequest request)
+        public virtual Task<Models.DTOs.PhotoBasic> Insert(PhotoInsertRequest request)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<Models.DTOs.Photo> Update(int id, PhotoUpdateRequest request)
+        public virtual Task<Models.DTOs.PhotoBasic> Update(int id, PhotoUpdateRequest request)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<Models.DTOs.Photo> Submit(int id)
+        public virtual Task<Models.DTOs.PhotoBasic> Submit(int id)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<Models.DTOs.Photo> Approve(int id)
+        public virtual Task<Models.DTOs.PhotoBasic> Approve(int id)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<Models.DTOs.Photo> Reject(int id)
+        public virtual Task<Models.DTOs.PhotoBasic> Reject(int id)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<Models.DTOs.Photo> Edit(int id)
+        public virtual Task<Models.DTOs.PhotoBasic> Edit(int id)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<Models.DTOs.Photo> Hide(int id)
+        public virtual Task<Models.DTOs.PhotoBasic> Hide(int id)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<Models.DTOs.Photo> Delete(int id)
+        public virtual Task<Models.DTOs.PhotoBasic> Delete(int id)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<Models.DTOs.Photo> Restore(int id)
+        public virtual Task<Models.DTOs.PhotoBasic> Restore(int id)
         {
             throw new ForbiddenException("Method not allowed");
         }
-        public virtual Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
+        public virtual Task<List<string>> AllowedActions(Models.DTOs.PhotoDetail enitity)
         {
             throw new ForbiddenException("Method not allowed");
         }

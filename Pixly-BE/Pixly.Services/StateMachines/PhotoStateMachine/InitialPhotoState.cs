@@ -13,7 +13,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
         {
         }
 
-        public override async Task<Models.DTOs.Photo> Insert(PhotoInsertRequest request)
+        public override async Task<Models.DTOs.PhotoBasic> Insert(PhotoInsertRequest request)
         {
             Database.Photo entity = Mapper.Map<Database.Photo>(request);
 
@@ -28,7 +28,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             }
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
-            return Mapper.Map<Models.DTOs.Photo>(entity);
+            return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
         private async Task BeforeInsert(Database.Photo entity, PhotoInsertRequest request)
         {
@@ -48,7 +48,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
                 });
             }
         }
-        public override Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
+        public override Task<List<string>> AllowedActions(Models.DTOs.PhotoDetail enitity)
         {
             return Task.FromResult(new List<string>() { nameof(Insert) });
         }

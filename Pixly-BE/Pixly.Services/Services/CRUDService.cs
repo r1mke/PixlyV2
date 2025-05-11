@@ -1,12 +1,13 @@
 ﻿using MapsterMapper;
 using Pixly.Models.Pagination;
 using Pixly.Services.Database;
+using Pixly.Services.Exceptions;
 using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
 
 namespace Pixly.Services.Services
 {
-    public class CRUDService<TModel, TSearch, TInsert, TUpdate, TDbEntity> : ICRUDService<TModel, TSearch, TInsert, TUpdate> where TDbEntity : class where TSearch : PaginationParams where TInsert : class where TUpdate : class
+    public class CRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate, TDbEntity> : ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate> where TDbEntity : class where TSearch : PaginationParams where TInsert : class where TUpdate : class
     {
 
         public IMapper Mapper;
@@ -17,47 +18,46 @@ namespace Pixly.Services.Services
             Mapper = mapper;
             _context = context;
         }
-        public async Task<TModel> GetById(int id)
+        public virtual async Task<TModelDetail> GetById(int id)
         {
             var entity = await _context.Set<TDbEntity>().FindAsync(id);
-            if (entity == null) return default;
-            AddFilterToSingleEntity(entity);
-            return Mapper.Map<TModel>(entity);
+            if (entity == null) throw new NotFoundException($"Entity with ID {id} not exist");
+            return Mapper.Map<TModelDetail>(entity);
         }
-        public async Task<PagedList<TModel>> GetPaged(TSearch search)
+        public async Task<PagedList<TModelBasic>> GetPaged(TSearch search)
         {
             var query = _context.Set<TDbEntity>().AsQueryable();
 
             query = await AddFilter(query, search);
 
-            var modelQuery = query.Select(x => Mapper.Map<TModel>(x));
+            var modelQuery = query.Select(x => Mapper.Map<TModelBasic>(x));
 
-            var result = await PagedList<TModel>.CreateAsync(modelQuery, search.PageNumber, search.PageSize);
+            var result = await PagedList<TModelBasic>.CreateAsync(modelQuery, search.PageNumber, search.PageSize);
 
             var transformatedResult = await AddTransformation(result, search);
 
             return transformatedResult;
 
         }
-        public virtual async Task<TModel> Insert(TInsert request)
+        public virtual async Task<TModelBasic> Insert(TInsert request)
         {
             TDbEntity entity = Mapper.Map<TDbEntity>(request);
             await BeforeInsert(entity, request);
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
-            return Mapper.Map<TModel>(entity);
+            return Mapper.Map<TModelBasic>(entity);
         }
-        public virtual async Task<TModel> Update(int id, TUpdate request)
+        public virtual async Task<TModelBasic> Update(int id, TUpdate request)
         {
             var entity = await _context.Set<TDbEntity>().FindAsync(id);
             await BeforeUpdate(request, entity);
 
             await _context.SaveChangesAsync();
 
-            return Mapper.Map<TModel>(entity);
+            return Mapper.Map<TModelBasic>(entity);
 
         }
-        protected virtual Task<PagedList<TModel>> AddTransformation(PagedList<TModel> result, TSearch search)
+        protected virtual Task<PagedList<TModelBasic>> AddTransformation(PagedList<TModelBasic> result, TSearch search)
         {
             return Task.FromResult(result);
         }
