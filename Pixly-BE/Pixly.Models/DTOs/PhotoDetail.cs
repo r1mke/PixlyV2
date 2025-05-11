@@ -1,6 +1,6 @@
 ﻿namespace Pixly.Models.DTOs
 {
-    public class Photo
+    public class PhotoDetail
     {
 
         public string Title { get; set; }
@@ -18,6 +18,7 @@
         public int LikeCount { get; set; }
         public int DownloadCount { get; set; }
         public string Orientation { get; set; }
+        public ICollection<PhotoTag> PhotoTags { get; set; } = new List<PhotoTag>();
 
     }
 }

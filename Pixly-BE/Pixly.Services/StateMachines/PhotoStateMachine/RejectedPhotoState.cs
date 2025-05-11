@@ -10,14 +10,14 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
         {
         }
 
-        public override async Task<Models.DTOs.Photo> Delete(int id)
+        public override async Task<Models.DTOs.PhotoBasic> Delete(int id)
         {
             var entity = await SetState(id, PhotoState.Deleted.ToString());
             entity.IsDeleted = true;
             await _context.SaveChangesAsync();
-            return Mapper.Map<Models.DTOs.Photo>(entity);
+            return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
-        public override Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
+        public override Task<List<string>> AllowedActions(Models.DTOs.PhotoDetail enitity)
         {
             return Task.FromResult(new List<string>() { nameof(Delete) });
         }

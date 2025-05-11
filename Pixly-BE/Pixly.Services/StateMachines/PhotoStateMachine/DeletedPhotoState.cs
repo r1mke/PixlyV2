@@ -9,7 +9,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
         public DeletedPhotoState(IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(mapper, serviceProvider, cloudinary, context)
         {
         }
-        public override Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
+        public override Task<List<string>> AllowedActions(Models.DTOs.PhotoDetail enitity)
         {
             return Task.FromResult(new List<string>() { });
         }

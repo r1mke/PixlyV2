@@ -4,7 +4,7 @@ using Pixly.Models.UpdateRequest;
 
 namespace Pixly.Services.Interfaces
 {
-    public interface ITagService : ICRUDService<Models.DTOs.Tag, TagSearchRequest, TagInsertRequest, TagUpdateRequest>
+    public interface ITagService : ICRUDService<Models.DTOs.Tag, Models.DTOs.Tag, TagSearchRequest, TagInsertRequest, TagUpdateRequest>
     {
     }
 }

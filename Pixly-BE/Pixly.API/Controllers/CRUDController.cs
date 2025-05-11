@@ -8,18 +8,18 @@ namespace Pixly.API.Controllers
 {
 
     [ApiController]
-    public class CRUDController<TModel, TSearch, TInsert, TUpdate> : ControllerBase
+    public class CRUDController<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate> : ControllerBase
     {
 
-        protected ICRUDService<TModel, TSearch, TInsert, TUpdate> _service;
+        protected ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate> _service;
 
-        public CRUDController(ICRUDService<TModel, TSearch, TInsert, TUpdate> service)
+        public CRUDController(ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate> service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PagedList<TModel>>>> GetPaged([FromQuery] TSearch search)
+        public async Task<ActionResult<ApiResponse<PagedList<TModelBasic>>>> GetPaged([FromQuery] TSearch search)
         {
             var pagedResult = await _service.GetPaged(search);
 
@@ -34,29 +34,29 @@ namespace Pixly.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<TModel>>> GetById(int id)
+        public async Task<ActionResult<ApiResponse<TModelDetail>>> GetById(int id)
         {
             var result = await _service.GetById(id);
 
-            if (result == null) return this.ApiNotFound<TModel>($"Resource with ID {id} not found");
+            if (result == null) return this.ApiNotFound<TModelDetail>($"Resource with ID {id} not found");
             return this.ApiSuccess(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<TModel>>> Insert(TInsert request)
+        public async Task<ActionResult<ApiResponse<TModelBasic>>> Insert(TInsert request)
         {
             var result = await _service.Insert(request);
 
-            if (result == null) return this.ApiBadRequest<TModel>();
+            if (result == null) return this.ApiBadRequest<TModelBasic>();
             return this.ApiSuccess(result);
         }
 
         [HttpPatch("id")]
-        public async Task<ActionResult<ApiResponse<TModel>>> Update(int id, TUpdate request)
+        public async Task<ActionResult<ApiResponse<TModelBasic>>> Update(int id, TUpdate request)
         {
             var result = await _service.Update(id, request);
 
-            if (result == null) return this.ApiBadRequest<TModel>();
+            if (result == null) return this.ApiBadRequest<TModelBasic>();
             return this.ApiSuccess(result);
         }
     }

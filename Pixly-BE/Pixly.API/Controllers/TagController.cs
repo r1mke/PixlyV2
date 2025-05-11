@@ -7,7 +7,7 @@ using Pixly.Services.Interfaces;
 namespace Pixly.API.Controllers
 {
     [Route("api/tag")]
-    public class TagController : CRUDController<Models.DTOs.Tag, TagSearchRequest, TagInsertRequest, TagUpdateRequest>
+    public class TagController : CRUDController<Models.DTOs.Tag, Models.DTOs.Tag, TagSearchRequest, TagInsertRequest, TagUpdateRequest>
     {
         public TagController(ITagService service) : base(service)
         {

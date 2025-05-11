@@ -10,19 +10,19 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
         {
         }
 
-        public override async Task<Models.DTOs.Photo> Approve(int id)
+        public override async Task<Models.DTOs.PhotoBasic> Approve(int id)
         {
             var entity = await SetState(id, PhotoState.Approved.ToString());
             await _context.SaveChangesAsync();
-            return Mapper.Map<Models.DTOs.Photo>(entity);
+            return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
-        public override async Task<Models.DTOs.Photo> Reject(int id)
+        public override async Task<Models.DTOs.PhotoBasic> Reject(int id)
         {
             var entity = await SetState(id, PhotoState.Rejected.ToString());
             await _context.SaveChangesAsync();
-            return Mapper.Map<Models.DTOs.Photo>(entity);
+            return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
-        public override Task<List<string>> AllowedActions(Models.DTOs.Photo enitity)
+        public override Task<List<string>> AllowedActions(Models.DTOs.PhotoDetail enitity)
         {
             return Task.FromResult(new List<string>() { nameof(Approve), nameof(Reject) });
         }

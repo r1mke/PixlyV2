@@ -9,7 +9,7 @@ using Pixly.Services.Interfaces;
 namespace Pixly.API.Controllers
 {
     [Route("api/photo")]
-    public class PhotoController : CRUDController<Models.DTOs.Photo, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest>
+    public class PhotoController : CRUDController<Models.DTOs.PhotoDetail, Models.DTOs.PhotoBasic, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest>
     {
         public PhotoController(IPhotoService service) : base(service)
         {
@@ -55,49 +55,49 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPost("{id}/submit")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Photo>>> SubmitPhoto(int id)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> SubmitPhoto(int id)
         {
             var result = await (_service as IPhotoService).Submit(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/approve")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Photo>>> ApprovePhoto(int id)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> ApprovePhoto(int id)
         {
             var result = await (_service as IPhotoService).Approve(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/reject")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Photo>>> RejectPhoto(int id)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> RejectPhoto(int id)
         {
             var result = await (_service as IPhotoService).Reject(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/edit")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Photo>>> EditPhoto(int id)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> EditPhoto(int id)
         {
             var result = await (_service as IPhotoService).Edit(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/hide")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Photo>>> HidePhoto(int id)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> HidePhoto(int id)
         {
             var result = await (_service as IPhotoService).Hide(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/delete")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Photo>>> DeletePhoto(int id)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> DeletePhoto(int id)
         {
             var result = await (_service as IPhotoService).Delete(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/restore")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Photo>>> RestorePhoto(int id)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> RestorePhoto(int id)
         {
             var result = await (_service as IPhotoService).Restore(id);
             return this.ApiSuccess(result);
