@@ -18,7 +18,7 @@ namespace Pixly.API.Exstensions
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString)
             );
-
+            services.AddMemoryCache();
             services.AddMapster();
             services.AddTransient<IPhotoService, PhotoService>();
             services.AddTransient<ITagService, TagService>();
@@ -29,7 +29,7 @@ namespace Pixly.API.Exstensions
                 options.ApiKey = Environment.GetEnvironmentVariable("CLOUDINARY_APIKEY");
                 options.ApiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_APISECRET");
             });
-
+            services.AddSingleton<ICacheService, MemoryCacheService>();
             services.AddSingleton<Cloudinary>(serviceProvider =>
             {
                 var cloudinarySettings = serviceProvider.GetRequiredService<IOptions<CloudinarySettings>>().Value;
@@ -47,6 +47,8 @@ namespace Pixly.API.Exstensions
             services.AddScoped<RejectedPhotoState>();
             services.AddScoped<ReportedPhotoState>();
             services.AddScoped<DeletedPhotoState>();
+
+
 
             return services;
         }

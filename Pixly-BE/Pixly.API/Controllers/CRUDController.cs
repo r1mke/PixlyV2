@@ -51,7 +51,7 @@ namespace Pixly.API.Controllers
             return this.ApiSuccess(result);
         }
 
-        [HttpPatch("id")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult<ApiResponse<TModelBasic>>> Update(int id, TUpdate request)
         {
             var result = await _service.Update(id, request);
