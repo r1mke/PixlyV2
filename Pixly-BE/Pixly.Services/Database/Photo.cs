@@ -6,7 +6,7 @@
         public string Title { get; set; }
         public string? Description { get; set; }
         public string Url { get; set; }
-        public string? PublicId { get; set; }
+        public string Slug { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public string? Format { get; set; }
@@ -14,7 +14,7 @@
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
         public int UserId { get; set; }
         public User? User { get; set; }
-        public string? State { get; set; }
+        public string State { get; set; }
         public int ViewCount { get; set; } = 0;
         public int LikeCount { get; set; } = 0;
         public int DownloadCount { get; set; } = 0;

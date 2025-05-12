@@ -15,6 +15,15 @@ namespace Pixly.API.Controllers
         {
         }
 
+        [HttpGet("slug/{slug}")]
+        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoDetail>>> GetBySlug(string slug)
+        {
+            var result = await (_service as IPhotoService).GetBySlug(slug);
+
+            if (result == null) return this.ApiNotFound<Models.DTOs.PhotoDetail>($"Resource with slug {slug} not found");
+            return this.ApiSuccess(result);
+        }
+
         [HttpPost("{photoId}/like")]
         public async Task<ActionResult<ApiResponse<Models.DTOs.Like>>> LikePhoto(int photoId, int userId)
         {
