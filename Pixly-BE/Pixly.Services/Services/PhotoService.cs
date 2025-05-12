@@ -360,6 +360,18 @@ namespace Pixly.Services.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<PhotoDetail> GetBySlug(string slug)
+        {
+            var cacheKey = $"photoSlug:{slug}";
+
+            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
+            {
+                var entity = await _context.Photos.FirstOrDefaultAsync(p => p.Slug == slug);
+                if (entity == null) throw new NotFoundException($"Photo with slug {slug} not found");
+                return Mapper.Map<PhotoDetail>(entity);
+            }, TimeSpan.FromMinutes(30));
+        }
     }
 }
 

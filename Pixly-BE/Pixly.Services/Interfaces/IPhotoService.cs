@@ -7,6 +7,7 @@ namespace Pixly.Services.Interfaces
     public interface IPhotoService : ICRUDService<Models.DTOs.PhotoDetail, Models.DTOs.PhotoBasic, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest>
     {
         Task<Models.DTOs.Like> LikePhoto(int photoId, int userId);
+        Task<Models.DTOs.PhotoDetail> GetBySlug(string slug);
         Task UnlikePhoto(int photoId, int userId);
         Task<Models.DTOs.Favorite> SavePhoto(int photoId, int userId);
         Task UnsavePhoto(int photoId, int userId);
