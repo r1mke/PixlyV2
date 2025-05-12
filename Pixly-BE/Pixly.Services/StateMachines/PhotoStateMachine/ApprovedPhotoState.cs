@@ -6,7 +6,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
 {
     public class ApprovedPhotoState : BasePhotoState
     {
-        public ApprovedPhotoState(IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(mapper, serviceProvider, cloudinary, context)
+        public ApprovedPhotoState(ICacheService cacheService, IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(cacheService, mapper, serviceProvider, cloudinary, context)
         {
         }
 

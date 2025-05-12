@@ -6,7 +6,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
 {
     public class HiddenPhotoState : BasePhotoState
     {
-        public HiddenPhotoState(IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(mapper, serviceProvider, cloudinary, context)
+        public HiddenPhotoState(ICacheService cacheService, IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(cacheService, mapper, serviceProvider, cloudinary, context)
         {
         }
 

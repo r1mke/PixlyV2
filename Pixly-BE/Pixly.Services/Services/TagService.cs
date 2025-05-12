@@ -10,7 +10,7 @@ namespace Pixly.Services.Services
 {
     public class TagService : CRUDService<Models.DTOs.Tag, Models.DTOs.Tag, TagSearchRequest, TagInsertRequest, TagUpdateRequest, Database.Tag>, ITagService
     {
-        public TagService(IMapper mapper, ApplicationDbContext context) : base(mapper, context)
+        public TagService(IMapper mapper, ApplicationDbContext context, ICacheService cacheService) : base(mapper, context, cacheService)
         {
         }
 

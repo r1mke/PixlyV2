@@ -1,5 +1,6 @@
 ﻿using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
+using Pixly.Models.DTOs;
 using Pixly.Models.InsertRequest;
 using Pixly.Models.SearchRequest;
 using Pixly.Models.UpdateRequest;
@@ -8,6 +9,7 @@ using Pixly.Services.Exceptions;
 using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
 using Pixly.Services.StateMachines.PhotoStateMachine;
+using System.Text.Json;
 
 namespace Pixly.Services.Services
 
@@ -17,8 +19,8 @@ namespace Pixly.Services.Services
 
         public BasePhotoState BasePhotoState { get; set; }
         private readonly ICloudinaryService _cloudinary;
-        public PhotoService(IMapper mapper, ApplicationDbContext context, ICloudinaryService cloudinary, BasePhotoState basePhotoState)
-         : base(mapper, context)
+        public PhotoService(ICacheService cacheService, IMapper mapper, ApplicationDbContext context, ICloudinaryService cloudinary, BasePhotoState basePhotoState)
+         : base(mapper, context, cacheService)
         {
             _cloudinary = cloudinary;
             BasePhotoState = basePhotoState;
@@ -26,10 +28,20 @@ namespace Pixly.Services.Services
 
         public override async Task<Models.DTOs.PhotoDetail> GetById(int id)
         {
-            var entity = await _context.Photos.Include(p => p.PhotoTags).ThenInclude(pt => pt.Tag).FirstOrDefaultAsync(p => p.PhotoId == id);
-            if (entity == null) throw new NotFoundException($"Photo with ID {id} not exist");
-            AddFilterToSingleEntity(entity);
-            return Mapper.Map<Models.DTOs.PhotoDetail>(entity);
+            var cacheKey = $"photo:{id}";
+
+            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
+            {
+                var entity = await _context.Photos
+                    .Include(p => p.PhotoTags)
+                    .ThenInclude(pt => pt.Tag)
+                    .FirstOrDefaultAsync(p => p.PhotoId == id);
+
+                if (entity == null) throw new NotFoundException($"Photo with ID {id} not exist");
+
+                AddFilterToSingleEntity(entity);
+                return Mapper.Map<Models.DTOs.PhotoDetail>(entity);
+            }, TimeSpan.FromMinutes(30));
         }
 
         protected override async Task<IQueryable<Photo>> AddFilter(IQueryable<Database.Photo> query, PhotoSearchRequest? search)
@@ -125,7 +137,23 @@ namespace Pixly.Services.Services
             photo.Url = TransformUrl(photo.Url, transformation);
 
         }
-        protected override Task<PagedList<Models.DTOs.PhotoBasic>> AddTransformation(PagedList<Models.DTOs.PhotoBasic> photos, PhotoSearchRequest search)
+
+        public override async Task<PagedList<PhotoBasic>> GetPaged(PhotoSearchRequest search)
+        {
+            var cacheKey = $"photo:paged:{JsonSerializer.Serialize(search)}";
+
+            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
+            {
+                var query = _context.Photos.AsQueryable();
+                query = await AddFilter(query, search);
+                var modelQuery = query.Select(x => Mapper.Map<PhotoBasic>(x));
+                var result = await PagedList<PhotoBasic>.CreateAsync(
+                    modelQuery, search.PageNumber, search.PageSize);
+                return await AddTransformation(result, search);
+            }, TimeSpan.FromMinutes(5));
+        }
+
+        protected Task<PagedList<Models.DTOs.PhotoBasic>> AddTransformation(PagedList<Models.DTOs.PhotoBasic> photos, PhotoSearchRequest search)
         {
             TransformEntities(photos);
             return Task.FromResult(photos);
@@ -264,6 +292,8 @@ namespace Pixly.Services.Services
 
             await _context.SaveChangesAsync();
 
+            await _cacheService.RemoveAsync($"photo:{photoId}");
+            await _cacheService.RemoveByPrefixAsync($"getPaged:");
             return Mapper.Map<Models.DTOs.Like>(entity);
         }
         public async Task UnlikePhoto(int photoId, int userId)
