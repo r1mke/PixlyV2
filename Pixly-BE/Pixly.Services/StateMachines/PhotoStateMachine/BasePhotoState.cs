@@ -73,6 +73,25 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
         {
             throw new ForbiddenException("Method not allowed");
         }
+        public virtual Task<Models.DTOs.Like> LikePhoto(int id, int userId)
+        {
+            throw new ForbiddenException("Method not allowed");
+        }
+
+        public virtual Task UnlikePhoto(int id, int userId)
+        {
+            throw new ForbiddenException("Method not allowed");
+        }
+
+        public virtual Task<Models.DTOs.Favorite> SavePhoto(int id, int userId)
+        {
+            throw new ForbiddenException("Method not allowed");
+        }
+
+        public virtual Task UnsavePhoto(int id, int userId)
+        {
+            throw new ForbiddenException("Method not allowed");
+        }
         public virtual Task<List<string>> AllowedActions(Models.DTOs.PhotoDetail enitity)
         {
             throw new ForbiddenException("Method not allowed");

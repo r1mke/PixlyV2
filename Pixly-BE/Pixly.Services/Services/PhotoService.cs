@@ -265,100 +265,31 @@ namespace Pixly.Services.Services
         // like
         public async Task<Models.DTOs.Like> LikePhoto(int photoId, int userId)
         {
-            var photo = await _context.Photos.FindAsync(photoId);
-            if (photo == null)
-                throw new NotFoundException($"Photo with ID {photoId} not found");
-
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                throw new NotFoundException($"User with ID {userId} not found");
-
-
-            var existingLike = await _context.Likes
-                .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == userId);
-
-            if (existingLike != null)
-                throw new ConflictException($"User with ID {userId} alredy like photo with ID {photo.PhotoId}");
-
-            Database.Like entity = new Database.Like
-            {
-                PhotoId = photoId,
-                UserId = userId,
-                LikedAt = DateTime.UtcNow
-            };
-
-            await _context.Likes.AddAsync(entity);
-            photo.LikeCount++;
-
-            await _context.SaveChangesAsync();
-
-            await _cacheService.RemoveAsync($"photo:{photoId}");
-            await _cacheService.RemoveByPrefixAsync($"getPaged:");
-            return Mapper.Map<Models.DTOs.Like>(entity);
+            var entity = await GetById(photoId);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.LikePhoto(photoId, userId);
+            return result;
         }
         public async Task UnlikePhoto(int photoId, int userId)
         {
-            var photo = await _context.Photos.FindAsync(photoId);
-            if (photo == null)
-                throw new NotFoundException($"Photo with ID {photoId} not found");
-
-            var like = await _context.Likes
-                .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == userId);
-
-            _context.Likes.Remove(like);
-
-            if (photo.LikeCount > 0)
-                photo.LikeCount--;
-
-            await _context.SaveChangesAsync();
-
+            var entity = await GetById(photoId);
+            var state = BasePhotoState.CreateState(entity.State);
+            await state.UnlikePhoto(photoId, userId);
         }
 
         // favorite
         public async Task<Models.DTOs.Favorite> SavePhoto(int photoId, int userId)
         {
-            var photo = await _context.Photos.FindAsync(photoId);
-            if (photo == null)
-                throw new NotFoundException($"Photo with ID {photoId} not found");
-
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                throw new NotFoundException($"User with ID {userId} not found");
-
-            var existingFavorite = await _context.Favorites
-                .FirstOrDefaultAsync(f => f.PhotoId == photoId && f.UserId == userId);
-
-            if (existingFavorite != null)
-                throw new ConflictException($"User with ID {userId} alredy save photo with ID {photo.PhotoId}");
-
-            Database.Favorite entity = new Database.Favorite
-            {
-                PhotoId = photoId,
-                UserId = userId,
-                FavoritedAt = DateTime.UtcNow
-            };
-
-            await _context.Favorites.AddAsync(entity);
-
-            await _context.SaveChangesAsync();
-
-            return Mapper.Map<Models.DTOs.Favorite>(entity);
+            var entity = await GetById(photoId);
+            var state = BasePhotoState.CreateState(entity.State);
+            var result = await state.SavePhoto(photoId, userId);
+            return result;
         }
         public async Task UnsavePhoto(int photoId, int userId)
         {
-            var photo = await _context.Photos.FindAsync(photoId);
-            if (photo == null)
-                throw new NotFoundException($"Photo with ID {photoId} not found");
-
-            var favorite = await _context.Favorites
-                .FirstOrDefaultAsync(f => f.PhotoId == photoId && f.UserId == userId);
-
-            if (favorite == null)
-                throw new NotFoundException($"Favorite not found");
-
-            _context.Favorites.Remove(favorite);
-
-            await _context.SaveChangesAsync();
+            var entity = await GetById(photoId);
+            var state = BasePhotoState.CreateState(entity.State);
+            await state.LikePhoto(photoId, userId);
         }
 
         public async Task<PhotoDetail> GetBySlug(string slug)
