@@ -6,7 +6,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
 {
     public class PendingPhotoState : BasePhotoState
     {
-        public PendingPhotoState(IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(mapper, serviceProvider, cloudinary, context)
+        public PendingPhotoState(ICacheService cacheService, IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(cacheService, mapper, serviceProvider, cloudinary, context)
         {
         }
 

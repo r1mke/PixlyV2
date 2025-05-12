@@ -21,19 +21,21 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
     }
     public class BasePhotoState
     {
+        protected readonly ICacheService _cacheService;
         protected readonly ICloudinaryService _cloudinary;
         public IMapper Mapper { get; set; }
         public IServiceProvider ServiceProvider { get; set; }
 
         protected readonly ApplicationDbContext _context;
 
-        public BasePhotoState(IMapper mapper,
+        public BasePhotoState(ICacheService cacheService, IMapper mapper,
             IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context)
         {
             Mapper = mapper;
             ServiceProvider = serviceProvider;
             _cloudinary = cloudinary;
             _context = context;
+            _cacheService = cacheService;
         }
         public virtual Task<Models.DTOs.PhotoBasic> Insert(PhotoInsertRequest request)
         {

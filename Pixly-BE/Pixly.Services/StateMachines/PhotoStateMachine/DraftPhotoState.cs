@@ -9,7 +9,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
 {
     public class DraftPhotoState : BasePhotoState
     {
-        public DraftPhotoState(IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(mapper, serviceProvider, cloudinary, context)
+        public DraftPhotoState(ICacheService cacheService, IMapper mapper, IServiceProvider serviceProvider, ICloudinaryService cloudinary, ApplicationDbContext context) : base(cacheService, mapper, serviceProvider, cloudinary, context)
         {
         }
 
@@ -26,6 +26,8 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
 
             await _context.SaveChangesAsync();
 
+            var cacheKey = $"photo:{id}";
+            await _cacheService.RemoveAsync(cacheKey);
             return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
         private async Task BeforeUpdate(PhotoUpdateRequest request, Database.Photo entity)
