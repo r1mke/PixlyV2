@@ -1,69 +1,63 @@
-<nav [ngClass]="{'open': menuOpen}">
-  <div class="container">
-
-    <!-- Logo -->
-    <div class="logo" (click)="goToHome()">
-      <img src="assets/image/logo.png" width="50" height="50" alt="Logo">
+<div class="container">
+  <nav>
+    <div class="logo">
+      <img src="assets/image/logo.png" height="50px">
     </div>
-
-    <!-- Search bar -->
-    <div class="search">
-      <div class="search-bar">
-        <input
-          class="search-input"
-          [(ngModel)]="currentSearch"
-          type="text"
-          placeholder="Search..."
-        />
-        <i class="fas fa-search"></i>
-      </div>
+    
+    <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
+      <input type="text" placeholder="Search...">
+      <i class="fas fa-search"></i>
     </div>
-
-    <!-- Menu -->
-    <div class="menu">
-      <div class="custom-dropdown-btn">
-          AI Generator
-      </div>
-
-      <div class="dropdown hover-dropdown">
-        <div class="custom-dropdown-btn">
-          Explore <i class="fa-solid fa-angle-down ms-1"></i>
+    
+    <div [ngClass]="isLoggedIn ? 'menu menu-logged' : 'menu'">
+      
+      <div class="menu-link">
+        <div class="dropdown hover-dropdown">
+          <div class="custom-dropdown-btn">
+            Explore <i class="fa-solid fa-angle-down ms-1"></i>
+          </div>
+          <ul class="dropdown-menu custom-dropdown-menu">
+            <li><a class="dropdown-item"><i class="fas fa-globe"></i> Discover Photos</a></li>
+            <li><a class="dropdown-item"><i class="fas fa-trophy"></i> Leaderboard</a></li>
+            <li><a class="dropdown-item"><i class="fas fa-medal"></i> Challenges</a></li>
+            <li><a class="dropdown-item"><i class="fas fa-video"></i> Free Videos</a></li>
+            <li><a class="dropdown-item"><i class="fas fa-blog"></i> Pixly Blog</a></li>
+          </ul>
         </div>
-        <ul class="dropdown-menu custom-dropdown-menu">
-          <li><a class="dropdown-item"><i class="fas fa-globe"></i> Discover Photos</a></li>
-          <li><a class="dropdown-item"><i class="fas fa-trophy"></i> Leaderboard</a></li>
-          <li><a class="dropdown-item"><i class="fas fa-medal"></i> Challenges</a></li>
-          <li><a class="dropdown-item"><i class="fas fa-video"></i> Free Videos</a></li>
-          <li><a class="dropdown-item"><i class="fas fa-blog"></i> Pixly Blog</a></li>
-        </ul>
       </div>
 
-      <!-- Login / Upload -->
-      <button *ngIf="user" class="upload" routerLink="/public/profile/upload">Upload</button>
-      <button *ngIf="!user" class="login" routerLink="/auth/login">Log in</button>
+      <div class="notification" *ngIf="isLoggedIn">
+        <i class="fa-regular fa-bell fa-lg"></i>
+      </div>
+      
+      <div class="menu-link" *ngIf="!isLoggedIn">
+        <button>Join</button>
+      </div>
+      
+      <div class="menu-link" *ngIf="isLoggedIn">
+        <img src="assets/image/avatar.png" height="40px" width="70px" alt="">
+      </div>
+      
+      <div class="menu-link" *ngIf="isLoggedIn">
+        <button>Upload</button>
+      </div>
     </div>
-
-    <!-- Hamburger icon -->
-    <div
-      (click)="toggleMenu()"
-      [style.display]="windowWidth > 900 ? 'none' : 'inline-flex'">
+    
+    <div class="hamburger-icon" (click)="menuOpen = !menuOpen">
       <i class="fas"
-         [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"
-         [style.color]="menuOpen ? 'white' : 'black'"
-         style="font-size: 30px;">
+        [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"
+        [style.color]="menuOpen ? 'white' : 'black'"
+        style="font-size: 30px;">
       </i>
     </div>
-
-    <!-- Hamburger menu -->
+    
     <div class="hamburger-menu" *ngIf="menuOpen">
-      <div class="explore menu">
+      <div class="explore-menu">
         <a href="#">Home</a>
         <a href="#">Leaderboard</a>
         <a href="#">Popular Searches</a>
         <a href="#">Pricing</a>
       </div>
-      <div class="line"></div>
     </div>
-
-  </div>
-</nav>
+  </nav>
+</div>
