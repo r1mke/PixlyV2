@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="box" *ngFor="let photo of photoService.photos(); let i = index" [routerLink]="['/photo', photo.slug]">
+    <img
+      [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+      [src]="photo.url"
+      [alt]="photo.title">
+    <div class="layout">
+      <div class="layout-content">
+        <div class="row-1">
+          <!-- Like i save dugme uklonjeni jer nema implementacije -->
+        </div>
+        
+        <div class="row-2">
+          <div class="user" *ngIf="photo.user">
+            <img src="assets/image/avatar.png" 
+              width="40px" 
+              height="40px" 
+              class="rounded-circle profile-img"
+            />
+            <div class="user-name">
+              <span>{{ photo.user?.username || 'Nepoznati korisnik' }}</span>
+            </div>
+          </div>
+          <div class="download-button" (click)="$event.stopPropagation()">
+            <i class="fa-solid fa-download"></i>
+            <span>Preuzmi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sentinel element za infinite scroll -->
+  <div #sentinel class="sentinel"></div>
+  
+  <!-- Dugme za učitavanje više -->
+  <div class="text-center my-4" *ngIf="photoService.paginationHeader() && photoService.paginationHeader()!.currentPage < photoService.paginationHeader()!.totalPages && photoService.photos().length > 0">
+    <button class="btn btn-dark" (click)="loadMore()" [disabled]="photoService.isLoading()">
+      {{ photoService.isLoading() ? 'Učitavanje...' : 'Učitaj više' }}
+    </button>
+  </div>
+  
+  <div class="loading-container" *ngIf="photoService.isLoading()">
+    <div class="spinner"></div>
+    <p>Učitavanje...</p>
+  </div>
+  
+  <div class="empty-state" *ngIf="photoService.photos().length === 0 && !photoService.isLoading()">
+    <p>{{ emptyStateMessage }}</p>
+    <p *ngIf="photoService.error()" class="text-danger">
+      {{ photoService.error() }}
+    </p>
+  </div>
+</div>
