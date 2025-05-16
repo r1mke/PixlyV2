@@ -1,17 +1,17 @@
 <div class="container">
   <nav>
     <div class="logo">
-      <img src="assets/image/logo.png" height="50px">
+      <img src="assets/image/logo.png" height="50px" width="50px">
     </div>
-    
+
     <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
       <input type="text" placeholder="Search...">
       <i class="fas fa-search"></i>
     </div>
-    
+
     <div [ngClass]="isLoggedIn ? 'menu menu-logged' : 'menu'">
-      
-      <div class="menu-link">
+
+      <div >
         <div class="dropdown hover-dropdown">
           <div class="custom-dropdown-btn">
             Explore <i class="fa-solid fa-angle-down ms-1"></i>
@@ -29,20 +29,20 @@
       <div class="notification" *ngIf="isLoggedIn">
         <i class="fa-regular fa-bell fa-lg"></i>
       </div>
-      
-      <div class="menu-link" *ngIf="!isLoggedIn">
+
+      <div *ngIf="!isLoggedIn">
         <button>Join</button>
       </div>
-      
-      <div class="menu-link" *ngIf="isLoggedIn">
+
+      <div *ngIf="isLoggedIn">
         <img src="assets/image/avatar.png" height="40px" width="70px" alt="">
       </div>
-      
-      <div class="menu-link" *ngIf="isLoggedIn">
+
+      <div *ngIf="isLoggedIn">
         <button>Upload</button>
       </div>
     </div>
-    
+
     <div class="hamburger-icon" (click)="menuOpen = !menuOpen">
       <i class="fas"
         [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"
@@ -50,7 +50,7 @@
         style="font-size: 30px;">
       </i>
     </div>
-    
+
     <div class="hamburger-menu" *ngIf="menuOpen">
       <div class="explore-menu">
         <a href="#">Home</a>

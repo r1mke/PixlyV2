@@ -7,7 +7,8 @@ import {NavBarComponent} from '../../shared/components/nav-bar/nav-bar.component
     NavBarComponent
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
+  standalone: true
 })
 export class HomeComponent {
 
