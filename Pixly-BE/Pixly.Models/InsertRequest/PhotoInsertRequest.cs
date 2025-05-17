@@ -13,8 +13,8 @@ namespace Pixly.Models.InsertRequest
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "User ID is required.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Invalid user ID.")]
-        public int UserId { get; set; }
+        //[Range(1, int.MaxValue, ErrorMessage = "Invalid user ID.")]
+        public string UserId { get; set; }
 
         [Required(ErrorMessage = "File is required.")]
         public IFormFile File { get; set; }

@@ -50,5 +50,25 @@ namespace Pixly.Services
             );
         }
 
+        public static void SeedTags(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Tag>().HasData(
+                new Tag { Name = "AI" },
+                new Tag { Name = "Machine Learning" },
+                new Tag { Name = "Deep Learning" },
+                new Tag { Name = "Image Generation" },
+                new Tag { Name = "Neural Networks" },
+                new Tag { Name = "Computer Vision" },
+                new Tag { Name = "Photo Enhancement" },
+                new Tag { Name = "Art" },
+                new Tag { Name = "Digital Art" },
+                new Tag { Name = "Creative AI" },
+                new Tag { Name = "Automation" },
+                new Tag { Name = "Innovation" },
+                new Tag { Name = "Futuristic" },
+                new Tag { Name = "Generative Art" },
+                new Tag { Name = "Augmented Reality" }
+            );
+        }
     }
 }

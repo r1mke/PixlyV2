@@ -194,56 +194,56 @@ namespace Pixly.Services.Services
         }
         public override async Task<Models.DTOs.PhotoBasic> Update(int id, PhotoUpdateRequest request)
         {
-            var entity = await GetById(id);
+            var entity = await _context.Photos.FindAsync(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Update(id, request);
             return result;
         }
         public async Task<Models.DTOs.PhotoBasic> Submit(int id)
         {
-            var entity = await GetById(id);
+            var entity = await _context.Photos.FindAsync(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Submit(id);
             return result;
         }
         public async Task<Models.DTOs.PhotoBasic> Approve(int id)
         {
-            var entity = await GetById(id);
+            var entity = await _context.Photos.FindAsync(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Approve(id);
             return result;
         }
         public async Task<Models.DTOs.PhotoBasic> Reject(int id)
         {
-            var entity = await GetById(id);
+            var entity = await _context.Photos.FindAsync(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Reject(id);
             return result;
         }
         public async Task<Models.DTOs.PhotoBasic> Edit(int id)
         {
-            var entity = await GetById(id);
+            var entity = await _context.Photos.FindAsync(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Edit(id);
             return result;
         }
         public async Task<Models.DTOs.PhotoBasic> Hide(int id)
         {
-            var entity = await GetById(id);
+            var entity = await _context.Photos.FindAsync(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Hide(id);
             return result;
         }
         public async Task<Models.DTOs.PhotoBasic> Delete(int id)
         {
-            var entity = await GetById(id);
+            var entity = await _context.Photos.FindAsync(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Delete(id);
             return result;
         }
         public async Task<Models.DTOs.PhotoBasic> Restore(int id)
         {
-            var entity = await GetById(id);
+            var entity = await _context.Photos.FindAsync(id);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Restore(id);
             return result;
@@ -267,14 +267,14 @@ namespace Pixly.Services.Services
         // like
         public async Task<Models.DTOs.Like> LikePhoto(int photoId, string userId)
         {
-            var entity = await GetById(photoId);
+            var entity = await _context.Photos.FindAsync(photoId);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.LikePhoto(photoId, userId);
             return result;
         }
         public async Task UnlikePhoto(int photoId, string userId)
         {
-            var entity = await GetById(photoId);
+            var entity = await _context.Photos.FindAsync(photoId);
             var state = BasePhotoState.CreateState(entity.State);
             await state.UnlikePhoto(photoId, userId);
         }
@@ -282,14 +282,14 @@ namespace Pixly.Services.Services
         // favorite
         public async Task<Models.DTOs.Favorite> SavePhoto(int photoId, string userId)
         {
-            var entity = await GetById(photoId);
+            var entity = await _context.Photos.FindAsync(photoId);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.SavePhoto(photoId, userId);
             return result;
         }
         public async Task UnsavePhoto(int photoId, string userId)
         {
-            var entity = await GetById(photoId);
+            var entity = await _context.Photos.FindAsync(photoId);
             var state = BasePhotoState.CreateState(entity.State);
             await state.LikePhoto(photoId, userId);
         }
