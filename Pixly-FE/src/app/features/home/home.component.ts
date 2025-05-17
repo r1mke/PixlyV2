@@ -13,7 +13,8 @@ import { DropdownPopularityComponent } from "../../shared/components/dropdown-po
     DropdownPopularityComponent
 ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
+  standalone: true
 })
 export class HomeComponent {
   options: string[] = ["Trending", "New"];

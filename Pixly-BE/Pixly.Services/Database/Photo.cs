@@ -12,7 +12,7 @@
         public string? Format { get; set; }
         public long FileSize { get; set; }
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public User? User { get; set; }
         public string State { get; set; }
         public int ViewCount { get; set; } = 0;

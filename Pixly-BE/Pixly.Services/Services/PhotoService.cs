@@ -49,30 +49,30 @@ namespace Pixly.Services.Services
 
             if (!string.IsNullOrWhiteSpace(search?.Username))
             {
-                if (await _context.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == search.Username.ToLower()) == null)
+                if (await _context.Users.FirstOrDefaultAsync(u => u.UserName.ToLower() == search.Username.ToLower()) == null)
                     throw new NotFoundException($"User with username {search.Username} not found");
 
 
-                query = query.Where(x => x.User.Username == search.Username);
+                query = query.Where(x => x.User.UserName == search.Username);
             }
 
             if (search?.isLiked == true && search.Username != null)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == search.Username);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == search.Username);
                 if (user == null)
                     throw new NotFoundException($"User with username {search.Username} not found");
 
-                query = query.Where(p => p.Likes.Any(l => l.UserId == user.UserId));
+                query = query.Where(p => p.Likes.Any(l => l.UserId == user.Id));
             }
 
             if (search?.isSaved == true && search.Username != null)
             {
 
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == search.Username);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == search.Username);
                 if (user == null)
                     throw new NotFoundException($"User with username {search.Username} not found");
 
-                query = query.Where(p => p.Favorites.Any(f => f.UserId == user.UserId));
+                query = query.Where(p => p.Favorites.Any(f => f.UserId == user.Id));
             }
 
             if (!string.IsNullOrWhiteSpace(search?.Title))
@@ -265,14 +265,14 @@ namespace Pixly.Services.Services
         }
 
         // like
-        public async Task<Models.DTOs.Like> LikePhoto(int photoId, int userId)
+        public async Task<Models.DTOs.Like> LikePhoto(int photoId, string userId)
         {
             var entity = await GetById(photoId);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.LikePhoto(photoId, userId);
             return result;
         }
-        public async Task UnlikePhoto(int photoId, int userId)
+        public async Task UnlikePhoto(int photoId, string userId)
         {
             var entity = await GetById(photoId);
             var state = BasePhotoState.CreateState(entity.State);
@@ -280,14 +280,14 @@ namespace Pixly.Services.Services
         }
 
         // favorite
-        public async Task<Models.DTOs.Favorite> SavePhoto(int photoId, int userId)
+        public async Task<Models.DTOs.Favorite> SavePhoto(int photoId, string userId)
         {
             var entity = await GetById(photoId);
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.SavePhoto(photoId, userId);
             return result;
         }
-        public async Task UnsavePhoto(int photoId, int userId)
+        public async Task UnsavePhoto(int photoId, string userId)
         {
             var entity = await GetById(photoId);
             var state = BasePhotoState.CreateState(entity.State);

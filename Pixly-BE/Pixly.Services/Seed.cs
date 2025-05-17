@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Pixly.Services.Database;
 
 namespace Pixly.Services
@@ -10,21 +11,16 @@ namespace Pixly.Services
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
-                    UserId = 1,
-                    Username = "r1mke",
+                    UserName = "r1mke",
                     Email = "r1mke@example.com",
                     FirstName = "Kerim",
                     LastName = "Begic",
                     ProfilePictureUrl = "https://example.com/images/user1.jpg",
                     DateOfBirth = new DateTime(2000, 1, 1),
                     State = "Bosnia and Herzegovina",
-                    PasswordHash = "testhash1",
-                    PasswordSalt = "testsalt1"
                 },
                 new User
                 {
-                    UserId = 2,
-                    Username = "sedin123",
                     Email = "sedin@example.com",
                     FirstName = "Sedin",
                     LastName = "Smajic",
@@ -32,9 +28,27 @@ namespace Pixly.Services
                     DateOfBirth = new DateTime(1999, 5, 12),
                     State = "Bosnia and Herzegovina",
                     PasswordHash = "testhash2",
-                    PasswordSalt = "testsalt2"
                 }
             );
         }
+
+        public static void SeedRoles(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = "1",
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                },
+                new IdentityRole
+                {
+                    Id = "2",
+                    Name = "User",
+                    NormalizedName = "USER"
+                }
+            );
+        }
+
     }
 }

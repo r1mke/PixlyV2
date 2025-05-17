@@ -32,7 +32,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
 
-        public override async Task<Models.DTOs.Like> LikePhoto(int photoId, int userId)
+        public override async Task<Models.DTOs.Like> LikePhoto(int photoId, string userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
             if (photo == null)
@@ -44,7 +44,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
 
 
             var existingLike = await _context.Likes
-                .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == userId);
+                .FirstOrDefaultAsync(l => l.PhotoId == photoId && l.UserId == user.Id);
 
             if (existingLike != null)
                 throw new ConflictException($"User with ID {userId} alredy like photo with ID {photo.PhotoId}");
@@ -52,7 +52,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             Database.Like entity = new Database.Like
             {
                 PhotoId = photoId,
-                UserId = userId,
+                UserId = user.Id,
                 LikedAt = DateTime.UtcNow
             };
 
@@ -66,7 +66,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             return Mapper.Map<Models.DTOs.Like>(entity);
         }
 
-        public override async Task UnlikePhoto(int photoId, int userId)
+        public override async Task UnlikePhoto(int photoId, string userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
             if (photo == null)
@@ -83,7 +83,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             await _context.SaveChangesAsync();
         }
 
-        public override async Task<Models.DTOs.Favorite> SavePhoto(int photoId, int userId)
+        public override async Task<Models.DTOs.Favorite> SavePhoto(int photoId, string userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
             if (photo == null)
@@ -113,7 +113,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             return Mapper.Map<Models.DTOs.Favorite>(entity);
         }
 
-        public override async Task UnsavePhoto(int photoId, int userId)
+        public override async Task UnsavePhoto(int photoId, string userId)
         {
             var photo = await _context.Photos.FindAsync(photoId);
             if (photo == null)
