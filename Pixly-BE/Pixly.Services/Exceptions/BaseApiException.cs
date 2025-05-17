@@ -23,7 +23,7 @@ namespace Pixly.Services.Exceptions
 
     public class NotFoundException : BaseApiException
     {
-        public NotFoundException(string message)
+        public NotFoundException(string message, string? v)
             : base(message, HttpStatusCode.NotFound)
         {
         }
@@ -76,10 +76,16 @@ namespace Pixly.Services.Exceptions
 
     public class ValidationException : BaseApiException
     {
+        public ValidationException(string message)
+            : base(message, new List<string> { message }, HttpStatusCode.BadRequest)
+        {
+        }
+
         public ValidationException(string message, List<string> errors)
             : base(message, errors, HttpStatusCode.BadRequest)
         {
         }
     }
+
 
 }
