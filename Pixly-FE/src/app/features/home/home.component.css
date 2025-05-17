@@ -1,1 +1,15 @@
+.container{
+    max-width: 1400px;
+    padding: 20px;
+}
 
+.home-filter{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.home-filter-title{
+    display: flex;
+    align-items: center;
+}

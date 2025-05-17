@@ -1,0 +1,16 @@
+<div class="btn-group" dropdown>
+  <button id="button-animated" dropdownToggle type="button" class="btn dropdown-toggle"
+          aria-controls="dropdown-animated">
+    {{ selectedOption }} <span class="caret"></span>
+  </button>
+  <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right"
+      role="menu" aria-labelledby="button-animated">
+    @for (option of options; track $index) {
+      <li role="menuitem">
+        <a class="dropdown-item" href="#"
+         [class.active]="option === selectedOption ? 'active' : ''"
+        (click)="selectOption(option); $event.preventDefault()">{{ option }}</a>
+      </li>
+    }
+  </ul>
+</div>

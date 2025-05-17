@@ -9,6 +9,6 @@ export interface PhotoSearchRequest{
     sorting: string | null;
     isLiked: boolean | null;
     isSaved: boolean | null;
-    pageNumber: number;
+    pageNumber: number ;
     pageSize: number;
 }

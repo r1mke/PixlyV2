@@ -44,6 +44,7 @@ export class PhotoService {
           if(response.body?.success && response.body?.data) {
             if(searchRequest.pageNumber === 1) {
               this.photos.set(response.body.data);
+              console.log(this.photos());
             } else {
               this.photos.update((prevPhotos) => [...prevPhotos, ...response.body!.data]);
             }
@@ -100,6 +101,7 @@ export class PhotoService {
       ...currentContext,
       searchRequest: {...currentContext.searchRequest!, pageNumber: nextPage }
     });
+    
   }
 
 

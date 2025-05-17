@@ -15,21 +15,10 @@ import { RouterModule } from '@angular/router';
 })
 export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy{
   @Input() mode: 'home' | 'search' | 'profile' | 'liked' | 'saved' = 'home';
-  @Input() photoSearchRequest: PhotoSearchRequest = {
-    username: null,
-    title: null,
-    orientation: null,
-    size: null,
-    isUserIncluded: null,
-    sorting: null,
-    isLiked: null,
-    isSaved: null,
-    pageNumber: 1,
-    pageSize: 7
-  };
+  @Input() photoSearchRequest!: PhotoSearchRequest;
+  private _scrollHandler: (() => void) | null = null;
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
-
-   @ViewChild('sentinel') sentinel!: ElementRef;
+  @ViewChild('sentinel') sentinel!: ElementRef;
   
   private intersectionObserver?: IntersectionObserver;
   private subscription?: Subscription;
@@ -69,19 +58,49 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   setupIntersectionObserver(): void {
-    
-    
+    if (!this.sentinel || !('IntersectionObserver' in window)) {
+        console.log('Sentinel element missing or IntersectionObserver not supported');
+        // Ako IntersectionObserver nije podržan, koristimo scroll event kao fallback
+        this.setupScrollListener();
+        return;
+      }
+
+    if (this.intersectionObserver) {
+    this.intersectionObserver.disconnect();
+    }
+
     this.intersectionObserver = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && !this.photoService.isLoading()) {
         this.loadMore();
       }
     }, {
       root: null,
-      rootMargin: '200px', // Učitaj ranije, prije nego korisnik dosegne kraj
-      threshold: 0.1
+      rootMargin: '300px',
+      threshold: 0
     });
     
     this.intersectionObserver.observe(this.sentinel.nativeElement);
+  }
+
+  setupScrollListener(): void {
+  console.log('Setting up scroll listener as fallback');
+  
+  const handleScroll = () => {
+    if (this.photoService.isLoading()) return;
+    
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Učitaj više kad smo blizu kraja (npr. 300px od dna)
+    if (documentHeight - scrollPosition < 300) {
+      console.log('Loading more photos from scroll');
+      this.loadMore();
+    }
+  };
+  window.addEventListener('scroll', handleScroll);
+  
+  // Zapamti ovo za cleanup u ngOnDestroy
+  this._scrollHandler = handleScroll;
   }
 
   getColumnClass(photo: PhotoBasic): string {
@@ -96,16 +115,32 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         return 'grid-item-landscape';
     }
   }
-  
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
-    }
+
+  getColumnPhotos(columnIndex: number): PhotoBasic[] {
+  const photos = this.photoService.photos();
+  if (!photos || photos.length === 0) {
+    return [];
   }
+  
+ 
+  const columnCount = 3;
+  return photos.filter((_, index) => index % columnCount === columnIndex);
+}
+  
+ ngOnDestroy(): void {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
+  }
+  
+  if (this.intersectionObserver) {
+    this.intersectionObserver.disconnect();
+  }
+  
+  // Ukloni scroll listener ako postoji
+  if (this._scrollHandler) {
+    window.removeEventListener('scroll', this._scrollHandler);
+  }
+}
 
 }
   
