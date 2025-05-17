@@ -4,23 +4,22 @@ using Pixly.API.Filters;
 using Pixly.Services.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-
 Env.Load();
 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilterAttribute>();
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 });
-
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDataServices(builder.Configuration);
+builder.Services.AddSecurityServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 
 

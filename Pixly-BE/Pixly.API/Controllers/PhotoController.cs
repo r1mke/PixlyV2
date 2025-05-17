@@ -25,7 +25,7 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPost("{photoId}/like")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Like>>> LikePhoto(int photoId, int userId)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.Like>>> LikePhoto(int photoId, string userId)
         {
             var like = await (_service as IPhotoService).LikePhoto(photoId, userId);
 
@@ -36,7 +36,7 @@ namespace Pixly.API.Controllers
         }
 
         [HttpDelete("{photoId}/like")]
-        public async Task<ActionResult<ApiResponse<object>>> UnlikePhoto(int photoId, int userId)
+        public async Task<ActionResult<ApiResponse<object>>> UnlikePhoto(int photoId, string userId)
         {
 
             await (_service as IPhotoService).UnlikePhoto(photoId, userId);
@@ -45,7 +45,7 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPost("{photoId}/save")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Favorite>>> SavePhoto(int photoId, int userId)
+        public async Task<ActionResult<ApiResponse<Models.DTOs.Favorite>>> SavePhoto(int photoId, string userId)
         {
             var favorite = await (_service as IPhotoService).SavePhoto(photoId, userId);
 
@@ -56,7 +56,7 @@ namespace Pixly.API.Controllers
         }
 
         [HttpDelete("{photoId}/save")]
-        public async Task<ActionResult<ApiResponse<object>>> UnsavePhoto(int photoId, int userId)
+        public async Task<ActionResult<ApiResponse<object>>> UnsavePhoto(int photoId, string userId)
         {
             await (_service as IPhotoService).UnsavePhoto(photoId, userId);
 
