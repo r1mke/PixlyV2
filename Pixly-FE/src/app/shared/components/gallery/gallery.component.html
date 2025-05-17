@@ -1,50 +1,127 @@
-<div class="container">
-  <div class="box" *ngFor="let photo of photoService.photos(); let i = index" [routerLink]="['/photo', photo.slug]">
-    <img
-      [attr.loading]="i === 0 ? 'eager' : 'lazy'"
-      [src]="photo.url"
-      [alt]="photo.title">
-    <div class="layout">
-      <div class="layout-content">
-        <div class="row-1">
-          <!-- Like i save dugme uklonjeni jer nema implementacije -->
+<div class="masonry-container">
+  <div class="masonry-columns desktop-columns" *ngIf="photoService.photos().length > 0">
+    <div class="masonry-column">
+      <div *ngFor="let photo of getColumnPhotos(0)" class="photo-item" [routerLink]="['/photo', photo.slug]">
+        <div class="photo-wrapper">
+          <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
+          
+          <!-- Gornji lijevi ugao - korisnik -->
+          <div class="photo-user" (click)="$event.stopPropagation()">
+            <img src="assets/image/avatar.png"
+                class="user-avatar" 
+                alt="User avatar" />
+            <span class="user-name">{{ photo.user?.username || 'Unknown' }}</span>
+          </div>
+          
+          <!-- Gornji desni ugao - akcije -->
+          <div class="photo-actions" (click)="$event.stopPropagation()">
+            <button class="action-btn like-btn" >
+              <i class="fas fa-heart"></i>
+            </button>
+            <button class="action-btn save-btn" >
+              <i class="fas fa-bookmark"></i>
+            </button>
+          </div>
+          
         </div>
-        
-        <div class="row-2">
-          <div class="user" *ngIf="photo.user">
+      </div>
+    </div>
+    
+    <!-- Druga kolona -->
+    <div class="masonry-column">
+      <div *ngFor="let photo of getColumnPhotos(1)" class="photo-item" [routerLink]="['/photo', photo.slug]">
+        <div class="photo-wrapper">
+          <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
+          
+          <!-- Gornji lijevi ugao - korisnik -->
+          <div class="photo-user" (click)="$event.stopPropagation()">
             <img src="assets/image/avatar.png" 
-              width="40px" 
-              height="40px" 
-              class="rounded-circle profile-img"
-            />
-            <div class="user-name">
-              <span>{{ photo.user?.username || 'Nepoznati korisnik' }}</span>
-            </div>
+                class="user-avatar" 
+                alt="User avatar" />
+            <span class="user-name">{{ photo.user?.username || 'Unknown' }}</span>
           </div>
-          <div class="download-button" (click)="$event.stopPropagation()">
-            <i class="fa-solid fa-download"></i>
-            <span>Preuzmi</span>
+          
+          <!-- Gornji desni ugao - akcije -->
+          <div class="photo-actions" (click)="$event.stopPropagation()">
+            <button class="action-btn like-btn">
+              <i class="fas fa-heart"></i>
+            </button>
+            <button class="action-btn save-btn" >
+              <i class="fas fa-bookmark"></i>
+            </button>
           </div>
+          
+        </div>
+      </div>
+    </div>
+    
+    <!-- Treća kolona -->
+    <div class="masonry-column">
+      <div *ngFor="let photo of getColumnPhotos(2)" class="photo-item" [routerLink]="['/photo', photo.slug]">
+        <div class="photo-wrapper">
+          <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
+          
+          <!-- Gornji lijevi ugao - korisnik -->
+          <div class="photo-user" (click)="$event.stopPropagation()">
+            <img src="assets/image/avatar.png"
+                class="user-avatar" 
+                alt="User avatar" />
+            <span class="user-name">{{ photo.user?.username || 'Unknown' }}</span>
+          </div>
+          
+          <!-- Gornji desni ugao - akcije -->
+          <div class="photo-actions" (click)="$event.stopPropagation()">
+            <button class="action-btn like-btn" >
+              <i class="fas fa-heart"></i>
+            </button>
+            <button class="action-btn save-btn" >
+              <i class="fas fa-bookmark"></i>
+            </button>
+          </div>
+          
         </div>
       </div>
     </div>
   </div>
-
+  
+  <!-- Mobile layout s jednom kolonom -->
+  <div class="mobile-columns" *ngIf="photoService.photos().length > 0">
+    <div *ngFor="let photo of photoService.photos()" class="photo-item" [routerLink]="['/photo', photo.slug]">
+      <div class="photo-wrapper">
+        <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
+        
+        <!-- Gornji lijevi kut - korisnik -->
+        <div class="photo-user" (click)="$event.stopPropagation()">
+          <img src="assets/image/avatar.png" 
+              class="user-avatar" 
+              alt="User avatar" />
+          <span class="user-name">{{ photo.user?.username || 'Unknown' }}</span>
+        </div>
+        
+        <!-- Gornji desni ugao - akcije -->
+        <div class="photo-actions" (click)="$event.stopPropagation()">
+          <button class="action-btn like-btn" >
+            <i class="fas fa-heart"></i>
+          </button>
+          <button class="action-btn save-btn" >
+            <i class="fas fa-bookmark"></i>
+          </button>
+        </div>
+      
+      </div>
+    </div>
+  </div>
+  
   <!-- Sentinel element za infinite scroll -->
   <div #sentinel class="sentinel"></div>
   
-  <!-- Dugme za učitavanje više -->
-  <div class="text-center my-4" *ngIf="photoService.paginationHeader() && photoService.paginationHeader()!.currentPage < photoService.paginationHeader()!.totalPages && photoService.photos().length > 0">
-    <button class="btn btn-dark" (click)="loadMore()" [disabled]="photoService.isLoading()">
-      {{ photoService.isLoading() ? 'Učitavanje...' : 'Učitaj više' }}
-    </button>
-  </div>
-  
+  <!-- Loading indikator -->
   <div class="loading-container" *ngIf="photoService.isLoading()">
     <div class="spinner"></div>
     <p>Učitavanje...</p>
   </div>
   
+  <!-- Empty state -->
   <div class="empty-state" *ngIf="photoService.photos().length === 0 && !photoService.isLoading()">
     <p>{{ emptyStateMessage }}</p>
     <p *ngIf="photoService.error()" class="text-danger">

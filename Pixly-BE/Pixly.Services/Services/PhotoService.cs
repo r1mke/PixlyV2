@@ -116,6 +116,8 @@ namespace Pixly.Services.Services
                 }
             }
 
+            query = query.Where(p => p.State == "Approved");
+
             return query;
         }
 

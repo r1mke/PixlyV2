@@ -23,7 +23,8 @@ namespace Pixly.Services.Services
                 Folder = folder,
                 UseFilename = true,
                 UniqueFilename = false,
-                Overwrite = false
+                Overwrite = false,
+                Transformation = new Transformation().Named("qualityTransformation")
             };
 
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
