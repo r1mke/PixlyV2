@@ -9,6 +9,7 @@ import { PhotoSearchRequest } from '../../../models/SearchRequest/PhotoSarchRequ
 import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-gallery',
+  standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.css'
@@ -19,12 +20,12 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   private _scrollHandler: (() => void) | null = null;
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
   @ViewChild('sentinel') sentinel!: ElementRef;
-  
+
   private intersectionObserver?: IntersectionObserver;
   private subscription?: Subscription;
-  
+
   constructor(public photoService: PhotoService) {}
-  
+
   ngOnInit(): void {
     this.loadPhotos();
   }
@@ -35,7 +36,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.loadPhotos();
     }
   }
-  
+
   ngAfterViewInit(): void {
     this.setupIntersectionObserver();
   }
@@ -44,16 +45,16 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    
+
     this.subscription = this.photoService.loadPhotosForContext({
       mode: this.mode,
       searchRequest : this.photoSearchRequest
     }).subscribe();
   }
-  
+
   loadMore(): void {
     if (this.photoService.isLoading()) return;
-    
+
     this.subscription = this.photoService.loadMorePhotos().subscribe();
   }
 
@@ -78,19 +79,19 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       rootMargin: '300px',
       threshold: 0
     });
-    
+
     this.intersectionObserver.observe(this.sentinel.nativeElement);
   }
 
   setupScrollListener(): void {
   console.log('Setting up scroll listener as fallback');
-  
+
   const handleScroll = () => {
     if (this.photoService.isLoading()) return;
-    
+
     const scrollPosition = window.scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-    
+
     // Učitaj više kad smo blizu kraja (npr. 300px od dna)
     if (documentHeight - scrollPosition < 300) {
       console.log('Loading more photos from scroll');
@@ -98,7 +99,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }
   };
   window.addEventListener('scroll', handleScroll);
-  
+
   // Zapamti ovo za cleanup u ngOnDestroy
   this._scrollHandler = handleScroll;
   }
@@ -121,21 +122,21 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   if (!photos || photos.length === 0) {
     return [];
   }
-  
- 
+
+
   const columnCount = 3;
   return photos.filter((_, index) => index % columnCount === columnIndex);
 }
-  
+
  ngOnDestroy(): void {
   if (this.subscription) {
     this.subscription.unsubscribe();
   }
-  
+
   if (this.intersectionObserver) {
     this.intersectionObserver.disconnect();
   }
-  
+
   // Ukloni scroll listener ako postoji
   if (this._scrollHandler) {
     window.removeEventListener('scroll', this._scrollHandler);
@@ -143,5 +144,5 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 }
 
 }
-  
+
 

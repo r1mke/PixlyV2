@@ -57,7 +57,7 @@ namespace Pixly.Services.Services
         /// CRUD Methods
         public async Task<User> CreateUserAsync(RegisterRequest request)
         {
-            var existingUser = GetUserAsync(request.Email, byEmail: true, throwIfNotFound: false);
+            var existingUser = await GetUserAsync(request.Email, byEmail: true, throwIfNotFound: false);
             if (existingUser != null)
             {
                 _logger.LogWarning("User with email {Email} already exists", request.Email);

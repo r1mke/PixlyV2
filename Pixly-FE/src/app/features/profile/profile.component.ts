@@ -3,6 +3,7 @@ import { GalleryComponent } from "../../shared/components/gallery/gallery.compon
 import { PhotoSearchRequest } from '../../models/SearchRequest/PhotoSarchRequest';
 @Component({
   selector: 'app-profile',
+  standalone: true,
   imports: [GalleryComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
