@@ -34,7 +34,10 @@ namespace Pixly.Services.Services
                 _logger.LogWarning("User with {IdType} {Identifier} not found", idType, identifier);
 
                 if (throwIfNotFound)
-                    throw new NotFoundException(byEmail ? $"User with email {identifier}" : "User", byEmail ? null : identifier);
+                    throw new NotFoundException(byEmail
+                        ? $"User with email '{identifier}' not found"
+                        : $"User with ID '{identifier}' not found");
+
             }
 
             return user;
@@ -73,7 +76,7 @@ namespace Pixly.Services.Services
             {
                 var errorMessage = string.Join(", ", result.Errors.Select(e => e.Description));
                 _logger.LogError("User creation failed: {Errors}", errorMessage);
-                throw new ValidationException(errorMessage);
+                throw new ValidationException(errorMessage, null);
             }
 
             await _userManager.AddToRoleAsync(user, "User");
