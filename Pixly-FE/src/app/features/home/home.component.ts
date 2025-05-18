@@ -17,18 +17,18 @@ import { DropdownPopularityComponent } from "../../shared/components/dropdown-po
   standalone: true
 })
 export class HomeComponent {
-  options: string[] = ["Trending", "New"];
-
-   searchRequest : PhotoSearchRequest = {
-    username: null,
-    title: null,
-    orientation: null,
-    size: null,
-    isUserIncluded: null,
-    sorting: null,
-    isLiked: null,
-    isSaved: null,
+  options: string[] = ["Popular", "New"];
+   searchRequest : Partial<PhotoSearchRequest> = {
     pageNumber: 1,
     pageSize: 10
   };
+
+  onTrendingSelected(sorting: string) {
+    this.searchRequest = {
+      ...this.searchRequest,
+      sorting: sorting
+    }
+    console.log("updating search request", this.searchRequest);
+  }
+
 }

@@ -9,7 +9,7 @@
       <li role="menuitem">
         <a class="dropdown-item" href="#"
          [class.active]="option === selectedOption ? 'active' : ''"
-        (click)="selectOption(option); $event.preventDefault()">{{ option }}</a>
+        (click)="selectTrending(option); $event.preventDefault()">{{ option }}</a>
       </li>
     }
   </ul>
