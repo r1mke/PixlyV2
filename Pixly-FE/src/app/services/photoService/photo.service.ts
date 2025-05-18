@@ -24,10 +24,10 @@ export class PhotoService {
 
   private currentContextSubject = new BehaviorSubject<{
    mode: 'home' | 'search' | 'profile' | 'liked' | 'saved';
-   searchRequest: PhotoSearchRequest; 
+   searchRequest: Partial<PhotoSearchRequest>; 
   }>({mode: 'home', searchRequest: {username: null, title: null, orientation: null, size: null, isUserIncluded: null, sorting: null, isLiked: null, isSaved: null, pageNumber: 1, pageSize: 10}});
 
-  getPopularPhotos(searchRequest: PhotoSearchRequest): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
+  getPopularPhotos(searchRequest: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
    this.isLoading.set(true);
 
     let params = new HttpParams();
@@ -67,7 +67,7 @@ export class PhotoService {
 
   loadPhotosForContext(context : {
     mode: 'home' | 'search' | 'profile' | 'liked' | 'saved';
-    searchRequest: PhotoSearchRequest; 
+    searchRequest: Partial<PhotoSearchRequest>; 
   }) : Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
 
     this.currentContextSubject.next(context);

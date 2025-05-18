@@ -12,7 +12,7 @@
         public long FileSize { get; set; }
         public string Format { get; set; }
         public DateTime UploadedAt { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public User? User { get; set; }
         public string? State { get; set; }
         public int ViewCount { get; set; }

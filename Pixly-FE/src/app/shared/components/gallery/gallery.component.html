@@ -1,7 +1,7 @@
 <div class="masonry-container">
   <div class="masonry-columns desktop-columns" *ngIf="photoService.photos().length > 0">
     <div class="masonry-column">
-      <div *ngFor="let photo of getColumnPhotos(0)" class="photo-item" [routerLink]="['/photo', photo.slug]">
+      <div *ngFor="let photo of getColumnPhotos(0); trackBy: trackByPhotoId" class="photo-item" [routerLink]="['/photo', photo.slug]">
         <div class="photo-wrapper">
           <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
           
