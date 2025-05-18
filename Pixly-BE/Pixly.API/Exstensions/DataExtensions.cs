@@ -16,6 +16,7 @@ namespace Pixly.API.Exstensions
                 options.UseSqlServer(connectionString));
 
             // Cache configuration
+            services.AddDistributedMemoryCache();
             services.AddMemoryCache();
             services.AddSingleton<ICacheService, MemoryCacheService>();
 

@@ -67,7 +67,7 @@ namespace Pixly.API.Exstensions
                 opts.Secret = secret;
                 opts.Issuer = issuer;
                 opts.Audience = audience;
-                opts.ExpirationInMinutes = 15; // TESTING
+                opts.ExpirationInMinutes = 15;
                 opts.RefreshTokenExpirationInDays = 7;
             });
 
