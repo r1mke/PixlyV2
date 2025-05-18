@@ -17,8 +17,28 @@ export class SearchService {
     this.searchObject.set(searchObject);
   }
 
-  performSearch() {
+  setTitle(title: string) {
+    this.setSearchObject({
+      ...this.getSearchObject(),
+      title,
+      pageNumber: 1
+    });
+  }
 
+   setSorting(sorting: string) {
+    this.setSearchObject({
+      ...this.getSearchObject(),
+      sorting,
+      pageNumber: 1
+    });
+  }
+
+  resetSearch() {
+    this.setSearchObject({
+      pageNumber: 1,
+      pageSize: 10,
+      sorting: 'Popular'
+    });
   }
 
 }

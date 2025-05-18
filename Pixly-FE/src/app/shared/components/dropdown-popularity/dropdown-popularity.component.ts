@@ -23,14 +23,10 @@ export class DropdownPopularityComponent implements OnInit {
   }
 
   selectTrending(option: string) {
-    this.selectedOption = option;
-    let searchRequest = this.searchService.getSearchObject();
-    if(searchRequest.sorting !== option) {
-      searchRequest = {
-        ...searchRequest,
-        sorting: option
-      }
-      this.searchService.setSearchObject(searchRequest);
+    if (this.selectedOption !== option) {
+      this.selectedOption = option;
+      
+      this.searchService.setSorting(option);
     }
   }
 

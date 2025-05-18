@@ -18,16 +18,15 @@ import { SearchService } from '../../../services/searchService/search.service';
   styleUrl: './gallery.component.css'
 })
 export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy{
-  @Input() mode: 'home' | 'search' | 'profile' | 'liked' | 'saved' = 'home';
-  private _scrollHandler: (() => void) | null = null;
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
   @ViewChild('sentinel') sentinel!: ElementRef;
+  
+  private _scrollHandler: (() => void) | null = null;
   private destroy$ = new Subject<void>();
   private intersectionObserver?: IntersectionObserver;
   private subscription?: Subscription;
   searchService = inject(SearchService);
-  constructor(public photoService: PhotoService) {}
-
+  photoService = inject(PhotoService);
   ngOnInit(): void {
     this.loadPhotos();
   }
@@ -45,18 +44,12 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   loadPhotos(): void {
-    let searchObject = this.searchService.getSearchObject()
-    this.photoService.loadPhotosForContext({
-      mode: this.mode,
-      searchRequest: searchObject
-    })
-    .pipe(takeUntil(this.destroy$))
-    .subscribe();
+    const searchObject = this.searchService.getSearchObject();
+    this.subscription = this.photoService.getPhotos(searchObject).subscribe();
   }
 
   loadMore(): void {
     if (this.photoService.isLoading()) return;
-
     this.subscription = this.photoService.loadMorePhotos().subscribe();
   }
 
@@ -72,7 +65,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
 
     if (this.intersectionObserver) {
-    this.intersectionObserver.disconnect();
+      this.intersectionObserver.disconnect();
     }
 
     this.intersectionObserver = new IntersectionObserver((entries) => {
@@ -89,18 +82,16 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   setupScrollListener(): void {
-  const handleScroll = () => {
+    const handleScroll = () => {
     if (this.photoService.isLoading()) return;
-
     const scrollPosition = window.scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-
     if (documentHeight - scrollPosition < 200) {
       this.loadMore();
     }
-  };
-  window.addEventListener('scroll', handleScroll);
-  this._scrollHandler = handleScroll;
+    };
+    window.addEventListener('scroll', handleScroll);
+    this._scrollHandler = handleScroll;
   }
 
   getColumnClass(photo: PhotoBasic): string {

@@ -5,7 +5,7 @@
     </div>
 
     <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
-      <input [value]="searchService.getSearchObject" (keyup)="search($event)" type="text" placeholder="Search...">
+      <input [value]="searchService.getSearchObject().title" (keyup)="search($event)" type="text" placeholder="Search...">
       <i class="fas fa-search" (click)="searchByClick()"></i>
     </div>
 
