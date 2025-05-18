@@ -2,8 +2,8 @@ import { Component, output } from '@angular/core';
 import { BsDropdownModule,BsDropdownConfig  } from 'ngx-bootstrap/dropdown';
 import { Input } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { Output } from '@angular/core';
-import { EventEmitter } from '@angular/core';
+import { SearchService } from '../../../services/searchService/search.service';
+import { inject } from '@angular/core';
 @Component({
   selector: 'app-dropdown-popularity',
   imports: [BsDropdownModule],
@@ -13,8 +13,9 @@ import { EventEmitter } from '@angular/core';
 })
 export class DropdownPopularityComponent implements OnInit {
    @Input() options: string[] = [];
+   searchService = inject(SearchService);
    selectedOption: string | null = null;
-   trending = output<string>();
+
   ngOnInit() {
     if (this.options.length > 0) {
       this.selectedOption = this.options[0];
@@ -23,7 +24,14 @@ export class DropdownPopularityComponent implements OnInit {
 
   selectTrending(option: string) {
     this.selectedOption = option;
-    this.trending.emit(option);
+    let searchRequest = this.searchService.getSearchObject();
+    if(searchRequest.sorting !== option) {
+      searchRequest = {
+        ...searchRequest,
+        sorting: option
+      }
+      this.searchService.setSearchObject(searchRequest);
+    }
   }
 
 }

@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {NavBarComponent} from '../../shared/components/nav-bar/nav-bar.component';
 import { GalleryComponent } from "../../shared/components/gallery/gallery.component";
 import { PhotoSearchRequest } from '../../models/SearchRequest/PhotoSarchRequest';
 import { HeroComponent } from "../../shared/components/hero/hero.component";
 import { DropdownPopularityComponent } from "../../shared/components/dropdown-popularity/dropdown-popularity.component";
+import { SearchService } from '../../services/searchService/search.service';
 @Component({
   selector: 'app-home',
   imports: [
@@ -18,17 +19,5 @@ import { DropdownPopularityComponent } from "../../shared/components/dropdown-po
 })
 export class HomeComponent {
   options: string[] = ["Popular", "New"];
-   searchRequest : Partial<PhotoSearchRequest> = {
-    pageNumber: 1,
-    pageSize: 10
-  };
-
-  onTrendingSelected(sorting: string) {
-    this.searchRequest = {
-      ...this.searchRequest,
-      sorting: sorting
-    }
-    console.log("updating search request", this.searchRequest);
-  }
 
 }
