@@ -22,14 +22,20 @@ export class PhotoService {
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
 
-  private currentContextSubject = new BehaviorSubject<{
-   mode: 'home' | 'search' | 'profile' | 'liked' | 'saved';
-   searchRequest: Partial<PhotoSearchRequest>; 
-  }>({mode: 'home', searchRequest: {username: null, title: null, orientation: null, size: null, isUserIncluded: null, sorting: null, isLiked: null, isSaved: null, pageNumber: 1, pageSize: 10}});
+  private currentSearchRequest = new BehaviorSubject<Partial<PhotoSearchRequest>>({
+    sorting: "Popular",
+    pageNumber: 1,
+    pageSize: 10
+  });
 
-  getPopularPhotos(searchRequest: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
-   this.isLoading.set(true);
+  getPhotos(searchRequest: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
+    this.isLoading.set(true);
+    this.currentSearchRequest.next(searchRequest);
 
+    if (searchRequest.pageNumber === 1) {
+      this.photos.set([]);
+    }
+    
     let params = new HttpParams();
 
     Object.entries(searchRequest).forEach(([key, value]) => {
@@ -65,27 +71,10 @@ export class PhotoService {
     );
   }
 
-  loadPhotosForContext(context : {
-    mode: 'home' | 'search' | 'profile' | 'liked' | 'saved';
-    searchRequest: Partial<PhotoSearchRequest>; 
-  }) : Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
-
-    this.currentContextSubject.next(context);
-
-    const pageNumber = context.searchRequest?.pageNumber || 1;
-    const pageSize = context.searchRequest?.pageSize || 10;
-
-    if(pageNumber === 1) {
-      this.photos.set([]);
+  loadMorePhotos(): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
+    if (this.isLoading()) {
+      return of() as Observable<HttpResponse<ApiResponse<PhotoBasic[]>>>;
     }
-
-    this.isLoading.set(true);
-
-    return this.getPopularPhotos(context.searchRequest!);
-  }
-
-   loadMorePhotos(): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
-    if (this.isLoading()) return of() as Observable<HttpResponse<ApiResponse<PhotoBasic[]>>>;
     
     const currentPage = this.paginationHeader()?.currentPage || 0;
     const nextPage = currentPage + 1;
@@ -95,15 +84,13 @@ export class PhotoService {
       return of() as Observable<HttpResponse<ApiResponse<PhotoBasic[]>>>;
     }
     
-    const currentContext = this.currentContextSubject.value;
+    const currentRequest = this.currentSearchRequest.getValue();
     
-    return this.loadPhotosForContext({
-      ...currentContext,
-      searchRequest: {...currentContext.searchRequest!, pageNumber: nextPage }
+    return this.getPhotos({
+      ...currentRequest,
+      pageNumber: nextPage
     });
-    
   }
-
 
   getPagionationFromResponse(response: HttpResponse<any>): PaginationHeader | null {
     const paginationHeader = response.headers.get('Pagination');

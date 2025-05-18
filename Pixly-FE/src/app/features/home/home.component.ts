@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {NavBarComponent} from '../../shared/components/nav-bar/nav-bar.component';
 import { GalleryComponent } from "../../shared/components/gallery/gallery.component";
-import { PhotoSearchRequest } from '../../models/SearchRequest/PhotoSarchRequest';
 import { HeroComponent } from "../../shared/components/hero/hero.component";
 import { DropdownPopularityComponent } from "../../shared/components/dropdown-popularity/dropdown-popularity.component";
+import { SearchService } from '../../services/searchService/search.service';
+import { PhotoService } from '../../services/photoService/photo.service';
+import { effect } from '@angular/core';
 @Component({
   selector: 'app-home',
   imports: [
@@ -18,17 +20,29 @@ import { DropdownPopularityComponent } from "../../shared/components/dropdown-po
 })
 export class HomeComponent {
   options: string[] = ["Popular", "New"];
-   searchRequest : Partial<PhotoSearchRequest> = {
-    pageNumber: 1,
-    pageSize: 10
-  };
+  searchService = inject(SearchService);
+  photoService = inject(PhotoService);
 
-  onTrendingSelected(sorting: string) {
-    this.searchRequest = {
-      ...this.searchRequest,
-      sorting: sorting
-    }
-    console.log("updating search request", this.searchRequest);
+   constructor() {
+  
+    effect(() => {
+      const searchObj = this.searchService.getSearchObject();
+      
+      if (!searchObj.title && searchObj.sorting) {
+        console.log('Sorting changed on home, reloading photos:', searchObj);
+        this.photoService.getPhotos(searchObj).subscribe();
+      }
+    });
+  }
+
+  ngOnInit() {
+   
+    this.searchService.setSearchObject({
+      sorting: "Popular",
+      title: null,
+      pageNumber: 1,
+      pageSize: 10
+    });
   }
 
 }

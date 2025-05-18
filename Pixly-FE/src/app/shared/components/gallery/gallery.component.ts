@@ -9,6 +9,7 @@ import { PhotoSearchRequest } from '../../../models/SearchRequest/PhotoSarchRequ
 import { RouterModule } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { Subject } from 'rxjs';
+import { SearchService } from '../../../services/searchService/search.service';
 @Component({
   selector: 'app-gallery',
   standalone: true,
@@ -17,17 +18,15 @@ import { Subject } from 'rxjs';
   styleUrl: './gallery.component.css'
 })
 export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy{
-  @Input() mode: 'home' | 'search' | 'profile' | 'liked' | 'saved' = 'home';
-  @Input() photoSearchRequest!: Partial<PhotoSearchRequest>;
-  private _scrollHandler: (() => void) | null = null;
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
   @ViewChild('sentinel') sentinel!: ElementRef;
+  
+  private _scrollHandler: (() => void) | null = null;
   private destroy$ = new Subject<void>();
   private intersectionObserver?: IntersectionObserver;
   private subscription?: Subscription;
-
-  constructor(public photoService: PhotoService) {}
-
+  searchService = inject(SearchService);
+  photoService = inject(PhotoService);
   ngOnInit(): void {
     this.loadPhotos();
   }
@@ -45,21 +44,18 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   loadPhotos(): void {
-  this.photoService.loadPhotosForContext({
-    mode: this.mode,
-    searchRequest: this.photoSearchRequest
-  })
-  .pipe(takeUntil(this.destroy$))
-  .subscribe();
-}
+    const searchObject = this.searchService.getSearchObject();
+    this.subscription = this.photoService.getPhotos(searchObject).subscribe();
+  }
+
   loadMore(): void {
     if (this.photoService.isLoading()) return;
-
     this.subscription = this.photoService.loadMorePhotos().subscribe();
   }
 
   trackByPhotoId(index: number, photo: PhotoBasic): string {
-  return photo.slug;   }
+    return photo.slug;
+  }
 
   setupIntersectionObserver(): void {
     if (!this.sentinel || !('IntersectionObserver' in window)) {
@@ -69,7 +65,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
 
     if (this.intersectionObserver) {
-    this.intersectionObserver.disconnect();
+      this.intersectionObserver.disconnect();
     }
 
     this.intersectionObserver = new IntersectionObserver((entries) => {
@@ -86,23 +82,16 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   setupScrollListener(): void {
-  console.log('Setting up scroll listener as fallback');
-
-  const handleScroll = () => {
+    const handleScroll = () => {
     if (this.photoService.isLoading()) return;
-
     const scrollPosition = window.scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-
     if (documentHeight - scrollPosition < 200) {
-      console.log('Loading more photos from scroll');
       this.loadMore();
     }
-  };
-  window.addEventListener('scroll', handleScroll);
-
-
-  this._scrollHandler = handleScroll;
+    };
+    window.addEventListener('scroll', handleScroll);
+    this._scrollHandler = handleScroll;
   }
 
   getColumnClass(photo: PhotoBasic): string {
@@ -119,23 +108,23 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   getColumnPhotos(columnIndex: number): PhotoBasic[] {
-  return this.photoService.photos()
-    .filter((_, index) => index % 3 === columnIndex);
+    return this.photoService.photos()
+      .filter((_, index) => index % 3 === columnIndex);
   }
 
  ngOnDestroy(): void {
-  if (this.subscription) {
-    this.subscription.unsubscribe();
-  }
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
 
-  if (this.intersectionObserver) {
-    this.intersectionObserver.disconnect();
-  }
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
 
-  if (this._scrollHandler) {
-    window.removeEventListener('scroll', this._scrollHandler);
+    if (this._scrollHandler) {
+      window.removeEventListener('scroll', this._scrollHandler);
+    }
   }
-}
 
 }
 
