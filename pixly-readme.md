@@ -1,4 +1,4 @@
-# Pixly Backend
+# Pixly
 
 ## 🚀 New in this version
 
