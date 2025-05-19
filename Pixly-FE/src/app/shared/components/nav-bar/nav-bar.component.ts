@@ -1,8 +1,8 @@
 import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SearchService } from '../../../services/searchService/search.service';
+import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
-import { Key } from 'readline';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -14,29 +14,38 @@ import { Key } from 'readline';
 export class NavBarComponent {
   menuOpen : boolean = false;
   isLoggedIn : boolean = false;
-  searchService = inject(SearchService);  
+  searchService = inject(SearchService);
+  router = inject(Router);
 
-  search(event: KeyboardEvent) {
-    let searchObject = this.searchService.getSearchObject();
+   search(event: KeyboardEvent) {
     if(event.key === 'Enter'){
-      searchObject = {
-        ...searchObject,
-        title: (event.target as HTMLInputElement).value,
-      }
-      this.searchService.setSearchObject(searchObject);
+      const searchText = (event.target as HTMLInputElement).value;
+      this.performSearch(searchText);
     }
   }
 
   searchByClick() {
-    let searchObject = this.searchService.getSearchObject();
     const inputElement = document.querySelector('.search-bar input') as HTMLInputElement;
-      if (inputElement.value.length > 0) {
-        searchObject = {
+    if (inputElement && inputElement.value.trim().length > 0) {
+      this.performSearch(inputElement.value);
+    }
+  }
+
+  performSearch(searchText: string) {
+    if (searchText.trim().length > 0) {
+      let searchObject = this.searchService.getSearchObject();
+      searchObject = {
         ...searchObject,
-        title: inputElement.value,
-      }
+        title: searchText,
+        pageNumber: 1,
+      };
+
       this.searchService.setSearchObject(searchObject);
+
+      if (!this.router.url.includes('/search')) {
+        this.router.navigate(['/search']);
       }
+    }
   }
 
 }

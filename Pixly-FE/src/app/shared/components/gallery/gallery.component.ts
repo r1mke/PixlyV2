@@ -1,15 +1,15 @@
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { PhotoBasic } from '../../../models/DTOs/PhotoBasic';
-import { PhotoService } from '../../../services/photoService/photo.service';
+import { PhotoBasic } from '../../../core/models/DTOs/PhotoBasic';
+import { PhotoService } from '../../../core/services/photo.service';
 import { OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { SimpleChanges } from '@angular/core';
-import { PhotoSearchRequest } from '../../../models/SearchRequest/PhotoSarchRequest';
+import { PhotoSearchRequest } from '../../../core/models/SearchRequest/PhotoSarchRequest';
 import { RouterModule } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { Subject } from 'rxjs';
-import { SearchService } from '../../../services/searchService/search.service';
+import { SearchService } from '../../../core/services/search.service';
 @Component({
   selector: 'app-gallery',
   standalone: true,
@@ -18,16 +18,14 @@ import { SearchService } from '../../../services/searchService/search.service';
   styleUrl: './gallery.component.css'
 })
 export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy{
-  @Input() mode: 'home' | 'search' | 'profile' | 'liked' | 'saved' = 'home';
-  private _scrollHandler: (() => void) | null = null;
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
   @ViewChild('sentinel') sentinel!: ElementRef;
-  private destroy$ = new Subject<void>();
+  private onDestroy$ = new Subject<void>();
+  private _scrollHandler: (() => void) | null = null;
   private intersectionObserver?: IntersectionObserver;
-  private subscription?: Subscription;
   searchService = inject(SearchService);
-  constructor(public photoService: PhotoService) {}
-
+  photoService = inject(PhotoService);
+  
   ngOnInit(): void {
     this.loadPhotos();
   }
@@ -45,19 +43,13 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   loadPhotos(): void {
-    let searchObject = this.searchService.getSearchObject()
-    this.photoService.loadPhotosForContext({
-      mode: this.mode,
-      searchRequest: searchObject
-    })
-    .pipe(takeUntil(this.destroy$))
-    .subscribe();
+    const searchObject = this.searchService.getSearchObject();
+    this.photoService.getPhotos(searchObject).pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   loadMore(): void {
     if (this.photoService.isLoading()) return;
-
-    this.subscription = this.photoService.loadMorePhotos().subscribe();
+    this.photoService.loadMorePhotos().pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   trackByPhotoId(index: number, photo: PhotoBasic): string {
@@ -72,7 +64,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
 
     if (this.intersectionObserver) {
-    this.intersectionObserver.disconnect();
+      this.intersectionObserver.disconnect();
     }
 
     this.intersectionObserver = new IntersectionObserver((entries) => {
@@ -81,7 +73,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
     }, {
       root: null,
-      rootMargin: '200px',
+      rootMargin: '30px',
       threshold: 0
     });
 
@@ -89,18 +81,16 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   setupScrollListener(): void {
-  const handleScroll = () => {
+    const handleScroll = () => {
     if (this.photoService.isLoading()) return;
-
     const scrollPosition = window.scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-
     if (documentHeight - scrollPosition < 200) {
       this.loadMore();
     }
-  };
-  window.addEventListener('scroll', handleScroll);
-  this._scrollHandler = handleScroll;
+    };
+    window.addEventListener('scroll', handleScroll);
+    this._scrollHandler = handleScroll;
   }
 
   getColumnClass(photo: PhotoBasic): string {
@@ -122,9 +112,8 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
 
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();

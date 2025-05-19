@@ -1,15 +1,15 @@
 import { Component, output } from '@angular/core';
-import { BsDropdownModule,BsDropdownConfig  } from 'ngx-bootstrap/dropdown';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Input } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { SearchService } from '../../../services/searchService/search.service';
+import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
 @Component({
   selector: 'app-dropdown-popularity',
   imports: [BsDropdownModule],
   standalone: true,
   templateUrl: './dropdown-popularity.component.html',
-  styleUrl: './dropdown-popularity.component.css'
+  styleUrls: ['./dropdown-popularity.component.css']
 })
 export class DropdownPopularityComponent implements OnInit {
    @Input() options: string[] = [];
@@ -23,14 +23,10 @@ export class DropdownPopularityComponent implements OnInit {
   }
 
   selectTrending(option: string) {
-    this.selectedOption = option;
-    let searchRequest = this.searchService.getSearchObject();
-    if(searchRequest.sorting !== option) {
-      searchRequest = {
-        ...searchRequest,
-        sorting: option
-      }
-      this.searchService.setSearchObject(searchRequest);
+    if (this.selectedOption !== option) {
+      this.selectedOption = option;
+
+      this.searchService.setSorting(option);
     }
   }
 

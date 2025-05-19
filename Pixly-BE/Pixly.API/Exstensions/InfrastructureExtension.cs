@@ -1,5 +1,7 @@
 ﻿using DotNetEnv;
 using Microsoft.OpenApi.Models;
+using Pixly.Services.Interfaces;
+using Pixly.Services.Services;
 using Pixly.Services.Settings;
 
 namespace Pixly.API.Exstensions
@@ -99,8 +101,6 @@ namespace Pixly.API.Exstensions
 
         private static IServiceCollection AddMessageBrokerServices(this IServiceCollection services)
         {
-            return null;
-            /*
             try
             {
                 var rabbitMqHost = Env.GetString("RABBITMQ_HOST") ?? "localhost";
@@ -136,7 +136,6 @@ namespace Pixly.API.Exstensions
             }
 
             return services;
-             */
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Pixly.Models.Request;
+using Pixly.Models.Response;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
 using Pixly.Services.Interfaces;
@@ -11,17 +12,19 @@ namespace Pixly.Services.Services
     public class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly ILogger<UserService> _logger;
         private readonly IMapper _mapper;
 
-        public UserService(UserManager<User> userManager, ILogger<UserService> logger, IMapper mapper)
+        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<UserService> logger, IMapper mapper)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _logger = logger;
             _mapper = mapper;
         }
 
-        /// Helper Methods
+        /// Helper Method
         private async Task<User> GetUserAsync(string identifier, bool byEmail = false, bool throwIfNotFound = true)
         {
             var user = byEmail
@@ -54,7 +57,6 @@ namespace Pixly.Services.Services
             return user.Email;
         }
 
-        /// CRUD Methods
         public async Task<User> CreateUserAsync(RegisterRequest request)
         {
             var existingUser = await GetUserAsync(request.Email, byEmail: true, throwIfNotFound: false);
@@ -82,6 +84,70 @@ namespace Pixly.Services.Services
             await _userManager.AddToRoleAsync(user, "User");
             _logger.LogInformation("User {Email} created successfully", request.Email);
             return user;
+        }
+
+        public async Task<(bool Succeeded, User User, bool Requires2FA, bool EmailConfirmed)> VerifyCredentialsAsync(string email, string password)
+        {
+            var user = await GetUserAsync(email, byEmail: true, throwIfNotFound: false);
+            if (user == null)
+                return (false, null, false, true);
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+            if (!result.Succeeded)
+            {
+                _logger.LogWarning("Failed login for user {Email} - invalid password", email);
+                return (false, null, false, true);
+            }
+
+            bool emailConfirmed = user.EmailConfirmed;
+            if (emailConfirmed)
+                _logger.LogInformation("Login for user {Email} with confirmed email", email);
+
+            if (user.TwoFactorEnabled)
+            {
+                _logger.LogInformation("Login requires 2FA for user {Email}", email);
+                return (true, user, true, emailConfirmed);
+            }
+
+            _logger.LogInformation("Successful login for user {Email}", email);
+            return (true, user, false, emailConfirmed);
+        }
+
+        public async Task<CurrentUserResponse> GetCurrentUserAsync(string userId)
+        {
+            var user = await GetUserAsync(userId, throwIfNotFound: true);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var currentUserResponse = _mapper.Map<CurrentUserResponse>(user);
+            currentUserResponse.Roles = roles.ToList();
+            currentUserResponse.IsTwoFactorEnabled = user.TwoFactorEnabled;
+            currentUserResponse.EmailConfirmed = user.EmailConfirmed;
+
+            return currentUserResponse;
+        }
+
+        public async Task<string> GenerateEmailConfirmationTokenAsync(string userId)
+        {
+            var user = await GetUserAsync(userId, throwIfNotFound: true);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            _logger.LogInformation("Email confirmation token generated for user {Email}", user.Email);
+            return token;
+        }
+
+        public async Task<bool> ConfirmEmailAsync(string userId, string token)
+        {
+            var user = await GetUserAsync(userId, throwIfNotFound: true);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                _logger.LogWarning("Failed to confirm email for user {Email}: {Errors}", user.Email, errors);
+                return false;
+            }
+
+            _logger.LogInformation("Email confirmed for user {Email}", user.Email);
+            return true;
         }
     }
 }
