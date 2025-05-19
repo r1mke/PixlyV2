@@ -1,11 +1,12 @@
 import {Component, Input} from '@angular/core';
-import {NgClass} from '@angular/common';
+import {CommonModule, NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-submit-button',
   standalone: true,
   imports: [
-    NgClass
+    NgClass,
+    CommonModule
   ],
   templateUrl: './submit-button.component.html',
   styleUrl: './submit-button.component.css'
