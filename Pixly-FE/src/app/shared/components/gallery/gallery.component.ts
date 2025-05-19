@@ -1,15 +1,15 @@
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { PhotoBasic } from '../../../models/DTOs/PhotoBasic';
-import { PhotoService } from '../../../services/photoService/photo.service';
+import { PhotoBasic } from '../../../core/models/DTOs/PhotoBasic';
+import { PhotoService } from '../../../core/services/photo.service';
 import { OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { SimpleChanges } from '@angular/core';
-import { PhotoSearchRequest } from '../../../models/SearchRequest/PhotoSarchRequest';
+import { PhotoSearchRequest } from '../../../core/models/SearchRequest/PhotoSarchRequest';
 import { RouterModule } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { Subject } from 'rxjs';
-import { SearchService } from '../../../services/searchService/search.service';
+import { SearchService } from '../../../core/services/search.service';
 @Component({
   selector: 'app-gallery',
   standalone: true,
@@ -20,7 +20,7 @@ import { SearchService } from '../../../services/searchService/search.service';
 export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy{
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
   @ViewChild('sentinel') sentinel!: ElementRef;
-  
+
   private _scrollHandler: (() => void) | null = null;
   private destroy$ = new Subject<void>();
   private intersectionObserver?: IntersectionObserver;
