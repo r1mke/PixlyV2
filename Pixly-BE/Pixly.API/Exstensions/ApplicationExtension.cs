@@ -37,8 +37,11 @@ namespace Pixly.API.Exstensions
         {
             services.AddTransient<IPhotoService, PhotoService>();
             services.AddTransient<ITagService, TagService>();
-            services.AddTransient<IAuthService, AuthService>();
-            services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ITwoFactorService, TwoFactorService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddSingleton<IEmailService, EmailService>();
             return services;
         }
 
