@@ -3,8 +3,8 @@ import {NavBarComponent} from '../../shared/components/nav-bar/nav-bar.component
 import { GalleryComponent } from "../../shared/components/gallery/gallery.component";
 import { HeroComponent } from "../../shared/components/hero/hero.component";
 import { DropdownPopularityComponent } from "../../shared/components/dropdown-popularity/dropdown-popularity.component";
-import { SearchService } from '../../services/searchService/search.service';
-import { PhotoService } from '../../services/photoService/photo.service';
+import { SearchService } from '../../core/services/search.service';
+import { PhotoService } from '../../core/services/photo.service';
 import { effect } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs';
@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    constructor() {
     effect(() => {
       const searchObj = this.searchService.getSearchObject();
+
       if (!searchObj.title && searchObj.sorting) {
         this.photoService.getPhotos(searchObj).pipe(takeUntil(this.ngOnDestroy$)).subscribe();
       }

@@ -82,5 +82,13 @@ namespace Pixly.Services.Exceptions
         }
     }
 
+    public class SecurityException : BaseApiException
+    {
+        public SecurityException(string message, List<string> errors)
+            : base(message, errors, HttpStatusCode.Unauthorized)
+        {
+        }
+    }
+
 
 }

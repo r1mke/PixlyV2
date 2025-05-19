@@ -1,6 +1,6 @@
 import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SearchService } from '../../../services/searchService/search.service';
+import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 @Component({
@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class NavBarComponent {
   menuOpen : boolean = false;
   isLoggedIn : boolean = false;
-  searchService = inject(SearchService);  
+  searchService = inject(SearchService);
   router = inject(Router);
 
    search(event: KeyboardEvent) {
@@ -39,9 +39,9 @@ export class NavBarComponent {
         title: searchText,
         pageNumber: 1,
       };
-      
+
       this.searchService.setSearchObject(searchObject);
-      
+
       if (!this.router.url.includes('/search')) {
         this.router.navigate(['/search']);
       }

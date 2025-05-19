@@ -2,7 +2,7 @@ import { Component, output } from '@angular/core';
 import { BsDropdownModule,BsDropdownConfig  } from 'ngx-bootstrap/dropdown';
 import { Input } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { SearchService } from '../../../services/searchService/search.service';
+import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
 @Component({
   selector: 'app-dropdown-popularity',
@@ -25,7 +25,7 @@ export class DropdownPopularityComponent implements OnInit {
   selectTrending(option: string) {
     if (this.selectedOption !== option) {
       this.selectedOption = option;
-      
+
       this.searchService.setSorting(option);
     }
   }
