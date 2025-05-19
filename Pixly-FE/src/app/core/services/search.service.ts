@@ -1,12 +1,13 @@
 import { Injectable, signal } from '@angular/core';
-import { PhotoSearchRequest } from '../models/SearchRequest/PhotoSarchRequest';
+import { PhotoSearchRequest } from '../../core/models/SearchRequest/PhotoSarchRequest';
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
   searchObject = signal<Partial<PhotoSearchRequest>>({
+    title: null,
     pageNumber: 1,
-    pageSize: 10,
+    pageSize: 5,
   })
 
   getSearchObject(): Partial<PhotoSearchRequest> {

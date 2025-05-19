@@ -1,14 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Toast, ToastService} from '../../../core/services/toast.service';
-import {AsyncPipe, NgSwitch} from '@angular/common';
+import {AsyncPipe, CommonModule, NgSwitch} from '@angular/common';
 
 @Component({
   selector: 'app-toast',
   standalone: true,
   imports: [
     NgSwitch,
-    AsyncPipe
+    AsyncPipe, CommonModule
   ],
   templateUrl: './toast.component.html',
   styleUrl: './toast.component.css'

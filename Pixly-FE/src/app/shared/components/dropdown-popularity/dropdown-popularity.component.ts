@@ -1,5 +1,5 @@
 import { Component, output } from '@angular/core';
-import { BsDropdownModule,BsDropdownConfig  } from 'ngx-bootstrap/dropdown';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Input } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { SearchService } from '../../../core/services/search.service';
@@ -9,7 +9,7 @@ import { inject } from '@angular/core';
   imports: [BsDropdownModule],
   standalone: true,
   templateUrl: './dropdown-popularity.component.html',
-  styleUrl: './dropdown-popularity.component.css'
+  styleUrls: ['./dropdown-popularity.component.css']
 })
 export class DropdownPopularityComponent implements OnInit {
    @Input() options: string[] = [];

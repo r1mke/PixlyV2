@@ -20,13 +20,12 @@ import { SearchService } from '../../../core/services/search.service';
 export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy{
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
   @ViewChild('sentinel') sentinel!: ElementRef;
-
+  private onDestroy$ = new Subject<void>();
   private _scrollHandler: (() => void) | null = null;
-  private destroy$ = new Subject<void>();
   private intersectionObserver?: IntersectionObserver;
-  private subscription?: Subscription;
   searchService = inject(SearchService);
   photoService = inject(PhotoService);
+  
   ngOnInit(): void {
     this.loadPhotos();
   }
@@ -45,12 +44,12 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   loadPhotos(): void {
     const searchObject = this.searchService.getSearchObject();
-    this.subscription = this.photoService.getPhotos(searchObject).subscribe();
+    this.photoService.getPhotos(searchObject).pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   loadMore(): void {
     if (this.photoService.isLoading()) return;
-    this.subscription = this.photoService.loadMorePhotos().subscribe();
+    this.photoService.loadMorePhotos().pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   trackByPhotoId(index: number, photo: PhotoBasic): string {
@@ -74,7 +73,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
     }, {
       root: null,
-      rootMargin: '200px',
+      rootMargin: '30px',
       threshold: 0
     });
 
@@ -113,9 +112,8 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
 
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
