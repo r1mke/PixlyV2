@@ -25,6 +25,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   private intersectionObserver?: IntersectionObserver;
   searchService = inject(SearchService);
   photoService = inject(PhotoService);
+  
   ngOnInit(): void {
     this.loadPhotos();
   }
