@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import {NavBarComponent} from '../../shared/components/nav-bar/nav-bar.component';
 import { GalleryComponent } from "../../shared/components/gallery/gallery.component";
 import { HeroComponent } from "../../shared/components/hero/hero.component";
@@ -6,6 +6,9 @@ import { DropdownPopularityComponent } from "../../shared/components/dropdown-po
 import { SearchService } from '../../services/searchService/search.service';
 import { PhotoService } from '../../services/photoService/photo.service';
 import { effect } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs';
+
 @Component({
   selector: 'app-home',
   imports: [
@@ -18,31 +21,27 @@ import { effect } from '@angular/core';
   styleUrl: './home.component.css',
   standalone: true
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
   options: string[] = ["Popular", "New"];
   searchService = inject(SearchService);
   photoService = inject(PhotoService);
+  private ngOnDestroy$ = new Subject<void>();
 
    constructor() {
-  
     effect(() => {
       const searchObj = this.searchService.getSearchObject();
-      
       if (!searchObj.title && searchObj.sorting) {
-        console.log('Sorting changed on home, reloading photos:', searchObj);
-        this.photoService.getPhotos(searchObj).subscribe();
+        this.photoService.getPhotos(searchObj).pipe(takeUntil(this.ngOnDestroy$)).subscribe();
       }
     });
   }
 
   ngOnInit() {
-   
-    this.searchService.setSearchObject({
-      sorting: "Popular",
-      title: null,
-      pageNumber: 1,
-      pageSize: 10
-    });
+  }
+
+  ngOnDestroy() {
+    this.ngOnDestroy$.next();
+    this.ngOnDestroy$.complete();
   }
 
 }

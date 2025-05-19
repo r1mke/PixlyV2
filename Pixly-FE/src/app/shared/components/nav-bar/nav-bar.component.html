@@ -1,8 +1,11 @@
 <div class="container">
   <nav>
-    <div class="logo">
-      <img src="assets/image/logo.png" height="50px" width="50px">
+    <div class="logo" routerLink="/">
+      <a href="/">
+        <img src="assets/image/logo.png" height="50px" width="50px">
+      </a>
     </div>
+
 
     <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
       <input [value]="searchService.getSearchObject().title" (keyup)="search($event)" type="text" placeholder="Search...">

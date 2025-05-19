@@ -9,16 +9,5 @@ import { PhotoSearchRequest } from '../../models/SearchRequest/PhotoSarchRequest
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent {
-searchRequest : PhotoSearchRequest = {
-    username: null,
-    title: null,
-    orientation: null,
-    size: null,
-    isUserIncluded: null,
-    sorting: "Popular",
-    isLiked: null,
-    isSaved: null,
-    pageNumber: 1,
-    pageSize: 10
-  };
+
 }
