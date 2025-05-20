@@ -34,7 +34,7 @@
       </div>
 
       <div *ngIf="isLoggedIn === false">
-        <button>Join</button>
+        <button [routerLink]="['/register']">Join</button>
       </div>
 
       <div *ngIf="isLoggedIn">

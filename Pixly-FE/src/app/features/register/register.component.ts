@@ -105,6 +105,7 @@ export class RegisterComponent implements OnInit {
         },
         complete: () => {
           this.isLoading = false;
+          this.router.navigate(['/home']);
         }
       });
 

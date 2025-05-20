@@ -6,6 +6,7 @@ import {RegisterComponent} from './features/register/register.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  {path: 'home', component: HomeComponent},
   {path: 'profile', component: ProfileComponent},
   {path: 'search', component: SearchComponent},
   {path: 'register', component: RegisterComponent},

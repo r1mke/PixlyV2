@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Pixly.Models.Request;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
+using Pixly.Services.Helper;
+using Pixly.Services.Interfaces;
 using Pixly.Services.Settings;
 using System.Text;
 using System.Text.Json;
@@ -67,7 +70,7 @@ namespace Pixly.API.Exstensions
                 opts.Secret = secret;
                 opts.Issuer = issuer;
                 opts.Audience = audience;
-                opts.ExpirationInMinutes = 15;
+                opts.ExpirationInMinutes = 1;
                 opts.RefreshTokenExpirationInDays = 7;
             });
 
@@ -116,7 +119,6 @@ namespace Pixly.API.Exstensions
                             if (string.IsNullOrEmpty(refreshToken))
                                 return;
 
-                            /*
                             try
                             {
                                 var expiredToken = httpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
@@ -146,13 +148,12 @@ namespace Pixly.API.Exstensions
 
                                 logger.LogInformation("Token refreshed");
                             }
-                            
+
                             catch (Exception ex)
                             {
                                 var logger = httpContext.RequestServices.GetRequiredService<ILogger<JwtBearerEvents>>();
                                 logger.LogWarning(ex, "Failed refreshing token");
                             }
-                            */
                         }
                     },
                     OnChallenge = context =>
