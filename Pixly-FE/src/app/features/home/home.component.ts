@@ -21,28 +21,13 @@ import { takeUntil } from 'rxjs';
   styleUrl: './home.component.css',
   standalone: true
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent{
   options: string[] = ["Popular", "New"];
   searchService = inject(SearchService);
   photoService = inject(PhotoService);
   private ngOnDestroy$ = new Subject<void>();
 
-   constructor() {
-    effect(() => {
-      const searchObj = this.searchService.getSearchObject();
-
-      if (!searchObj.title && searchObj.sorting) {
-        this.photoService.getPhotos(searchObj).pipe(takeUntil(this.ngOnDestroy$)).subscribe();
-      }
-    });
-  }
-
   ngOnInit() {
+    //this.searchService.resetSearch();
   }
-
-  ngOnDestroy() {
-    this.ngOnDestroy$.next();
-    this.ngOnDestroy$.complete();
-  }
-
 }

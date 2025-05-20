@@ -25,7 +25,6 @@ export class DropdownPopularityComponent implements OnInit {
   selectTrending(option: string) {
     if (this.selectedOption !== option) {
       this.selectedOption = option;
-
       this.searchService.setSorting(option);
     }
   }
