@@ -267,17 +267,26 @@ namespace Pixly.Services.Services
 
         public async Task<User> ValidateRefreshTokenAsync(string token, string refreshToken, string ipAddress = null)
         {
-            var principal = GetPrincipalFromExpiredToken(token);
+            // Preskoči validaciju JWT tokena, fokusiraj se samo na refresh token
+            var refreshTokenEntity = await _context.RefreshTokens
+                .FirstOrDefaultAsync(rt => rt.Token == refreshToken && rt.RevokedAt == null);
 
-            var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                        principal.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (refreshTokenEntity == null)
+            {
+                _logger.LogWarning("Refresh token not found or has been revoked");
+                throw new AuthenticationException("Invalid refresh token.");
+            }
+
+            // Izvuci userId iz refresh tokena
+            string userId = refreshTokenEntity.UserId;
 
             if (string.IsNullOrEmpty(userId))
             {
-                _logger.LogWarning("Invalid token: missing identifier claim");
-                throw new AuthenticationException("Invalid token: missing identifier claim.");
+                _logger.LogWarning("User ID not found in refresh token");
+                throw new AuthenticationException("Invalid refresh token: missing user ID.");
             }
 
+            // Nađi korisnika
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
@@ -285,30 +294,21 @@ namespace Pixly.Services.Services
                 throw new AuthenticationException("User not found.");
             }
 
-            var refreshTokenEntity = await _context.RefreshTokens
-                .SingleOrDefaultAsync(rt => rt.Token == refreshToken && rt.UserId == user.Id);
-
-            if (refreshTokenEntity == null)
-            {
-                _logger.LogWarning($"Refresh token not found for user {userId}");
-                throw new AuthenticationException("Invalid refresh token.");
-            }
-
+            // Provjeri je li token istekao
             if (refreshTokenEntity.IsExpired)
             {
                 _logger.LogWarning($"Refresh token has expired for user {userId}");
                 throw new AuthenticationException("Refresh token has expired.");
             }
 
+            // Provjeri je li token opozvan
             if (refreshTokenEntity.RevokedAt != null)
             {
                 if (_refreshTokenSettings.DetectTokenReuse && refreshTokenEntity.ReplacedByToken != null)
                 {
                     _logger.LogWarning("SECURITY ALERT: Detected refresh token reuse! Token: {Token}, User: {UserId}",
                         refreshToken, userId);
-
                     await RevokeAllRefreshTokensAsync(userId, ipAddress, "Token reuse detected");
-
                     throw new SecurityException("Invalid token use detected. For security reasons, all your sessions have been terminated.", null);
                 }
 
@@ -316,6 +316,7 @@ namespace Pixly.Services.Services
                 throw new AuthenticationException("Refresh token has been revoked.");
             }
 
+            // Provjeri broj osvježavanja
             if (refreshTokenEntity.RefreshCount >= _refreshTokenSettings.MaxRefreshCount)
             {
                 await RevokeRefreshTokenAsync(refreshToken, userId, ipAddress, "Max refresh count exceeded");
