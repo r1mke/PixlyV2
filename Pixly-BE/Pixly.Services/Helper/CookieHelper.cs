@@ -6,6 +6,7 @@ namespace Pixly.Services.Helper
     {
         public static void SetRefreshTokenCookie(HttpContext context, string refreshToken)
         {
+            /* Za PRODUKCIJU
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true, // Nije dostupan JavaScript-u - zaštita od XSS napada
@@ -16,6 +17,19 @@ namespace Pixly.Services.Helper
             };
 
             context.Response.Cookies.Append("refresh_token", refreshToken, cookieOptions);
+            */
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7),
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/"
+            };
+
+            context.Response.Cookies.Append("refresh_token", refreshToken, cookieOptions);
+            Console.WriteLine("Cookie postavljen: refresh_token");
         }
     }
 }
