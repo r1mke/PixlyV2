@@ -48,4 +48,8 @@ export class NavBarComponent {
     }
   }
 
+  goToHome() {
+    this.router.navigate(['/']);
+  }
+
 }

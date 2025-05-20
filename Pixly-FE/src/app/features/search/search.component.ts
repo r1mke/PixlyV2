@@ -19,16 +19,10 @@ export class SearchComponent implements OnInit {
   photoService = inject(PhotoService);
   route = inject(ActivatedRoute);
 
-  constructor() {
-    effect(() => {
-      const searchObj = this.searchService.getSearchObject();
-      console.log('Search object changed, reloading photos:', searchObj);
-      this.photoService.getPhotos(searchObj).subscribe();
-    });
-  }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['q']) {
+        console.log('Query parameter q:', params['q']);
         this.searchService.setTitle(params['q']);
       }
     });
