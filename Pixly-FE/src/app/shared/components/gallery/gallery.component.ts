@@ -10,6 +10,9 @@ import { RouterModule } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { Subject } from 'rxjs';
 import { SearchService } from '../../../core/services/search.service';
+import { distinctUntilChanged } from 'rxjs';
+import isEqual from 'lodash.isequal';
+
 @Component({
   selector: 'app-gallery',
   standalone: true,
@@ -17,7 +20,7 @@ import { SearchService } from '../../../core/services/search.service';
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.css'
 })
-export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy{
+export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
   @ViewChild('sentinel') sentinel!: ElementRef;
   private onDestroy$ = new Subject<void>();
@@ -27,23 +30,19 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   photoService = inject(PhotoService);
   
   ngOnInit(): void {
-    this.loadPhotos();
-  }
-
-   ngOnChanges(changes: SimpleChanges): void {
-    if ((changes['photoSearchRequest'] && !changes['photoSearchRequest'].firstChange)
-    ) {
-      console.log('Search request changed:');
-      this.loadPhotos();
-    }
+    this.searchService.getSearchObjectAsObservable().pipe(
+      takeUntil(this.onDestroy$),
+      distinctUntilChanged((prev, curr) => isEqual(prev, curr))
+      ).subscribe((searchObject: Partial<PhotoSearchRequest>) => {
+      this.loadPhotos(searchObject);
+    });
   }
 
   ngAfterViewInit(): void {
     this.setupIntersectionObserver();
   }
 
-  loadPhotos(): void {
-    const searchObject = this.searchService.getSearchObject();
+  loadPhotos(searchObject: Partial<PhotoSearchRequest>): void {
     this.photoService.getPhotos(searchObject).pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 

@@ -3,11 +3,13 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { PhotoBasic } from '../models/DTOs/PhotoBasic';
 import { PaginationResponse } from '../models/Pagination/PaginationResponse';
 import { signal } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
 import { PaginationHeader } from '../models/Pagination/PaginationHeader';
 import { ApiResponse } from '../models/Response/api-response';
 import { tap } from 'rxjs';
 import { of } from 'rxjs';
+import isEqual from 'lodash.isequal';
+import { SearchService } from './search.service';
 import { PhotoSearchRequest } from '../models/SearchRequest/PhotoSarchRequest';
 @Injectable({
   providedIn: 'root'
@@ -21,16 +23,17 @@ export class PhotoService {
   paginationHeader = signal<PaginationHeader | null>(null);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
-
+  searchService = inject(SearchService);
   private currentSearchRequest = new BehaviorSubject<Partial<PhotoSearchRequest>>({
-    sorting: "Popular",
+    sorting: 'Popular',
     pageNumber: 1,
-    pageSize: 10
+    pageSize: 5
   });
 
   getPhotos(searchRequest: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
-    this.isLoading.set(true);
+    
     this.currentSearchRequest.next(searchRequest);
+    this.isLoading.set(true);
 
     if (searchRequest.pageNumber === 1) {
       this.photos.set([]);
@@ -73,7 +76,7 @@ export class PhotoService {
 
   loadMorePhotos(): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
     if (this.isLoading()) {
-      return of() as Observable<HttpResponse<ApiResponse<PhotoBasic[]>>>;
+      return EMPTY;
     }
 
     const currentPage = this.paginationHeader()?.currentPage || 0;
@@ -81,10 +84,10 @@ export class PhotoService {
     const totalPages = this.paginationHeader()?.totalPages || 0;
 
     if (nextPage > totalPages) {
-      return of() as Observable<HttpResponse<ApiResponse<PhotoBasic[]>>>;
+      return EMPTY;
     }
 
-    const currentRequest = this.currentSearchRequest.getValue();
+    const currentRequest = this.searchService.getSearchObject();
 
     return this.getPhotos({
       ...currentRequest,

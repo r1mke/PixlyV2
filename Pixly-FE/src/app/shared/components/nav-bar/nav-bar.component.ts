@@ -1,28 +1,19 @@
-// src/app/shared/components/nav-bar/nav-bar.component.ts
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { AuthState } from '../../../core/state/auth.state';
-import { Subscription } from 'rxjs';
-import { User } from '../../../core/models/DTOs/User';
-import { AuthService } from '../../../core/services/auth.service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css'],
 })
-export class NavBarComponent implements OnInit, OnDestroy {
-  menuOpen = false;
-  isLoggedIn = false;
-  currentUser: User | null = null;
 
-  private subscription = new Subscription();
-
+export class NavBarComponent {
+  menuOpen : boolean = false;
+  isLoggedIn : boolean = true;
   searchService = inject(SearchService);
   router = inject(Router);
   authState = inject(AuthState);
@@ -52,9 +43,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
     });
   }
 
-  search(event: KeyboardEvent) {
+   search(event: KeyboardEvent) {
     if(event.key === 'Enter'){
       const searchText = (event.target as HTMLInputElement).value;
+       if ((!searchText || searchText.trim().length === 0) && this.router.url.includes('/search')) {
+        this.router.navigate(['/'], { queryParams: {} });
+        return;
+      }
       this.performSearch(searchText);
     }
   }
@@ -78,8 +73,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
       this.searchService.setSearchObject(searchObject);
 
       if (!this.router.url.includes('/search')) {
-        this.router.navigate(['/search']);
+        this.router.navigate(['/search', searchText]);
+      } else {
+          this.router.navigate(['/search', searchText], {
+          queryParamsHandling: 'merge'
+        });
       }
     }
   }
+
 }

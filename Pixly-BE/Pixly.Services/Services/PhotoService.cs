@@ -83,19 +83,29 @@ namespace Pixly.Services.Services
 
             if (!string.IsNullOrWhiteSpace(search?.Orientation))
             {
-                query = query.Where(x => x.Orientation == search.Orientation);
+                if (search.Orientation == "all orientation")
+                {
+                    query = query;
+                }
+                else
+                {
+                    query = query.Where(x => x.Orientation == search.Orientation);
+                }
+
             }
 
             if (!string.IsNullOrWhiteSpace(search?.Size))
             {
                 switch (search.Size)
                 {
-                    case "Large":
+                    case "large":
                         query = query.Where(x => x.FileSize > 8 * 1024 * 1024); break;
-                    case "Medium":
+                    case "medium":
                         query = query.Where(x => x.FileSize >= 5 * 1024 * 1024 && x.FileSize <= 8 * 1024 * 1024); break;
-                    case "Small":
+                    case "small":
                         query = query.Where(x => x.FileSize < 5 * 1024 * 1024); break;
+                    case "all size":
+                        query = query; break;
                 }
             }
 
@@ -195,6 +205,7 @@ namespace Pixly.Services.Services
         public override async Task<Models.DTOs.PhotoBasic> Update(int id, PhotoUpdateRequest request)
         {
             var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Update(id, request);
             return result;
@@ -202,6 +213,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.PhotoBasic> Submit(int id)
         {
             var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Submit(id);
             return result;
@@ -209,6 +221,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.PhotoBasic> Approve(int id)
         {
             var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Approve(id);
             return result;
@@ -216,6 +229,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.PhotoBasic> Reject(int id)
         {
             var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Reject(id);
             return result;
@@ -223,6 +237,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.PhotoBasic> Edit(int id)
         {
             var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Edit(id);
             return result;
@@ -230,6 +245,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.PhotoBasic> Hide(int id)
         {
             var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Hide(id);
             return result;
@@ -237,6 +253,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.PhotoBasic> Delete(int id)
         {
             var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Delete(id);
             return result;
@@ -244,6 +261,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.PhotoBasic> Restore(int id)
         {
             var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.Restore(id);
             return result;
@@ -268,6 +286,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.Like> LikePhoto(int photoId, string userId)
         {
             var entity = await _context.Photos.FindAsync(photoId);
+            if (entity == null) throw new NotFoundException($"Photo with ID {photoId} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.LikePhoto(photoId, userId);
             return result;
@@ -275,6 +294,7 @@ namespace Pixly.Services.Services
         public async Task UnlikePhoto(int photoId, string userId)
         {
             var entity = await _context.Photos.FindAsync(photoId);
+            if (entity == null) throw new NotFoundException($"Photo with ID {photoId} not found");
             var state = BasePhotoState.CreateState(entity.State);
             await state.UnlikePhoto(photoId, userId);
         }
@@ -283,6 +303,7 @@ namespace Pixly.Services.Services
         public async Task<Models.DTOs.Favorite> SavePhoto(int photoId, string userId)
         {
             var entity = await _context.Photos.FindAsync(photoId);
+            if (entity == null) throw new NotFoundException($"Photo with ID {photoId} not found");
             var state = BasePhotoState.CreateState(entity.State);
             var result = await state.SavePhoto(photoId, userId);
             return result;
@@ -290,6 +311,7 @@ namespace Pixly.Services.Services
         public async Task UnsavePhoto(int photoId, string userId)
         {
             var entity = await _context.Photos.FindAsync(photoId);
+            if (entity == null) throw new NotFoundException($"Photo with ID {photoId} not found");
             var state = BasePhotoState.CreateState(entity.State);
             await state.LikePhoto(photoId, userId);
         }

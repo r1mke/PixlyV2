@@ -1,11 +1,11 @@
 <app-nav-bar/>
 <app-hero></app-hero>
 <div class="container">
-    <div class="home-filter">
+    <div class="filter">
         <h4>Free stock photos</h4>
-        <app-dropdown-popularity 
-        [options]="options"
-        ></app-dropdown-popularity>
+        <app-dropdown
+        [options]="dropdownPopularity"
+        ></app-dropdown>
     </div>
 </div>
 <app-gallery></app-gallery> 
