@@ -1,0 +1,35 @@
+.container{
+    max-width: 1400px;
+    padding: 20px;
+}
+
+.filter{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.filter-basic{
+    width: 100%;
+    display: flex;
+}
+
+.filter-basic-left, .filter-basic-right{
+    width: 50%;
+    display: flex;
+}
+
+.filter-basic-right{
+    justify-content: flex-end;
+}
+
+.filter-advance{
+    margin-top: 20px;
+    width: 100%;
+    display: flex;  
+    justify-content: space-between;
+}
+
+.filter-advance >*{
+    flex: 1;
+}

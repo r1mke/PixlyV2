@@ -83,19 +83,29 @@ namespace Pixly.Services.Services
 
             if (!string.IsNullOrWhiteSpace(search?.Orientation))
             {
-                query = query.Where(x => x.Orientation == search.Orientation);
+                if (search.Orientation == "all orientation")
+                {
+                    query = query;
+                }
+                else
+                {
+                    query = query.Where(x => x.Orientation == search.Orientation);
+                }
+
             }
 
             if (!string.IsNullOrWhiteSpace(search?.Size))
             {
                 switch (search.Size)
                 {
-                    case "Large":
+                    case "large":
                         query = query.Where(x => x.FileSize > 8 * 1024 * 1024); break;
-                    case "Medium":
+                    case "medium":
                         query = query.Where(x => x.FileSize >= 5 * 1024 * 1024 && x.FileSize <= 8 * 1024 * 1024); break;
-                    case "Small":
+                    case "small":
                         query = query.Where(x => x.FileSize < 5 * 1024 * 1024); break;
+                    case "all size":
+                        query = query; break;
                 }
             }
 
