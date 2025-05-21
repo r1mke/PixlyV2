@@ -1,8 +1,9 @@
-// src/app/app.component.ts
+// app.component.ts
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { AuthService } from './core/services/auth.service';
+import { TokenService } from './core/services/token.service';
 
 @Component({
   selector: 'app-root',
@@ -15,18 +16,38 @@ export class AppComponent implements OnInit {
   title = 'Pixly';
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private tokenService: TokenService,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    // Try to refresh token using only refresh token cookie
+    if (!this.tokenService.getToken()) {
+      this.tryRefreshToken();
+    }
+    else {
+      this.verifyTokenAndGetUser();
+    }
+  }
+
+  private tryRefreshToken() {
     this.authService.refreshToken(null).subscribe({
       next: response => {
-        // After successful refresh, get user data
-        this.authService.getCurrentUser().subscribe();
+        this.authService.getCurrentUser().subscribe({
+          next: user => {},
+        });
       },
+      error: error => {}
+    });
+  }
+
+  private verifyTokenAndGetUser() {
+    this.authService.getCurrentUser().subscribe({
+      next: user => {},
       error: error => {
-        // Not logged in, which is fine - no redirect needed
+        if (error.status === 401) {
+          this.tryRefreshToken();
+        }
       }
     });
   }

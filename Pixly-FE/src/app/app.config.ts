@@ -11,8 +11,9 @@ import {
 
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideClientHydration } from '@angular/platform-browser';
-import { errorInterceptorFn, jwtInterceptorFn } from './core/interceptors/interceptor-provider';
+import { errorInterceptorFn } from './core/interceptors/error.interceptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import {jwtInterceptorFn} from './core/interceptors/jwt.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,7 +22,6 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideAnimations(),
 
-    // Dodaj funkcijske interceptore
     provideHttpClient(
       withFetch(),
       withInterceptors([
@@ -30,7 +30,6 @@ export const appConfig: ApplicationConfig = {
       ])
     ),
 
-    // Dodaj klasični interceptor kao useClass
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

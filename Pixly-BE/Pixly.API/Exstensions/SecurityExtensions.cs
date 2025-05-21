@@ -193,7 +193,7 @@ namespace Pixly.API.Exstensions
                         partitionKey: key,
                         factory: _ => new FixedWindowRateLimiterOptions
                         {
-                            PermitLimit = 5,
+                            PermitLimit = 100,
                             Window = TimeSpan.FromMinutes(5),
                             AutoReplenishment = true
                         });

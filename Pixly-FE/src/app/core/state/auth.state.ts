@@ -1,4 +1,3 @@
-// src/app/core/state/auth.state.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../models/DTOs/User';
@@ -19,7 +18,6 @@ export class AuthState {
   public isLoggedIn$ = this.currentUser$.pipe(map(user => !!user));
 
   constructor(private http: HttpClient) {
-    // Initialize from storage on startup
     const storedToken = sessionStorage.getItem(this.TOKEN_KEY);
     if (storedToken) {
       this.tokenSubject.next(storedToken);
@@ -46,7 +44,6 @@ export class AuthState {
     this.currentUserSubject.next(null);
   }
 
-  // Add this method to update the current user
   updateCurrentUser(user: User): void {
     this.currentUserSubject.next(user);
   }

@@ -30,5 +30,18 @@ namespace Pixly.Services.Helper
 
             context.Response.Cookies.Append("refresh_token", refreshToken, cookieOptions);
         }
+
+        public static void DeleteRefreshTokenCookie(HttpContext context)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(-1),
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/"
+            };
+            context.Response.Cookies.Delete("refresh_token", cookieOptions);
+        }
     }
 }

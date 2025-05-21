@@ -18,10 +18,8 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Add credentials to every request
     let newRequest = request.clone({ withCredentials: true });
 
-    // Add token if available
     const token = this.authState.token;
     if (token) {
       newRequest = newRequest.clone({
@@ -33,14 +31,12 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(newRequest).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Don't try to refresh if we're already trying to refresh or if this is a refresh request
         if (error.status === 401 && !this.isRefreshing && !request.url.includes('refresh-token')) {
           this.isRefreshing = true;
 
           return this.authService.refreshToken(token).pipe(
             switchMap(response => {
               this.isRefreshing = false;
-              // The new token will be saved by the auth service
               return next.handle(newRequest.clone({
                 setHeaders: {
                   Authorization: `Bearer ${this.authState.token}`

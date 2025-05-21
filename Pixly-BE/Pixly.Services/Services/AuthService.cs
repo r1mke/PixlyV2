@@ -26,13 +26,13 @@ namespace Pixly.Services.Services
             _twoFactorService = twoFactorService;
         }
 
-        public async Task<(User, RegisterResponse)> RegisterAsync(RegisterRequest request)
+        public async Task<(User, AuthResponse)> RegisterAsync(RegisterRequest request)
         {
             _logger.LogInformation("Starting registration for email {Email}", request.Email);
 
             var user = await _userService.CreateUserAsync(request);
 
-            var response = new RegisterResponse
+            var response = new AuthResponse
             {
                 UserId = user.Id,
                 Email = user.Email,

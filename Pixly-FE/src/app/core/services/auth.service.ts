@@ -1,10 +1,9 @@
-// src/app/core/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RegisterRequest } from '../models/DTOs/Request/RegisterRequest';
+import { RegisterRequest } from '../models/Request/RegisterRequest';
 import { Observable, tap } from 'rxjs';
 import { ApiResponse } from '../models/Response/api-response';
-import { RegisterResponse } from '../models/Response/RegisterResponse';
+import { AuthResponse } from '../models/Response/AuthResponse';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/DTOs/User';
 import { AuthState } from '../state/auth.state';
@@ -45,15 +44,14 @@ export class AuthService {
     }).pipe(
       tap(response => {
         if (response.success && response.data) {
-          // Use the public method instead of accessing the subject directly
           this.authState.updateCurrentUser(response.data);
         }
       })
     );
   }
 
-  register(values: RegisterRequest): Observable<ApiResponse<RegisterResponse>> {
-    return this.http.post<ApiResponse<RegisterResponse>>(`${this.baseUrl}/register`, values, {
+  register(values: RegisterRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.baseUrl}/register`, values, {
       withCredentials: true
     }).pipe(
       tap(response => {
@@ -65,8 +63,8 @@ export class AuthService {
     );
   }
 
-  login(email: string, password: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/login`, { email, password }, {
+  login(values: LoginRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.baseUrl}/login`, values, {
       withCredentials: true
     }).pipe(
       tap(response => {

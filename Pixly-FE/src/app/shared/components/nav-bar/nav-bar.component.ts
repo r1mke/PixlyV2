@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
@@ -15,7 +15,7 @@ import {User} from '../../../core/models/DTOs/User';
   styleUrls: ['./nav-bar.component.css'],
 })
 
-export class NavBarComponent {
+export class NavBarComponent implements  OnInit, OnDestroy{
   menuOpen : boolean = false;
   isLoggedIn : boolean = true;
   searchService = inject(SearchService);
