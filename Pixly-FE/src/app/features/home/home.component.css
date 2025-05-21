@@ -3,7 +3,7 @@
     padding: 20px;
 }
 
-.home-filter{
+.filter{
     display: flex;
     align-items: center;
     justify-content: space-between;

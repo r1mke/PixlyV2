@@ -13,19 +13,29 @@ import { Router } from '@angular/router';
 
 export class NavBarComponent {
   menuOpen : boolean = false;
-  isLoggedIn : boolean = false;
+  isLoggedIn : boolean = true;
   searchService = inject(SearchService);
   router = inject(Router);
 
    search(event: KeyboardEvent) {
     if(event.key === 'Enter'){
       const searchText = (event.target as HTMLInputElement).value;
+       if ((!searchText || searchText.trim().length === 0) && this.router.url.includes('/search')) {
+        this.router.navigate(['/'], { queryParams: {} });
+        return;
+      }
       this.performSearch(searchText);
     }
   }
 
   searchByClick() {
     const inputElement = document.querySelector('.search-bar input') as HTMLInputElement;
+    const searchText = inputElement?.value || '';
+    if ((!searchText || searchText.trim().length === 0) && this.router.url.includes('/search')) {
+      this.router.navigate(['/'], { queryParams: {} });
+      return;
+    }
+    
     if (inputElement && inputElement.value.trim().length > 0) {
       this.performSearch(inputElement.value);
     }
@@ -43,9 +53,17 @@ export class NavBarComponent {
       this.searchService.setSearchObject(searchObject);
 
       if (!this.router.url.includes('/search')) {
-        this.router.navigate(['/search']);
+        this.router.navigate(['/search', searchText]);
+      } else {
+          this.router.navigate(['/search', searchText], {
+          queryParamsHandling: 'merge' 
+        });
       }
     }
+  }
+
+  goToHome() {
+    this.router.navigate(['/']);
   }
 
 }

@@ -1,0 +1,32 @@
+<div class="btn-group" dropdown [class.active]="options?.mode === 'Orientation' || options?.mode === 'Size' ? 'active' : 'in-active'">
+  <button 
+    id="button-animated" dropdownToggle type="button"  class="btn dropdown-toggle"
+          aria-controls="dropdown-animated">
+          <ng-container *ngIf="options?.mode === 'More filters'">
+            <div class="filter-content">
+              <img src="assets/image/sort.png" height="20px" width="20px" class="filter-icon"  alt="">
+              {{ options?.selectedOption }}
+            </div>
+          </ng-container>
+          <ng-container *ngIf="options?.mode !== 'More filters'">
+            {{ options?.selectedOption }}
+            <i class="fa-solid fa-caret-down fa-xs"></i>
+          </ng-container>
+  </button>
+  @if(options?.value) {
+  <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right"
+      role="menu" aria-labelledby="button-animated">
+    
+        @for (option of options?.value; track $index) {
+          <li role="menuitem">
+            <a class="dropdown-item" href="#"
+             [class.active]="option === options?.selectedOption ? 'active' : ''"
+            (click)="selectTrending(option); $event.preventDefault()">{{ option }}</a>
+          </li>
+        }
+    
+    </ul>
+    }
+</div>
+
+
