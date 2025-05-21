@@ -20,12 +20,22 @@ export class NavBarComponent {
    search(event: KeyboardEvent) {
     if(event.key === 'Enter'){
       const searchText = (event.target as HTMLInputElement).value;
+       if ((!searchText || searchText.trim().length === 0) && this.router.url.includes('/search')) {
+        this.router.navigate(['/'], { queryParams: {} });
+        return;
+      }
       this.performSearch(searchText);
     }
   }
 
   searchByClick() {
     const inputElement = document.querySelector('.search-bar input') as HTMLInputElement;
+    const searchText = inputElement?.value || '';
+    if ((!searchText || searchText.trim().length === 0) && this.router.url.includes('/search')) {
+      this.router.navigate(['/'], { queryParams: {} });
+      return;
+    }
+    
     if (inputElement && inputElement.value.trim().length > 0) {
       this.performSearch(inputElement.value);
     }
@@ -44,6 +54,10 @@ export class NavBarComponent {
 
       if (!this.router.url.includes('/search')) {
         this.router.navigate(['/search', searchText]);
+      } else {
+          this.router.navigate(['/search', searchText], {
+          queryParamsHandling: 'merge' 
+        });
       }
     }
   }
