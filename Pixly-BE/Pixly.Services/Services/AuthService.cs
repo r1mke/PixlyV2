@@ -46,10 +46,10 @@ namespace Pixly.Services.Services
         {
             try
             {
-                var user = await _tokenService.ValidateRefreshTokenAsync(request.Token, request.RefreshToken, ipAddress);
+                var user = await _tokenService.ValidateRefreshTokenAsync(null, request.RefreshToken, ipAddress);
 
                 var result = await _tokenService
-                    .RotateRefreshTokenAsync(request.Token, request.RefreshToken, user.Id, ipAddress);
+                    .RotateRefreshTokenAsync(null, request.RefreshToken, user.Id, ipAddress);
 
                 _logger.LogInformation("Token successfully refreshed for user {Email}", user.Email);
 
