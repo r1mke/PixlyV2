@@ -4,5 +4,8 @@ import { ProfileComponent } from './features/profile/profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  {path: 'profile', component: ProfileComponent},  
+  {path: 'profile', component: ProfileComponent}, 
+  { path: 'search/:title', component: SearchComponent, canActivate: [SearchGuard] }, 
+  {path: 'register', component: RegisterComponent},
+  {path: '**', redirectTo: ''} 
 ];
