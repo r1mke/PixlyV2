@@ -1,6 +1,12 @@
-import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { inject, Injectable, signal } from '@angular/core';
+import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { PhotoSearchRequest } from '../../core/models/SearchRequest/PhotoSarchRequest';
+import { List } from 'lodash';
+import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+import { tap } from 'rxjs';
+import { ApiResponse } from '../models/Response/api-response';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,12 +20,20 @@ export class SearchService {
     pageSize: 10,
   });
 
+  searchSuggestionsTitle = new BehaviorSubject<string>('');
+  searchSuggestions = signal<string[]>([]);
+  private http = inject(HttpClient);
+  private apiUrl = "https://localhost:7136/api/photo";
   getSearchObject(): Partial<PhotoSearchRequest> {
     return this.searchObject.getValue();
   }
 
   getSearchObjectAsObservable() {
     return this.searchObject.asObservable();
+  }
+
+  getSearchSuggestionsTitleAsObservable() {
+    return this.searchSuggestionsTitle.asObservable();
   }
 
   setSearchObject(searchObject: Partial<PhotoSearchRequest>) {
@@ -72,4 +86,31 @@ export class SearchService {
     });
   }
 
+  getSearchSuggestions(title : string) : Observable<ApiResponse<string[]>> {
+    if(!title) {
+      return EMPTY;
+    }
+    let params = new HttpParams();
+    params = params.set('title', title);
+    return this.http.get<ApiResponse<string[]>>(`${this.apiUrl}/search-suggestion/${title}`).pipe(
+      tap({
+      next:
+        (response : ApiResponse<string[]>) => {
+        if(response.success && response.data) {
+          this.searchSuggestions.set(response.data);
+        } else{
+          this.searchSuggestions.set([]);
+        }
+      }, error: (err) => {
+        console.log(err);
+        this.searchSuggestions.set([]);
+      }
+    })
+    );
+  }
 }
+      
+      
+
+    
+

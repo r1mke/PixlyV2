@@ -93,7 +93,7 @@ export class SearchComponent implements OnInit {
       else {
        this.router.navigate(['/'], { 
           replaceUrl: true,
-          queryParamsHandling: 'merge'
+          queryParams: {}
         });
       }
   }
@@ -151,7 +151,7 @@ export class SearchComponent implements OnInit {
     
     const queryParams: any = {};
     
-    // Add filters to query params
+    
     if (searchObject.orientation) {
       queryParams.orientation = searchObject.orientation.toLowerCase();
     }
@@ -161,7 +161,6 @@ export class SearchComponent implements OnInit {
     }
     
      if (searchObject.sorting) {
-      // Convert sorting parameters to match Pexels format
       switch(searchObject.sorting) {
         case 'Popular':
           queryParams.sort = 'popular';
@@ -175,12 +174,12 @@ export class SearchComponent implements OnInit {
       }
     }
     
-    // Navigate with the updated URL
+
     this.router.navigate(
       ['/search', searchObject.title || ''], 
       { 
         queryParams,
-        replaceUrl: true // Use replaceUrl to avoid creating multiple history entries
+        replaceUrl: true 
       }
     ).then(() => {
       this.isUpdatingFromUrl = false;

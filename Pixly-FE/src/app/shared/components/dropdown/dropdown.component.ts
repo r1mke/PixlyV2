@@ -5,11 +5,11 @@ import { OnInit } from '@angular/core';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
 import { DropdownValue } from '../../../core/models/Dropdown/DropdownValue';
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-dropdown',
   standalone: true,
-  imports: [BsDropdownModule],
+  imports: [BsDropdownModule, CommonModule],
   templateUrl: './dropdown.component.html',
   styleUrl: './dropdown.component.css'
 })

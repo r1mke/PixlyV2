@@ -327,6 +327,18 @@ namespace Pixly.Services.Services
                 return Mapper.Map<PhotoDetail>(entity);
             }, TimeSpan.FromMinutes(30));
         }
+
+        public async Task<List<string>> SearchSuggestions(string title)
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                var result = await _context.Photos.Where(p => p.Title.StartsWith(title)).Select(p => p.Title).ToListAsync();
+                return result;
+            }
+
+            return new List<string> { };
+        }
+
     }
 }
 

@@ -12,13 +12,27 @@
     font-weight: 600;
 }
 
+.dropdown-toggle::after {
+    display: none; 
+}
+
+.filter-icon{
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
+}
+
+.btn-group.show .filter-icon {
+    transform: rotate(-180deg);
+}
 
 .dropdown-menu.show {
   animation: fadeInDown 0.3s ease-out forwards;
+  width: 100%;
 }
 
 .dropdown-menu {
   animation: fadeOut 0.3s ease-in forwards;
+  width: 100%;
 }
 
 .menu-item{
@@ -47,6 +61,33 @@
 .btn-group.active{
   width: 100%;
 }
+
+
+
+.btn-group button i{
+  margin-left: 5px;
+}
+
+.btn-group button img{
+  margin-right: 5px;
+}
+
+.btn-group.active button{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-content{
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.active .btn {
+  width: 100%;
+}
+
 
 
 @keyframes fadeInDown {
