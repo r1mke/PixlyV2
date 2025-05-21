@@ -221,5 +221,39 @@ namespace Pixly.API.Controllers
 
             return Ok(ApiResponse<AuthResponse>.SuccessResponse(result, "2FA verification successful"));
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<ApiResponse<AuthResponse>>> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refresh_token"];
+
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized(ApiResponse<AuthResponse>.ErrorResponse(
+                    "No refresh token found", System.Net.HttpStatusCode.Unauthorized));
+            }
+
+            string token = null;
+            var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            {
+                token = authHeader.Substring("Bearer ".Length).Trim();
+            }
+
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var request = new RefreshTokenRequest
+            {
+                Token = token,
+                RefreshToken = refreshToken
+            };
+
+            var response = await _authService.RefreshTokenAsync(request, ipAddress);
+
+            CookieHelper.SetRefreshTokenCookie(HttpContext, response.RefreshToken);
+            response.RefreshToken = null;
+
+            return Ok(ApiResponse<AuthResponse>.SuccessResponse(response, "Token refreshed"));
+        }
+
     }
 }
