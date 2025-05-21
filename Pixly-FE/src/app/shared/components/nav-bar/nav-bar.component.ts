@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import {AuthState} from '../../../core/state/auth.state';
+import {AuthService} from '../../../core/services/auth.service';
+import {Subscription} from 'rxjs';
+import {User} from '../../../core/models/DTOs/User';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -18,6 +22,9 @@ export class NavBarComponent {
   router = inject(Router);
   authState = inject(AuthState);
   authService = inject(AuthService);
+
+  currentUser: User | null = null;
+  private subscription = new Subscription();
 
   ngOnInit() {
     this.subscription.add(
