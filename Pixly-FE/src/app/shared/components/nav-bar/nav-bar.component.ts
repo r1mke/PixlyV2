@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { OnInit } from '@angular/core';
+import { debounceTime, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs';
+import isEqual from 'lodash.isequal';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -11,13 +16,26 @@ import { Router } from '@angular/router';
   styleUrls: ['./nav-bar.component.css'],
 })
 
-export class NavBarComponent {
+export class NavBarComponent implements OnInit {
   menuOpen : boolean = false;
   isLoggedIn : boolean = true;
   searchService = inject(SearchService);
   router = inject(Router);
+  curerntSearchText: string = '';
+  private onDestroy$ = new Subject<void>();
 
-   search(event: KeyboardEvent) {
+  ngOnInit() {
+    this.searchService.getSearchSuggestionsTitleAsObservable().pipe(
+          takeUntil(this.onDestroy$),
+          distinctUntilChanged((prev, curr) => isEqual(prev, curr)),
+          debounceTime(400)
+          ).subscribe((title: string) => {
+            console.log("poziv");
+          this.searchService.getSearchSuggestions(title).subscribe();
+        });
+  }
+
+  search(event: KeyboardEvent) {
     if(event.key === 'Enter'){
       const searchText = (event.target as HTMLInputElement).value;
        if ((!searchText || searchText.trim().length === 0) && this.router.url.includes('/search')) {
@@ -60,6 +78,15 @@ export class NavBarComponent {
         });
       }
     }
+  }
+
+  getSearchSuggestions(event : KeyboardEvent) {
+    const inputElement = event.target as HTMLInputElement;
+    const searchText = inputElement.value;
+    if (searchText.trim().length > 0) {
+      console.log('Search text:', searchText);
+      this.searchService.searchSuggestionsTitle.next(searchText);
+    } 
   }
 
   goToHome() {

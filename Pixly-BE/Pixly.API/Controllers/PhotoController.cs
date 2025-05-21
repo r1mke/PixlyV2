@@ -24,6 +24,15 @@ namespace Pixly.API.Controllers
             return this.ApiSuccess(result);
         }
 
+        [HttpGet("search-suggestion/{title}")]
+        public async Task<ActionResult<ApiResponse<List<string>>>> GetSearchSuggestions(string title)
+        {
+            var result = await (_service as IPhotoService).SearchSuggestions(title);
+
+            if (result == null) return this.ApiNotFound<List<string>>($"Bad request");
+            return this.ApiSuccess(result);
+        }
+
         [HttpPost("{photoId}/like")]
         public async Task<ActionResult<ApiResponse<Models.DTOs.Like>>> LikePhoto(int photoId, string userId)
         {
