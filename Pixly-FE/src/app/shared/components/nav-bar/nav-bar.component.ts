@@ -3,9 +3,6 @@ import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
-import {TokenService} from '../../../core/services/token.service';
-import {AuthService} from '../../../core/services/auth.service';
-import {Subscription} from 'rxjs';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -19,25 +16,8 @@ export class NavBarComponent {
   isLoggedIn : boolean = false;
   searchService = inject(SearchService);
   router = inject(Router);
-  tokenService = inject(TokenService);
-  authService = inject(AuthService);
 
-  private tokenSubscription?: Subscription;
-  ngOnInit() {
-    // Prati stanje tokena
-    this.tokenSubscription = this.tokenService.token$.subscribe(token => {
-      this.isLoggedIn = !!token;
-    });
 
-    // Inicijalno stanje
-    this.isLoggedIn = this.tokenService.hasToken();
-  }
-
-  ngOnDestroy() {
-    if (this.tokenSubscription) {
-      this.tokenSubscription.unsubscribe();
-    }
-  }
 
    search(event: KeyboardEvent) {
     if(event.key === 'Enter'){

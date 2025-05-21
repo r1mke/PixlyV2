@@ -14,6 +14,10 @@ export const errorInterceptorFn: HttpInterceptorFn = (req, next) => {
       let errorMessage = 'An error occurred';
 
       if (error) {
+        if (error.error && error.error.success === true && error.error.token) {
+          return throwError(() => error);
+        }
+
         switch (error.status) {
           case 400:
             if (error.error?.errors?.length) {
@@ -27,7 +31,6 @@ export const errorInterceptorFn: HttpInterceptorFn = (req, next) => {
 
           case 401:
             errorMessage = error.error?.message || 'Unauthorized access';
-            //router.navigateByUrl('/auth/login');
             break;
 
           case 403:

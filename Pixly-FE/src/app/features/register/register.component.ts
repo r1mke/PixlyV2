@@ -101,7 +101,6 @@ export class RegisterComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          // Error is handled globally in the interceptor
         },
         complete: () => {
           this.isLoading = false;

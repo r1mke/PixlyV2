@@ -215,8 +215,7 @@ namespace Pixly.Services.Services
                 userId, token.RevokeReason);
         }
 
-        public async Task<AuthResponse> RotateRefreshTokenAsync(
-            string jwtToken, string refreshToken, string userId, string ipAddress = null)
+        public async Task<AuthResponse> RotateRefreshTokenAsync(string jwtToken, string refreshToken, string userId, string ipAddress = null)
         {
             var oldToken = await _context.RefreshTokens
                 .SingleOrDefaultAsync(rt => rt.Token == refreshToken && rt.UserId == userId);
@@ -267,63 +266,52 @@ namespace Pixly.Services.Services
 
         public async Task<User> ValidateRefreshTokenAsync(string token, string refreshToken, string ipAddress = null)
         {
-            // Preskoči validaciju JWT tokena, fokusiraj se samo na refresh token
             var refreshTokenEntity = await _context.RefreshTokens
-                .FirstOrDefaultAsync(rt => rt.Token == refreshToken && rt.RevokedAt == null);
+                .Include(rt => rt.User)
+                .SingleOrDefaultAsync(rt => rt.Token == refreshToken);
 
             if (refreshTokenEntity == null)
             {
-                _logger.LogWarning("Refresh token not found or has been revoked");
+                _logger.LogWarning("Refresh token not found");
                 throw new AuthenticationException("Invalid refresh token.");
             }
 
-            // Izvuci userId iz refresh tokena
-            string userId = refreshTokenEntity.UserId;
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning("User ID not found in refresh token");
-                throw new AuthenticationException("Invalid refresh token: missing user ID.");
-            }
-
-            // Nađi korisnika
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = refreshTokenEntity.User;
             if (user == null)
             {
-                _logger.LogWarning($"User with ID {userId} not found during refresh token validation");
+                _logger.LogWarning("User not found for refresh token");
                 throw new AuthenticationException("User not found.");
             }
 
-            // Provjeri je li token istekao
             if (refreshTokenEntity.IsExpired)
             {
-                _logger.LogWarning($"Refresh token has expired for user {userId}");
+                _logger.LogWarning($"Refresh token has expired for user {user.Id}");
                 throw new AuthenticationException("Refresh token has expired.");
             }
 
-            // Provjeri je li token opozvan
             if (refreshTokenEntity.RevokedAt != null)
             {
                 if (_refreshTokenSettings.DetectTokenReuse && refreshTokenEntity.ReplacedByToken != null)
                 {
                     _logger.LogWarning("SECURITY ALERT: Detected refresh token reuse! Token: {Token}, User: {UserId}",
-                        refreshToken, userId);
-                    await RevokeAllRefreshTokensAsync(userId, ipAddress, "Token reuse detected");
+                        refreshToken, user.Id);
+
+                    await RevokeAllRefreshTokensAsync(user.Id, ipAddress, "Token reuse detected");
+
                     throw new SecurityException("Invalid token use detected. For security reasons, all your sessions have been terminated.", null);
                 }
 
-                _logger.LogWarning("Refresh token has been revoked for user {UserId}", userId);
+                _logger.LogWarning("Refresh token has been revoked for user {UserId}", user.Id);
                 throw new AuthenticationException("Refresh token has been revoked.");
             }
 
-            // Provjeri broj osvježavanja
             if (refreshTokenEntity.RefreshCount >= _refreshTokenSettings.MaxRefreshCount)
             {
-                await RevokeRefreshTokenAsync(refreshToken, userId, ipAddress, "Max refresh count exceeded");
+                await RevokeRefreshTokenAsync(refreshToken, user.Id, ipAddress, "Max refresh count exceeded");
                 throw new AuthenticationException("Maximum token refresh limit reached. Please log in again.");
             }
 
-            _logger.LogInformation($"Refresh token successfully validated for user {userId}");
+            _logger.LogInformation($"Refresh token successfully validated for user {user.Id}");
             return user;
         }
     }

@@ -29,7 +29,6 @@ namespace Pixly.Services.Helper
             };
 
             context.Response.Cookies.Append("refresh_token", refreshToken, cookieOptions);
-            Console.WriteLine("Cookie postavljen: refresh_token");
         }
     }
 }
