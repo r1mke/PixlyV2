@@ -2,10 +2,18 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideAnimations } from '@angular/platform-browser/animations'; // ✅ import this
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
+
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideClientHydration } from '@angular/platform-browser';
-import { errorInterceptorFn, jwtInterceptorFn } from './core/interceptors/interceptor-provider';
+import { errorInterceptorFn } from './core/interceptors/error.interceptor';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import {jwtInterceptorFn} from './core/interceptors/jwt.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,9 +21,19 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(),
     provideAnimations(),
+
     provideHttpClient(
       withFetch(),
-      withInterceptors([jwtInterceptorFn, errorInterceptorFn])
-    )
+      withInterceptors([
+        jwtInterceptorFn,
+        errorInterceptorFn,
+      ])
+    ),
+
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
   ]
 };

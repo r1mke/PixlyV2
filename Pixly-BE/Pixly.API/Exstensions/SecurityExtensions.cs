@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
+using Pixly.Services.Interfaces;
 using Pixly.Services.Settings;
 using System.Text;
 using System.Text.Json;
@@ -67,7 +68,7 @@ namespace Pixly.API.Exstensions
                 opts.Secret = secret;
                 opts.Issuer = issuer;
                 opts.Audience = audience;
-                opts.ExpirationInMinutes = 15;
+                opts.ExpirationInMinutes = 1;
                 opts.RefreshTokenExpirationInDays = 7;
             });
 
@@ -107,7 +108,7 @@ namespace Pixly.API.Exstensions
                 {
                     OnAuthenticationFailed = async context =>
                     {
-                        /// Check if JWT is expired
+                        // Check if JWT is expired
                         if (context.Exception is SecurityTokenExpiredException)
                         {
                             var httpContext = context.HttpContext;
@@ -116,43 +117,19 @@ namespace Pixly.API.Exstensions
                             if (string.IsNullOrEmpty(refreshToken))
                                 return;
 
-                            /*
                             try
                             {
-                                var expiredToken = httpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-                                if (string.IsNullOrEmpty(expiredToken))
-                                    return;
-
                                 var authService = httpContext.RequestServices.GetRequiredService<IAuthService>();
                                 var logger = httpContext.RequestServices.GetRequiredService<ILogger<JwtBearerEvents>>();
 
-                                logger.LogInformation("Trying to refresh expired token");
-
-                                var refreshRequest = new RefreshTokenRequest
-                                {
-                                    Token = expiredToken,
-                                    RefreshToken = refreshToken
-                                };
-
-                                var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString();
-                                var response = await authService.RefreshTokenAsync(refreshRequest, ipAddress);
-
-                                CookieHelper.SetRefreshTokenCookie(httpContext, response.RefreshToken);
-
-                                httpContext.Response.Headers.Add("X-New-Token", response.Token);
-
-                                httpContext.Items["TokenRefreshed"] = true;
-                                httpContext.Items["NewToken"] = response.Token;
-
-                                logger.LogInformation("Token refreshed");
+                                httpContext.Response.Headers.Add("X-Token-Expired", "true");
+                                logger.LogInformation("Token expired, notifying client");
                             }
-                            
                             catch (Exception ex)
                             {
                                 var logger = httpContext.RequestServices.GetRequiredService<ILogger<JwtBearerEvents>>();
-                                logger.LogWarning(ex, "Failed refreshing token");
+                                logger.LogWarning(ex, "Error handling expired token");
                             }
-                            */
                         }
                     },
                     OnChallenge = context =>
@@ -161,11 +138,14 @@ namespace Pixly.API.Exstensions
                         {
                             context.HandleResponse();
 
+                            var newToken = context.HttpContext.Items["NewToken"] as string;
+                            context.HttpContext.Response.Headers.Add("X-New-Token", newToken);
+
                             var response = new
                             {
                                 success = true,
-                                message = "Token refreshed",
-                                token = context.HttpContext.Items["NewToken"] as string
+                                message = "Token refreshed successfully",
+                                data = new { isAuthenticated = true }
                             };
 
                             context.HttpContext.Response.StatusCode = 200;
@@ -213,7 +193,7 @@ namespace Pixly.API.Exstensions
                         partitionKey: key,
                         factory: _ => new FixedWindowRateLimiterOptions
                         {
-                            PermitLimit = 5,
+                            PermitLimit = 100,
                             Window = TimeSpan.FromMinutes(5),
                             AutoReplenishment = true
                         });

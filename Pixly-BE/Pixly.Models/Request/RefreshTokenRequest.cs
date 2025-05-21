@@ -7,7 +7,7 @@ namespace Pixly.Models.Request
         [Required]
         public string Token { get; set; }
 
-        [Required]
-        public string RefreshToken { get; set; }
+        //[Required]
+        public string? RefreshToken { get; set; }
     }
 }

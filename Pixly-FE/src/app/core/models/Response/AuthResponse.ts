@@ -1,4 +1,4 @@
-export interface RegisterResponse {
+export interface AuthResponse {
   userId: string;
   email: string;
   requiresEmailConfirmation: boolean;

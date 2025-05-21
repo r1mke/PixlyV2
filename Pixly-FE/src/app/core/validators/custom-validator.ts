@@ -2,11 +2,7 @@
 import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export class CustomValidators {
-  /**
-   * Validator for password pattern matching
-   * @param regex The regular expression to test
-   * @param error The error object to return if validation fails
-   */
+
   static patternValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
@@ -22,9 +18,6 @@ export class CustomValidators {
     };
   }
 
-  /**
-   * Validator to check if password and confirm password match
-   */
   static passwordMatchValidator(formGroup: FormGroup): ValidationErrors | null {
     const password = formGroup.get('password');
     const confirmPassword = formGroup.get('confirmPassword');
@@ -33,7 +26,6 @@ export class CustomValidators {
       return null;
     }
 
-    // Check if both fields have values and if they match
     if (confirmPassword.value && password.value !== confirmPassword.value) {
       formGroup.setErrors({ NoPasswordMatch: true });
       return { NoPasswordMatch: true };
