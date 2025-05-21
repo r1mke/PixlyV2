@@ -1,0 +1,23 @@
+<div class="btn-group" dropdown [class.active]="options?.mode === 'Orientation' || options?.mode === 'Size' ? 'active' : ''">
+  <button 
+    id="button-animated" dropdownToggle type="button"   class="btn btn-primary dropdown-toggle"
+          aria-controls="dropdown-animated">
+    {{ options?.selectedOption }} <span class="caret"></span>
+  </button>
+  @if(options?.value) {
+  <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu dropdown-menu-right"
+      role="menu" aria-labelledby="button-animated">
+    
+        @for (option of options?.value; track $index) {
+          <li role="menuitem">
+            <a class="dropdown-item" href="#"
+             [class.active]="option === options?.selectedOption ? 'active' : ''"
+            (click)="selectTrending(option); $event.preventDefault()">{{ option }}</a>
+          </li>
+        }
+    
+    </ul>
+    }
+</div>
+
+

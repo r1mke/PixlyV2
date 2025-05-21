@@ -8,9 +8,11 @@ export class SearchService {
   searchObject = new BehaviorSubject<Partial<PhotoSearchRequest>>({
     sorting: 'Popular',
     title: null,
+    orientation: null,
+    size: null,
     pageNumber: 1,
     pageSize: 10,
-  })
+  });
 
   getSearchObject(): Partial<PhotoSearchRequest> {
     return this.searchObject.getValue();
@@ -22,6 +24,8 @@ export class SearchService {
 
   setSearchObject(searchObject: Partial<PhotoSearchRequest>) {
     console.log('Search object set:', searchObject);
+    if(searchObject.size?.includes('All')) searchObject.size = null;
+    if(searchObject.orientation?.includes('All')) searchObject.orientation = null;
     this.searchObject.next(searchObject);
   }
 
@@ -41,9 +45,27 @@ export class SearchService {
     });
   }
 
-  resetSearch() {
+  setOrientation(orientation: string) {
+    this.setSearchObject({
+      ...this.getSearchObject(),
+      orientation,
+      pageNumber: 1
+    });
+  }
+
+  setSize(size: string) {
+    this.setSearchObject({
+      ...this.getSearchObject(),
+      size,
+      pageNumber: 1
+    });
+  }
+
+   resetSearch() {
     this.setSearchObject({
       title: null,
+      orientation: null,
+      size: null,
       pageNumber: 1,
       pageSize: 10,
       sorting: 'Popular'

@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 
 export class NavBarComponent {
   menuOpen : boolean = false;
-  isLoggedIn : boolean = false;
+  isLoggedIn : boolean = true;
   searchService = inject(SearchService);
   router = inject(Router);
 
@@ -43,7 +43,7 @@ export class NavBarComponent {
       this.searchService.setSearchObject(searchObject);
 
       if (!this.router.url.includes('/search')) {
-        this.router.navigate(['/search']);
+        this.router.navigate(['/search', searchText]);
       }
     }
   }
