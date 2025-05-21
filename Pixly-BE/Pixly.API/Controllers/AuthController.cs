@@ -190,6 +190,17 @@ namespace Pixly.API.Controllers
 
             Response.Cookies.Delete("refresh_token");
 
+            Response.Cookies.Append("refresh_token", "", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/",
+                Expires = DateTime.UtcNow.AddDays(-1)
+            });
+
+            _logger.LogInformation("Deleted refresh token cookie during logout");
+
             return Ok(ApiResponse<bool>.SuccessResponse(result, "Logout successful"));
         }
 

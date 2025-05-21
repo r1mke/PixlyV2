@@ -2,12 +2,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RegisterRequest } from '../models/DTOs/Request/RegisterRequest';
-import { Observable, catchError, of, tap, map } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { ApiResponse } from '../models/Response/api-response';
 import { RegisterResponse } from '../models/Response/RegisterResponse';
-import { TokenService } from './token.service';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/DTOs/User';
+import { AuthState } from '../state/auth.state';
 
 interface LoginRequest {
   email: string;
@@ -22,7 +22,7 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private tokenService: TokenService
+    private authState: AuthState
   ) {}
 
   refreshToken(oldToken: string | null): Observable<ApiResponse<any>> {
@@ -33,8 +33,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         if (response.success && response.data?.token) {
-          this.tokenService.clearToken();
-          this.tokenService.setToken(response.data.token);
+          this.authState.setToken(response.data.token);
         }
       })
     );
@@ -43,7 +42,14 @@ export class AuthService {
   getCurrentUser(): Observable<ApiResponse<User>> {
     return this.http.get<ApiResponse<User>>(`${this.baseUrl}/current-user`, {
       withCredentials: true
-    });
+    }).pipe(
+      tap(response => {
+        if (response.success && response.data) {
+          // Use the public method instead of accessing the subject directly
+          this.authState.updateCurrentUser(response.data);
+        }
+      })
+    );
   }
 
   register(values: RegisterRequest): Observable<ApiResponse<RegisterResponse>> {
@@ -52,7 +58,8 @@ export class AuthService {
     }).pipe(
       tap(response => {
         if (response.success && response.data.token) {
-          this.tokenService.setToken(response.data.token);
+          this.authState.setToken(response.data.token);
+          this.authState.loadCurrentUser().subscribe();
         }
       })
     );
@@ -64,7 +71,8 @@ export class AuthService {
     }).pipe(
       tap(response => {
         if (response.success && response.data.token) {
-          this.tokenService.setToken(response.data.token);
+          this.authState.setToken(response.data.token);
+          this.authState.loadCurrentUser().subscribe();
         }
       })
     );
@@ -75,7 +83,7 @@ export class AuthService {
       withCredentials: true
     }).pipe(
       tap(() => {
-        this.tokenService.clearToken();
+        this.authState.clearToken();
       })
     );
   }
