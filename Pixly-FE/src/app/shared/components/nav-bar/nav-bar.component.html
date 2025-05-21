@@ -6,12 +6,21 @@
 
 
     <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
-      <input (keyup)="getSearchSuggestions($event)" [value]="searchService.getSearchObject().title" (keyup)="search($event)" type="text" placeholder="Search...">
+      <input
+       (keyup)="getSearchSuggestions($event)"
+       [value]="searchService.getSearchObject().title"
+       (keyup)="search($event)"
+       (focus)="onSearchFocus()" 
+       (blur)="onSearchBlur()"
+       type="text" placeholder="Search...">
       <i class="fas fa-search" (click)="searchByClick()"></i>
 
       <div class="search-bar-suggestions" *ngIf="searchService.searchSuggestions().length > 0">
-        <div class="search-bar-suggestion" *ngFor="let suggestion of searchService.searchSuggestions()">
-          <span>{{suggestion}}</span>
+        <div class="search-bar-suggestion"
+          *ngFor="let suggestion of searchService.searchSuggestions()"
+          (click)="useSuggestion(suggestion); $event.stopPropagation()"
+          (mousedown)="$event.preventDefault()">
+           <span [innerHTML]="highlightMatches(suggestion, currentSearchText)"></span>
           <i class="fa-solid fa-arrow-up fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>
         </div>
       </div>
