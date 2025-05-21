@@ -1,11 +1,13 @@
 import {Component, EventEmitter, Input, Output, Self} from '@angular/core';
 import {FormControl, NgControl, ReactiveFormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-password-input',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule
   ],
   templateUrl: './password-input.component.html',
   styleUrl: './password-input.component.css'
