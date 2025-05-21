@@ -4,15 +4,15 @@
       <div *ngFor="let photo of getColumnPhotos(0); trackBy: trackByPhotoId" class="photo-item" [routerLink]="['/photo', photo.slug]">
         <div class="photo-wrapper">
           <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
-          
+
           <!-- Gornji lijevi ugao - korisnik -->
           <div class="photo-user" (click)="$event.stopPropagation()">
             <img src="assets/image/avatar.png"
-                class="user-avatar" 
+                class="user-avatar"
                 alt="User avatar" />
-            <span class="user-name">{{ photo.user?.username || 'Unknown' }}</span>
+            <span class="user-name">{{ photo.user?.userName || 'Unknown' }}</span>
           </div>
-          
+
           <!-- Gornji desni ugao - akcije -->
           <div class="photo-actions" (click)="$event.stopPropagation()">
             <button class="action-btn like-btn" >
@@ -22,25 +22,25 @@
               <i class="fas fa-bookmark"></i>
             </button>
           </div>
-          
+
         </div>
       </div>
     </div>
-    
+
     <!-- Druga kolona -->
     <div class="masonry-column">
       <div *ngFor="let photo of getColumnPhotos(1)" class="photo-item" [routerLink]="['/photo', photo.slug]">
         <div class="photo-wrapper">
           <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
-          
+
           <!-- Gornji lijevi ugao - korisnik -->
           <div class="photo-user" (click)="$event.stopPropagation()">
-            <img src="assets/image/avatar.png" 
-                class="user-avatar" 
+            <img src="assets/image/avatar.png"
+                class="user-avatar"
                 alt="User avatar" />
-            <span class="user-name">{{ photo.user?.username || 'Unknown' }}</span>
+            <span class="user-name">{{ photo.user?.userName || 'Unknown' }}</span>
           </div>
-          
+
           <!-- Gornji desni ugao - akcije -->
           <div class="photo-actions" (click)="$event.stopPropagation()">
             <button class="action-btn like-btn">
@@ -50,25 +50,25 @@
               <i class="fas fa-bookmark"></i>
             </button>
           </div>
-          
+
         </div>
       </div>
     </div>
-    
+
     <!-- Treća kolona -->
     <div class="masonry-column">
       <div *ngFor="let photo of getColumnPhotos(2)" class="photo-item" [routerLink]="['/photo', photo.slug]">
         <div class="photo-wrapper">
           <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
-          
+
           <!-- Gornji lijevi ugao - korisnik -->
           <div class="photo-user" (click)="$event.stopPropagation()">
             <img src="assets/image/avatar.png"
-                class="user-avatar" 
+                class="user-avatar"
                 alt="User avatar" />
-            <span class="user-name">{{ photo.user?.username || 'Unknown' }}</span>
+            <span class="user-name">{{ photo.user?.userName || 'Unknown' }}</span>
           </div>
-          
+
           <!-- Gornji desni ugao - akcije -->
           <div class="photo-actions" (click)="$event.stopPropagation()">
             <button class="action-btn like-btn" >
@@ -78,26 +78,26 @@
               <i class="fas fa-bookmark"></i>
             </button>
           </div>
-          
+
         </div>
       </div>
     </div>
   </div>
-  
+
   <!-- Mobile layout s jednom kolonom -->
   <div class="mobile-columns" *ngIf="photoService.photos().length > 0">
     <div *ngFor="let photo of photoService.photos()" class="photo-item" [routerLink]="['/photo', photo.slug]">
       <div class="photo-wrapper">
         <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
-        
+
         <!-- Gornji lijevi kut - korisnik -->
         <div class="photo-user" (click)="$event.stopPropagation()">
-          <img src="assets/image/avatar.png" 
-              class="user-avatar" 
+          <img src="assets/image/avatar.png"
+              class="user-avatar"
               alt="User avatar" />
-          <span class="user-name">{{ photo.user?.username || 'Unknown' }}</span>
+          <span class="user-name">{{ photo.user?.userName || 'Unknown' }}</span>
         </div>
-        
+
         <!-- Gornji desni ugao - akcije -->
         <div class="photo-actions" (click)="$event.stopPropagation()">
           <button class="action-btn like-btn" >
@@ -107,20 +107,20 @@
             <i class="fas fa-bookmark"></i>
           </button>
         </div>
-      
+
       </div>
     </div>
   </div>
-  
+
   <!-- Sentinel element za infinite scroll -->
   <div #sentinel class="sentinel"></div>
-  
+
   <!-- Loading indikator -->
   <div class="loading-container" *ngIf="photoService.isLoading()">
     <div class="spinner"></div>
     <p>Učitavanje...</p>
   </div>
-  
+
   <!-- Empty state -->
   <div class="empty-state" *ngIf="photoService.photos().length === 0 && !photoService.isLoading()">
     <p>{{ emptyStateMessage }}</p>

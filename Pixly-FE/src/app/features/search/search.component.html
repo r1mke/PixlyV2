@@ -1,0 +1,35 @@
+<app-nav-bar></app-nav-bar>
+<div class="container">
+    <h4>"{{searchService.searchObject.getValue().title}}" photos</h4>
+    <div class="filter">
+        <div class="filter-basic">
+            <div class="filter-basic-left">
+                
+            </div>
+             <div class="filter-basic-right">
+                <div (click) = "toggleCollapse()">
+                    <app-dropdown
+                        [options]="moreFilters"
+                    ></app-dropdown>
+                </div>
+                <app-dropdown
+                     [options]="dropdownPopularity"
+                ></app-dropdown>
+            </div>
+        </div>
+        <div *ngIf="isCollapsed" @collapseAnimation class="filter-advance">
+            <app-dropdown 
+                     [options]="dropdownOrientation"
+            ></app-dropdown>
+            <app-dropdown
+                     [options]="dropdownSize"
+            ></app-dropdown>
+            <app-dropdown
+                     [options]="dropdownOrientation"
+            ></app-dropdown>
+        </div>
+    </div>
+</div>
+
+<app-gallery></app-gallery>
+

@@ -1,34 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import {NavBarComponent} from '../../shared/components/nav-bar/nav-bar.component';
 import { GalleryComponent } from "../../shared/components/gallery/gallery.component";
-import { PhotoSearchRequest } from '../../models/SearchRequest/PhotoSarchRequest';
 import { HeroComponent } from "../../shared/components/hero/hero.component";
-import { DropdownPopularityComponent } from "../../shared/components/dropdown-popularity/dropdown-popularity.component";
+import { DropdownComponent } from "../../shared/components/dropdown/dropdown.component";
+import { SearchService } from '../../core/services/search.service';
+import { PhotoService } from '../../core/services/photo.service';
+import { effect } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs';
+import { DropdownValue } from '../../core/models/Dropdown/DropdownValue';
+
 @Component({
   selector: 'app-home',
   imports: [
     NavBarComponent,
     GalleryComponent,
     HeroComponent,
-    DropdownPopularityComponent
+    DropdownComponent
 ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   standalone: true
 })
-export class HomeComponent {
-  options: string[] = ["Popular", "New"];
-   searchRequest : Partial<PhotoSearchRequest> = {
-    pageNumber: 1,
-    pageSize: 10
+export class HomeComponent{
+  dropdownPopularity : DropdownValue = {
+    mode: 'Popularity',
+    value : ["Popular", "New"],
+    selectedOption: "Popular"
   };
+  searchService = inject(SearchService);
+  photoService = inject(PhotoService);
+  //private ngOnDestroy$ = new Subject<void>();
 
-  onTrendingSelected(sorting: string) {
-    this.searchRequest = {
-      ...this.searchRequest,
-      sorting: sorting
-    }
-    console.log("updating search request", this.searchRequest);
+  ngOnInit() {
+    this.searchService.resetSearch();
   }
-
 }

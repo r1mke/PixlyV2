@@ -1,12 +1,13 @@
 <div class="container">
   <nav>
-    <div class="logo">
-      <img src="assets/image/logo.png" height="50px" width="50px">
+    <div class="logo" (click)="goToHome()">
+        <img src="assets/image/logo.png" height="50px" width="50px">
     </div>
 
+
     <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
-      <input type="text" placeholder="Search...">
-      <i class="fas fa-search"></i>
+      <input [value]="searchService.getSearchObject().title" (keyup)="search($event)" type="text" placeholder="Search...">
+      <i class="fas fa-search" (click)="searchByClick()"></i>
     </div>
 
     <div [ngClass]="isLoggedIn ? 'menu menu-logged' : 'menu'">
@@ -30,7 +31,7 @@
         <i class="fa-regular fa-bell fa-lg"></i>
       </div>
 
-      <div *ngIf="!isLoggedIn">
+      <div *ngIf="isLoggedIn === false">
         <button>Join</button>
       </div>
 

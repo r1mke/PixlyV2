@@ -1,14 +1,18 @@
 import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
-import { PhotoBasic } from '../../../models/DTOs/PhotoBasic';
-import { PhotoService } from '../../../services/photoService/photo.service';
+import { PhotoBasic } from '../../../core/models/DTOs/PhotoBasic';
+import { PhotoService } from '../../../core/services/photo.service';
 import { OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { SimpleChanges } from '@angular/core';
-import { PhotoSearchRequest } from '../../../models/SearchRequest/PhotoSarchRequest';
+import { PhotoSearchRequest } from '../../../core/models/SearchRequest/PhotoSarchRequest';
 import { RouterModule } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { Subject } from 'rxjs';
+import { SearchService } from '../../../core/services/search.service';
+import { distinctUntilChanged } from 'rxjs';
+import isEqual from 'lodash.isequal';
+
 @Component({
   selector: 'app-gallery',
   standalone: true,
@@ -16,50 +20,40 @@ import { Subject } from 'rxjs';
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.css'
 })
-export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy{
-  @Input() mode: 'home' | 'search' | 'profile' | 'liked' | 'saved' = 'home';
-  @Input() photoSearchRequest!: Partial<PhotoSearchRequest>;
-  private _scrollHandler: (() => void) | null = null;
+export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
   @ViewChild('sentinel') sentinel!: ElementRef;
-  private destroy$ = new Subject<void>();
+  private onDestroy$ = new Subject<void>();
+  private _scrollHandler: (() => void) | null = null;
   private intersectionObserver?: IntersectionObserver;
-  private subscription?: Subscription;
-
-  constructor(public photoService: PhotoService) {}
-
+  searchService = inject(SearchService);
+  photoService = inject(PhotoService);
+  
   ngOnInit(): void {
-    this.loadPhotos();
-  }
-
-   ngOnChanges(changes: SimpleChanges): void {
-    if ((changes['photoSearchRequest'] && !changes['photoSearchRequest'].firstChange)
-    ) {
-      console.log('Search request changed:');
-      this.loadPhotos();
-    }
+    this.searchService.getSearchObjectAsObservable().pipe(
+      takeUntil(this.onDestroy$),
+      distinctUntilChanged((prev, curr) => isEqual(prev, curr))
+      ).subscribe((searchObject: Partial<PhotoSearchRequest>) => {
+      this.loadPhotos(searchObject);
+    });
   }
 
   ngAfterViewInit(): void {
     this.setupIntersectionObserver();
   }
 
-  loadPhotos(): void {
-  this.photoService.loadPhotosForContext({
-    mode: this.mode,
-    searchRequest: this.photoSearchRequest
-  })
-  .pipe(takeUntil(this.destroy$))
-  .subscribe();
-}
+  loadPhotos(searchObject: Partial<PhotoSearchRequest>): void {
+    this.photoService.getPhotos(searchObject).pipe(takeUntil(this.onDestroy$)).subscribe();
+  }
+
   loadMore(): void {
     if (this.photoService.isLoading()) return;
-
-    this.subscription = this.photoService.loadMorePhotos().subscribe();
+    this.photoService.loadMorePhotos().pipe(takeUntil(this.onDestroy$)).subscribe();
   }
 
   trackByPhotoId(index: number, photo: PhotoBasic): string {
-  return photo.slug;   }
+    return photo.slug;
+  }
 
   setupIntersectionObserver(): void {
     if (!this.sentinel || !('IntersectionObserver' in window)) {
@@ -69,7 +63,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
 
     if (this.intersectionObserver) {
-    this.intersectionObserver.disconnect();
+      this.intersectionObserver.disconnect();
     }
 
     this.intersectionObserver = new IntersectionObserver((entries) => {
@@ -78,7 +72,7 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
     }, {
       root: null,
-      rootMargin: '200px',
+      rootMargin: '30px',
       threshold: 0
     });
 
@@ -86,23 +80,16 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   setupScrollListener(): void {
-  console.log('Setting up scroll listener as fallback');
-
-  const handleScroll = () => {
+    const handleScroll = () => {
     if (this.photoService.isLoading()) return;
-
     const scrollPosition = window.scrollY + window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
-
     if (documentHeight - scrollPosition < 200) {
-      console.log('Loading more photos from scroll');
       this.loadMore();
     }
-  };
-  window.addEventListener('scroll', handleScroll);
-
-
-  this._scrollHandler = handleScroll;
+    };
+    window.addEventListener('scroll', handleScroll);
+    this._scrollHandler = handleScroll;
   }
 
   getColumnClass(photo: PhotoBasic): string {
@@ -119,23 +106,22 @@ export class GalleryComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   getColumnPhotos(columnIndex: number): PhotoBasic[] {
-  return this.photoService.photos()
-    .filter((_, index) => index % 3 === columnIndex);
+    return this.photoService.photos()
+      .filter((_, index) => index % 3 === columnIndex);
   }
 
  ngOnDestroy(): void {
-  if (this.subscription) {
-    this.subscription.unsubscribe();
-  }
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
 
-  if (this.intersectionObserver) {
-    this.intersectionObserver.disconnect();
-  }
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
 
-  if (this._scrollHandler) {
-    window.removeEventListener('scroll', this._scrollHandler);
+    if (this._scrollHandler) {
+      window.removeEventListener('scroll', this._scrollHandler);
+    }
   }
-}
 
 }
 
