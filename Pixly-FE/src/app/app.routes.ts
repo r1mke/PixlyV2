@@ -6,6 +6,7 @@ import { SearchGuard } from './core/guards/search.guard';
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   {path: 'profile', component: ProfileComponent}, 
+  //{path: 'register', component: RegisterComponent},
   { path: 'search/:title', component: SearchComponent, canActivate: [SearchGuard] }, 
   {path: '**', redirectTo: ''} 
 ];
