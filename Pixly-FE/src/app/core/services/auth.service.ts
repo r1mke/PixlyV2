@@ -77,6 +77,7 @@ export class AuthService {
   }
 
   logout(): Observable<ApiResponse<any>> {
+    this.authState.loadCurrentUser().subscribe();
     return this.http.post<ApiResponse<any>>(`${this.baseUrl}/logout`, {}, {
       withCredentials: true
     }).pipe(
