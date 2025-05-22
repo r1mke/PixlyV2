@@ -89,6 +89,4 @@ namespace Pixly.Services.Exceptions
         {
         }
     }
-
-
 }

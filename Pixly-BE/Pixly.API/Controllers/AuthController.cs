@@ -42,7 +42,7 @@ namespace Pixly.API.Controllers
 
         [EnableRateLimiting("auth-email")]
         [HttpPost("register")]
-        public async Task<ActionResult<ApiResponse<RegisterResponse>>> Register([FromBody] RegisterRequest request)
+        public async Task<ActionResult<ApiResponse<AuthResponse>>> Register([FromBody] RegisterRequest request)
         {
             var result = await _authService.RegisterAsync(request);
 
@@ -61,8 +61,8 @@ namespace Pixly.API.Controllers
             CookieHelper.SetRefreshTokenCookie(HttpContext, loginResult.RefreshToken);
             loginResult.RefreshToken = null;
 
-            return Ok(ApiResponse<RegisterResponse>.SuccessResponse(
-                new RegisterResponse
+            return Ok(ApiResponse<AuthResponse>.SuccessResponse(
+                new AuthResponse
                 {
                     UserId = result.User.Id,
                     Email = result.User.Email,
@@ -164,7 +164,7 @@ namespace Pixly.API.Controllers
         }
 
         [Authorize]
-        [EnableRateLimiting("email-only")]
+        //[EnableRateLimiting("email-only")]
         [HttpGet("current-user")]
         public async Task<ActionResult<ApiResponse<CurrentUserResponse>>> GetCurrentUser()
         {
@@ -188,7 +188,9 @@ namespace Pixly.API.Controllers
             var refreshToken = Request.Cookies["refresh_token"];
             var result = await _authService.LogoutAsync(GetUserId(), refreshToken);
 
-            Response.Cookies.Delete("refresh_token");
+            CookieHelper.DeleteRefreshTokenCookie(HttpContext);
+
+            _logger.LogInformation("Deleted refresh token cookie during logout");
 
             return Ok(ApiResponse<bool>.SuccessResponse(result, "Logout successful"));
         }

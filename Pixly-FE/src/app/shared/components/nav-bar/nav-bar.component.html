@@ -1,20 +1,35 @@
 <div class="container">
   <nav>
-    <div class="logo" routerLink="/">
-      <a href="/">
+    <div class="logo" (click)="goToHome()">
         <img src="assets/image/logo.png" height="50px" width="50px">
-      </a>
     </div>
 
-
     <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
-      <input [value]="searchService.getSearchObject().title" (keyup)="search($event)" type="text" placeholder="Search...">
+      <input
+       [(ngModel)]="currentSearchText"
+       (keyup)="getSearchSuggestions($event)"
+       [value]="searchService.getSearchObject().title"
+       (keyup)="search($event)"
+       (focus)="searchFocused($event)"
+       (blur)="searchBlured($event)"
+       type="text" placeholder="Search...">
       <i class="fas fa-search" (click)="searchByClick()"></i>
+
+      <div class="search-bar-suggestions"
+      [class.visible]="isSuggesionsVisible"
+       *ngIf="searchService.searchSuggestions().length > 0">
+        <div class="search-bar-suggestion"
+          *ngFor="let suggestion of searchService.searchSuggestions()"
+          (click)="useSuggestion(suggestion); $event.stopPropagation()"
+          (mousedown)="$event.preventDefault()">
+           <span [innerHTML]="highlightMatches(suggestion)"></span>
+          <i class="fa-solid fa-arrow-up fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>
+        </div>
+      </div>
     </div>
 
     <div [ngClass]="isLoggedIn ? 'menu menu-logged' : 'menu'">
-
-      <div >
+      <div>
         <div class="dropdown hover-dropdown">
           <div class="custom-dropdown-btn">
             Explore <i class="fa-solid fa-angle-down ms-1"></i>
@@ -33,25 +48,39 @@
         <i class="fa-regular fa-bell fa-lg"></i>
       </div>
 
-      <div *ngIf="isLoggedIn === false">
+      <!-- User section when not logged in -->
+      <div *ngIf="!isLoggedIn">
         <button [routerLink]="['/register']">Join</button>
       </div>
 
-      <div *ngIf="isLoggedIn">
-        <img src="assets/image/avatar.png" height="40px" width="70px" alt="">
+      <!-- User section when logged in -->
+      <div *ngIf="isLoggedIn" class="user-info dropdown hover-dropdown">
+        <div class="d-flex align-items-center">
+          <img
+            [src]="currentUser?.profilePictureUrl || 'assets/image/user_def.png'"
+            class="profile-img"
+            alt="Profile"
+          />
+          <i class="fa-solid fa-angle-down ms-1"></i>
+        </div>
+        <ul class="dropdown-menu custom-dropdown-menu">
+          <li><a class="dropdown-item"><i class="fas fa-user"></i> My Profile</a></li>
+          <li><a class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
       </div>
 
       <div *ngIf="isLoggedIn">
         <button>Upload</button>
       </div>
-
     </div>
 
     <div class="hamburger-icon" (click)="menuOpen = !menuOpen">
       <i class="fas"
-        [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"
-        [style.color]="menuOpen ? 'white' : 'black'"
-        style="font-size: 30px;">
+         [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"
+         [style.color]="menuOpen ? 'white' : 'black'"
+         style="font-size: 30px;">
       </i>
     </div>
 
@@ -61,6 +90,16 @@
         <a href="#">Leaderboard</a>
         <a href="#">Popular Searches</a>
         <a href="#">Pricing</a>
+        <ng-container *ngIf="isLoggedIn">
+          <hr class="bg-white">
+          <a href="#">My Profile</a>
+          <a href="#">Settings</a>
+          <a href="#" (click)="logout()">Logout</a>
+        </ng-container>
+        <ng-container *ngIf="!isLoggedIn">
+          <hr class="bg-white">
+          <a [routerLink]="['/register']">Join</a>
+        </ng-container>
       </div>
     </div>
   </nav>

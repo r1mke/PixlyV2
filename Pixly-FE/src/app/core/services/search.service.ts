@@ -1,21 +1,46 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { PhotoSearchRequest } from '../../core/models/SearchRequest/PhotoSarchRequest';
+import { List } from 'lodash';
+import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+import { tap } from 'rxjs';
+import { ApiResponse } from '../models/Response/api-response';
+
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
-  searchObject = signal<Partial<PhotoSearchRequest>>({
+  searchObject = new BehaviorSubject<Partial<PhotoSearchRequest>>({
+    sorting: 'Popular',
     title: null,
+    orientation: null,
+    size: null,
     pageNumber: 1,
-    pageSize: 5,
-  })
+    pageSize: 10,
+  });
 
+  searchSuggestionsTitle = new BehaviorSubject<string>('');
+  searchSuggestions = signal<string[]>([]);
+  private http = inject(HttpClient);
+  private apiUrl = "https://localhost:7136/api/photo";
   getSearchObject(): Partial<PhotoSearchRequest> {
-    return this.searchObject();
+    return this.searchObject.getValue();
+  }
+
+  getSearchObjectAsObservable() {
+    return this.searchObject.asObservable();
+  }
+
+  getSearchSuggestionsTitleAsObservable() {
+    return this.searchSuggestionsTitle.asObservable();
   }
 
   setSearchObject(searchObject: Partial<PhotoSearchRequest>) {
-    this.searchObject.set(searchObject);
+    console.log('Search object set:', searchObject);
+    if(searchObject.size?.includes('All')) searchObject.size = null;
+    if(searchObject.orientation?.includes('All')) searchObject.orientation = null;
+    this.searchObject.next(searchObject);
   }
 
   setTitle(title: string) {
@@ -34,12 +59,64 @@ export class SearchService {
     });
   }
 
-  resetSearch() {
+  setOrientation(orientation: string) {
     this.setSearchObject({
+      ...this.getSearchObject(),
+      orientation,
+      pageNumber: 1
+    });
+  }
+
+  setSize(size: string) {
+    this.setSearchObject({
+      ...this.getSearchObject(),
+      size,
+      pageNumber: 1
+    });
+  }
+
+   resetSearch() {
+    this.setSearchObject({
+      title: null,
+      orientation: null,
+      size: null,
       pageNumber: 1,
       pageSize: 10,
       sorting: 'Popular'
     });
   }
 
+  getSearchSuggestionsTitle(): string {
+    return this.searchSuggestionsTitle.getValue();
+  }
+
+  getSearchSuggestions(title : string) : Observable<ApiResponse<string[]>> {
+    if(!title) {
+      return EMPTY;
+    }
+    let params = new HttpParams();
+    params = params.set('title', title);
+    console.log("pozivam api");
+    return this.http.get<ApiResponse<string[]>>(`${this.apiUrl}/search-suggestion/${title}`).pipe(
+      tap({
+      next:
+        (response : ApiResponse<string[]>) => {
+        if(response.success && response.data) {
+          this.searchSuggestions.set(response.data);
+          console.log(response.data);
+        } else{
+          this.searchSuggestions.set([]);
+        }
+      }, error: (err) => {
+        console.log(err);
+        this.searchSuggestions.set([]);
+      }
+    })
+    );
+  }
 }
+      
+      
+
+    
+

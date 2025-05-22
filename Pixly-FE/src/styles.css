@@ -13,6 +13,12 @@
   font-size: 15px;
 }
 
+html {
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+}
+
 :root {
   --body:#000;
   --pixly-color:#02A388;

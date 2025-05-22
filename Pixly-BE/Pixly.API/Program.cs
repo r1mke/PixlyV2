@@ -14,6 +14,7 @@ builder.Services.AddControllers(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
 });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -21,18 +22,7 @@ builder.Services.AddDataServices(builder.Configuration);
 builder.Services.AddSecurityServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("MyAllowSpecificOrigins",
-                     policy =>
-                     {
-                         policy.WithOrigins("https://localhost:4200",
-                                           "http://localhost:4200")
-                                .AllowAnyHeader()
-                                .AllowAnyMethod()
-                                .AllowCredentials();
-                     });
-});
+
 
 var app = builder.Build();
 
@@ -45,11 +35,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseErrorHandling();
 app.UseRouting();
-app.UseCors("MyAllowSpecificOrigins");
+app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
 
+app.UseRateLimiter();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

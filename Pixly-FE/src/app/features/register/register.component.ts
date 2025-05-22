@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {ToastService} from '../../core/services/toast.service';
 import {CustomValidators} from '../../core/validators/custom-validator';
-import {RegisterRequest} from '../../core/models/DTOs/Request/RegisterRequest';
+import {RegisterRequest} from '../../core/models/Request/RegisterRequest';
 import {AuthService} from '../../core/services/auth.service';
 import {SubmitButtonComponent} from '../../shared/components/submit-button/submit-button.component';
 import {PasswordInputComponent} from '../../shared/components/password-input/password-input.component';
@@ -16,7 +16,8 @@ import {TextInputComponent} from '../../shared/components/text-input/text-input.
     SubmitButtonComponent,
     PasswordInputComponent,
     TextInputComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'

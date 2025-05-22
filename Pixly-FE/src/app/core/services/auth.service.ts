@@ -1,13 +1,12 @@
-// src/app/core/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RegisterRequest } from '../models/DTOs/Request/RegisterRequest';
-import { Observable, catchError, of, tap, map } from 'rxjs';
+import { RegisterRequest } from '../models/Request/RegisterRequest';
+import { Observable, tap } from 'rxjs';
 import { ApiResponse } from '../models/Response/api-response';
-import { RegisterResponse } from '../models/Response/RegisterResponse';
-import { TokenService } from './token.service';
+import { AuthResponse } from '../models/Response/AuthResponse';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/DTOs/User';
+import { AuthState } from '../state/auth.state';
 
 interface LoginRequest {
   email: string;
@@ -22,7 +21,7 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private tokenService: TokenService
+    private authState: AuthState
   ) {}
 
   refreshToken(oldToken: string | null): Observable<ApiResponse<any>> {
@@ -33,8 +32,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         if (response.success && response.data?.token) {
-          this.tokenService.clearToken();
-          this.tokenService.setToken(response.data.token);
+          this.authState.setToken(response.data.token);
         }
       })
     );
@@ -43,39 +41,48 @@ export class AuthService {
   getCurrentUser(): Observable<ApiResponse<User>> {
     return this.http.get<ApiResponse<User>>(`${this.baseUrl}/current-user`, {
       withCredentials: true
-    });
-  }
-
-  register(values: RegisterRequest): Observable<ApiResponse<RegisterResponse>> {
-    return this.http.post<ApiResponse<RegisterResponse>>(`${this.baseUrl}/register`, values, {
-      withCredentials: true
     }).pipe(
       tap(response => {
-        if (response.success && response.data.token) {
-          this.tokenService.setToken(response.data.token);
+        if (response.success && response.data) {
+          this.authState.updateCurrentUser(response.data);
         }
       })
     );
   }
 
-  login(email: string, password: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/login`, { email, password }, {
+  register(values: RegisterRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.baseUrl}/register`, values, {
       withCredentials: true
     }).pipe(
       tap(response => {
         if (response.success && response.data.token) {
-          this.tokenService.setToken(response.data.token);
+          this.authState.setToken(response.data.token);
+          this.authState.loadCurrentUser().subscribe();
+        }
+      })
+    );
+  }
+
+  login(values: LoginRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.baseUrl}/login`, values, {
+      withCredentials: true
+    }).pipe(
+      tap(response => {
+        if (response.success && response.data.token) {
+          this.authState.setToken(response.data.token);
+          this.authState.loadCurrentUser().subscribe();
         }
       })
     );
   }
 
   logout(): Observable<ApiResponse<any>> {
+    this.authState.loadCurrentUser().subscribe();
     return this.http.post<ApiResponse<any>>(`${this.baseUrl}/logout`, {}, {
       withCredentials: true
     }).pipe(
       tap(() => {
-        this.tokenService.clearToken();
+        this.authState.clearToken();
       })
     );
   }

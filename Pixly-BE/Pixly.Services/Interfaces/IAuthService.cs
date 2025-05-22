@@ -6,7 +6,7 @@ namespace Pixly.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<(User User, RegisterResponse Response)> RegisterAsync(RegisterRequest request);
+        Task<(User User, AuthResponse Response)> RegisterAsync(RegisterRequest request);
         Task<AuthResponse> RefreshTokenAsync(RefreshTokenRequest request, string ipAddress = null);
         Task<AuthResponse> LoginAsync(LoginRequest request, string ipAddress = null);
         Task<bool> LogoutAsync(string userId, string refreshToken = null);
