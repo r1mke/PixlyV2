@@ -24,6 +24,15 @@ export class AuthService {
     private authState: AuthState
   ) {}
 
+  // Helper observable-e
+  get isLoggedIn$() {
+    return this.authState.isLoggedIn$;
+  }
+
+  get currentUser$() {
+    return this.authState.currentUser$;
+  }
+
   refreshToken(oldToken: string | null): Observable<ApiResponse<any>> {
     const requestBody = oldToken ? { token: oldToken } : {};
 
@@ -77,7 +86,6 @@ export class AuthService {
   }
 
   logout(): Observable<ApiResponse<any>> {
-    this.authState.loadCurrentUser().subscribe();
     return this.http.post<ApiResponse<any>>(`${this.baseUrl}/logout`, {}, {
       withCredentials: true
     }).pipe(

@@ -1,34 +1,34 @@
 <div class="container">
   <nav>
     <div class="logo" (click)="goToHome()">
-        <img src="assets/image/logo.png" height="50px" width="50px">
+      <img src="assets/image/logo.png" height="50px" width="50px">
     </div>
 
-    <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
+    <div class="search-bar" [ngClass]="(isLoggedIn$ | async) ? 'search-bar search-bar-logged' : 'search-bar'">
       <input
-       [(ngModel)]="currentSearchText"
-       (keyup)="getSearchSuggestions($event)"
-       [value]="searchService.getSearchObject().title"
-       (keyup)="search($event)"
-       (focus)="searchFocused($event)"
-       (blur)="searchBlured($event)"
-       type="text" placeholder="Search...">
+        [(ngModel)]="currentSearchText"
+        (keyup)="getSearchSuggestions($event)"
+        [value]="searchService.getSearchObject().title"
+        (keyup)="search($event)"
+        (focus)="searchFocused($event)"
+        (blur)="searchBlured($event)"
+        type="text" placeholder="Search...">
       <i class="fas fa-search" (click)="searchByClick()"></i>
 
       <div class="search-bar-suggestions"
-      [class.visible]="isSuggesionsVisible"
-       *ngIf="searchService.searchSuggestions().length > 0">
+           [class.visible]="isSuggesionsVisible"
+           *ngIf="searchService.searchSuggestions().length > 0">
         <div class="search-bar-suggestion"
-          *ngFor="let suggestion of searchService.searchSuggestions()"
-          (click)="useSuggestion(suggestion); $event.stopPropagation()"
-          (mousedown)="$event.preventDefault()">
-           <span [innerHTML]="highlightMatches(suggestion)"></span>
+             *ngFor="let suggestion of searchService.searchSuggestions()"
+             (click)="useSuggestion(suggestion); $event.stopPropagation()"
+             (mousedown)="$event.preventDefault()">
+          <span [innerHTML]="highlightMatches(suggestion)"></span>
           <i class="fa-solid fa-arrow-up fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>
         </div>
       </div>
     </div>
 
-    <div [ngClass]="isLoggedIn ? 'menu menu-logged' : 'menu'">
+    <div [ngClass]="(isLoggedIn$ | async) ? 'menu menu-logged' : 'menu'">
       <div>
         <div class="dropdown hover-dropdown">
           <div class="custom-dropdown-btn">
@@ -44,20 +44,20 @@
         </div>
       </div>
 
-      <div class="notification" *ngIf="isLoggedIn">
+      <div class="notification" *ngIf="isLoggedIn$ | async">
         <i class="fa-regular fa-bell fa-lg"></i>
       </div>
 
       <!-- User section when not logged in -->
-      <div *ngIf="!isLoggedIn">
+      <div *ngIf="!(isLoggedIn$ | async)">
         <button [routerLink]="['/register']">Join</button>
       </div>
 
       <!-- User section when logged in -->
-      <div *ngIf="isLoggedIn" class="user-info dropdown hover-dropdown">
+      <div *ngIf="isLoggedIn$ | async" class="user-info dropdown hover-dropdown">
         <div class="d-flex align-items-center">
           <img
-            [src]="currentUser?.profilePictureUrl || 'assets/image/user_def.png'"
+            [src]="(currentUser$ | async)?.profilePictureUrl || 'assets/image/user_def.png'"
             class="profile-img"
             alt="Profile"
           />
@@ -71,7 +71,7 @@
         </ul>
       </div>
 
-      <div *ngIf="isLoggedIn">
+      <div *ngIf="isLoggedIn$ | async">
         <button>Upload</button>
       </div>
     </div>
@@ -90,13 +90,13 @@
         <a href="#">Leaderboard</a>
         <a href="#">Popular Searches</a>
         <a href="#">Pricing</a>
-        <ng-container *ngIf="isLoggedIn">
+        <ng-container *ngIf="isLoggedIn$ | async">
           <hr class="bg-white">
           <a href="#">My Profile</a>
           <a href="#">Settings</a>
           <a href="#" (click)="logout()">Logout</a>
         </ng-container>
-        <ng-container *ngIf="!isLoggedIn">
+        <ng-container *ngIf="!(isLoggedIn$ | async)">
           <hr class="bg-white">
           <a [routerLink]="['/register']">Join</a>
         </ng-container>

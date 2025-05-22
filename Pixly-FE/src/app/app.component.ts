@@ -1,9 +1,10 @@
-// app.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { AuthService } from './core/services/auth.service';
-import { TokenService } from './core/services/token.service';
+import { AuthState } from './core/state/auth.state';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -12,43 +13,69 @@ import { TokenService } from './core/services/token.service';
   styleUrl: './app.component.css',
   standalone: true
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Pixly';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
-    private tokenService: TokenService,
+    private authState: AuthState,
     private router: Router
   ) {}
 
   ngOnInit() {
-    if (!this.tokenService.getToken()) {
-      this.tryRefreshToken();
+    this.initializeAuth();
+  }
+
+  private initializeAuth() {
+    const hasToken = this.authState.hasToken();
+    const hasUser = !!this.authState.currentUser;
+
+    if (hasToken && hasUser) {
+      return;
     }
-    else {
+
+    if (hasToken && !hasUser) {
       this.verifyTokenAndGetUser();
+      return;
+    }
+
+    if (!hasToken) {
+      this.tryRefreshToken();
+      return;
     }
   }
 
+  private verifyTokenAndGetUser() {
+    this.authService.getCurrentUser().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: user => {},
+      error: error => {
+        if (error.status === 401) {this.tryRefreshToken();}
+        else {}
+      }
+    });
+  }
+
   private tryRefreshToken() {
-    this.authService.refreshToken(null).subscribe({
+    this.authService.refreshToken(null).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: response => {
-        this.authService.getCurrentUser().subscribe({
+        this.authService.getCurrentUser().pipe(
+          takeUntil(this.destroy$)
+        ).subscribe({
           next: user => {},
+          error: error => {}
         });
       },
       error: error => {}
     });
   }
 
-  private verifyTokenAndGetUser() {
-    this.authService.getCurrentUser().subscribe({
-      next: user => {},
-      error: error => {
-        if (error.status === 401) {
-          this.tryRefreshToken();
-        }
-      }
-    });
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
