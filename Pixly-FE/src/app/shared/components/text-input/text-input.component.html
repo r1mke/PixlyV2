@@ -9,7 +9,7 @@
     [attr.maxlength]="maxLength"
     [id]="label"
   />
-  <div *ngIf="(control.touched || control.dirty) && (control.invalid || customError)" class="invalid-feedback d-block">
-    {{ errorMessage }}
+  <div *ngIf="(control.touched || control.dirty) && (control.invalid || customError)" class="invalid-feedback d-block" [innerHTML]="errorMessage">
   </div>
+
 </div>
