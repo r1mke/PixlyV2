@@ -2,10 +2,12 @@
     height: auto;
     text-align: center;
     position: relative;
+    max-height: 400px;
 }
 
 .hero-overlay{
     position: absolute;
+    max-height: 400px;
     top: 0;
     left: 0;
     right: 0;

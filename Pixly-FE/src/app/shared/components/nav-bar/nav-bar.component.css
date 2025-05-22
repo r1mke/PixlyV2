@@ -13,6 +13,7 @@ nav {
 .logo {
   display: flex;
   justify-content: flex-start;
+  z-index: 1200;
 }
 
 /* --------------------------------------
