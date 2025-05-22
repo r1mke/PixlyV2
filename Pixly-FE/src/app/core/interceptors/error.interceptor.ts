@@ -9,11 +9,23 @@ export const errorInterceptorFn: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const toastService = inject(ToastService);
 
+  const isInitialAuthRequest = req.url.includes('/refresh-token') ||
+    req.url.includes('/current-user');
+
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       let errorMessage = 'An error occurred';
+      let showToast = true;
 
-      if (error) {
+      if (error.status === 401 && isInitialAuthRequest) {
+        showToast = false;
+      }
+
+      if (error && showToast) {
+        if (error.error && error.error.success === true && error.error.token) {
+          return throwError(() => error);
+        }
+
         switch (error.status) {
           case 400:
             if (error.error?.errors?.length) {
@@ -27,7 +39,6 @@ export const errorInterceptorFn: HttpInterceptorFn = (req, next) => {
 
           case 401:
             errorMessage = error.error?.message || 'Unauthorized access';
-            //router.navigateByUrl('/auth/login');
             break;
 
           case 403:
@@ -47,8 +58,9 @@ export const errorInterceptorFn: HttpInterceptorFn = (req, next) => {
             break;
 
           case 500:
-            errorMessage = 'Server error. Please try again later';
+            errorMessage = error.error?.message || 'Server error. Please try again later';
             break;
+
 
           default:
             errorMessage = error.error?.message || 'An unexpected error occurred';
@@ -63,17 +75,5 @@ export const errorInterceptorFn: HttpInterceptorFn = (req, next) => {
   );
 };
 
-export const jwtInterceptorFn: HttpInterceptorFn = (req, next) => {
-  const tokenService = inject(TokenService);
-  const token = tokenService.getToken();
 
-  if (token) {
-    req = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-  }
 
-  return next(req);
-};

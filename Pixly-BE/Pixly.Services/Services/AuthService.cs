@@ -4,7 +4,6 @@ using Pixly.Models.Response;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
 using Pixly.Services.Interfaces;
-using System.Security.Authentication;
 
 namespace Pixly.Services.Services
 {
@@ -26,13 +25,13 @@ namespace Pixly.Services.Services
             _twoFactorService = twoFactorService;
         }
 
-        public async Task<(User, RegisterResponse)> RegisterAsync(RegisterRequest request)
+        public async Task<(User, AuthResponse)> RegisterAsync(RegisterRequest request)
         {
             _logger.LogInformation("Starting registration for email {Email}", request.Email);
 
             var user = await _userService.CreateUserAsync(request);
 
-            var response = new RegisterResponse
+            var response = new AuthResponse
             {
                 UserId = user.Id,
                 Email = user.Email,
@@ -46,10 +45,10 @@ namespace Pixly.Services.Services
         {
             try
             {
-                var user = await _tokenService.ValidateRefreshTokenAsync(request.Token, request.RefreshToken, ipAddress);
+                var user = await _tokenService.ValidateRefreshTokenAsync(null, request.RefreshToken, ipAddress);
 
                 var result = await _tokenService
-                    .RotateRefreshTokenAsync(request.Token, request.RefreshToken, user.Id, ipAddress);
+                    .RotateRefreshTokenAsync(null, request.RefreshToken, user.Id, ipAddress);
 
                 _logger.LogInformation("Token successfully refreshed for user {Email}", user.Email);
 
@@ -83,7 +82,7 @@ namespace Pixly.Services.Services
             if (!succeeded)
             {
                 _logger.LogWarning("Failed login attempt for email {Email} - invalid credentials", request.Email);
-                throw new AuthenticationException("Invalid email or password.");
+                throw new UnauthorizedException("Invalid email or password.");
             }
 
             if (requiresTwoFactor)

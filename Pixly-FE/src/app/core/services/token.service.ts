@@ -1,32 +1,31 @@
-import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenService {
-  private token: string | null = null;
   private tokenSubject = new BehaviorSubject<string | null>(null);
+  private readonly TOKEN_KEY = 'jwt_token';
+
+  constructor() {
+    const storedToken = sessionStorage.getItem(this.TOKEN_KEY);
+    if (storedToken) {
+      this.tokenSubject.next(storedToken);
+    }
+  }
 
   setToken(token: string): void {
-    this.token = token;
+    sessionStorage.setItem(this.TOKEN_KEY, token);
     this.tokenSubject.next(token);
   }
 
   getToken(): string | null {
-    return this.token;
-  }
-
-  get token$(): Observable<string | null> {
-    return this.tokenSubject.asObservable();
+    return sessionStorage.getItem(this.TOKEN_KEY);
   }
 
   clearToken(): void {
-    this.token = null;
+    sessionStorage.removeItem(this.TOKEN_KEY);
     this.tokenSubject.next(null);
-  }
-
-  hasToken(): boolean {
-    return !!this.token;
   }
 }

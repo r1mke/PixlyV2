@@ -215,8 +215,7 @@ namespace Pixly.Services.Services
                 userId, token.RevokeReason);
         }
 
-        public async Task<AuthResponse> RotateRefreshTokenAsync(
-            string jwtToken, string refreshToken, string userId, string ipAddress = null)
+        public async Task<AuthResponse> RotateRefreshTokenAsync(string jwtToken, string refreshToken, string userId, string ipAddress = null)
         {
             var oldToken = await _context.RefreshTokens
                 .SingleOrDefaultAsync(rt => rt.Token == refreshToken && rt.UserId == userId);
@@ -267,37 +266,27 @@ namespace Pixly.Services.Services
 
         public async Task<User> ValidateRefreshTokenAsync(string token, string refreshToken, string ipAddress = null)
         {
-            var principal = GetPrincipalFromExpiredToken(token);
-
-            var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                        principal.FindFirstValue(JwtRegisteredClaimNames.Sub);
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning("Invalid token: missing identifier claim");
-                throw new AuthenticationException("Invalid token: missing identifier claim.");
-            }
-
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                _logger.LogWarning($"User with ID {userId} not found during refresh token validation");
-                throw new AuthenticationException("User not found.");
-            }
-
             var refreshTokenEntity = await _context.RefreshTokens
-                .SingleOrDefaultAsync(rt => rt.Token == refreshToken && rt.UserId == user.Id);
+                .Include(rt => rt.User)
+                .SingleOrDefaultAsync(rt => rt.Token == refreshToken);
 
             if (refreshTokenEntity == null)
             {
-                _logger.LogWarning($"Refresh token not found for user {userId}");
-                throw new AuthenticationException("Invalid refresh token.");
+                _logger.LogWarning("Refresh token not found");
+                throw new UnauthorizedException("Invalid refresh token.");
+            }
+
+            var user = refreshTokenEntity.User;
+            if (user == null)
+            {
+                _logger.LogWarning("User not found for refresh token");
+                throw new UnauthorizedException("User not found.");
             }
 
             if (refreshTokenEntity.IsExpired)
             {
-                _logger.LogWarning($"Refresh token has expired for user {userId}");
-                throw new AuthenticationException("Refresh token has expired.");
+                _logger.LogWarning($"Refresh token has expired for user {user.Id}");
+                throw new UnauthorizedException("Refresh token has expired.");
             }
 
             if (refreshTokenEntity.RevokedAt != null)
@@ -305,24 +294,24 @@ namespace Pixly.Services.Services
                 if (_refreshTokenSettings.DetectTokenReuse && refreshTokenEntity.ReplacedByToken != null)
                 {
                     _logger.LogWarning("SECURITY ALERT: Detected refresh token reuse! Token: {Token}, User: {UserId}",
-                        refreshToken, userId);
+                        refreshToken, user.Id);
 
-                    await RevokeAllRefreshTokensAsync(userId, ipAddress, "Token reuse detected");
+                    await RevokeAllRefreshTokensAsync(user.Id, ipAddress, "Token reuse detected");
 
                     throw new SecurityException("Invalid token use detected. For security reasons, all your sessions have been terminated.", null);
                 }
 
-                _logger.LogWarning("Refresh token has been revoked for user {UserId}", userId);
+                _logger.LogWarning("Refresh token has been revoked for user {UserId}", user.Id);
                 throw new AuthenticationException("Refresh token has been revoked.");
             }
 
             if (refreshTokenEntity.RefreshCount >= _refreshTokenSettings.MaxRefreshCount)
             {
-                await RevokeRefreshTokenAsync(refreshToken, userId, ipAddress, "Max refresh count exceeded");
-                throw new AuthenticationException("Maximum token refresh limit reached. Please log in again.");
+                await RevokeRefreshTokenAsync(refreshToken, user.Id, ipAddress, "Max refresh count exceeded");
+                throw new UnauthorizedException("Maximum token refresh limit reached. Please log in again.");
             }
 
-            _logger.LogInformation($"Refresh token successfully validated for user {userId}");
+            _logger.LogInformation($"Refresh token successfully validated for user {user.Id}");
             return user;
         }
     }
