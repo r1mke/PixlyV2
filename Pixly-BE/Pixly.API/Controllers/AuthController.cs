@@ -164,7 +164,7 @@ namespace Pixly.API.Controllers
         }
 
         [Authorize]
-        [EnableRateLimiting("email-only")]
+        //[EnableRateLimiting("email-only")]
         [HttpGet("current-user")]
         public async Task<ActionResult<ApiResponse<CurrentUserResponse>>> GetCurrentUser()
         {

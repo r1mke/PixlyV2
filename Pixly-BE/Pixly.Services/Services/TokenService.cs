@@ -273,20 +273,20 @@ namespace Pixly.Services.Services
             if (refreshTokenEntity == null)
             {
                 _logger.LogWarning("Refresh token not found");
-                throw new AuthenticationException("Invalid refresh token.");
+                throw new UnauthorizedException("Invalid refresh token.");
             }
 
             var user = refreshTokenEntity.User;
             if (user == null)
             {
                 _logger.LogWarning("User not found for refresh token");
-                throw new AuthenticationException("User not found.");
+                throw new UnauthorizedException("User not found.");
             }
 
             if (refreshTokenEntity.IsExpired)
             {
                 _logger.LogWarning($"Refresh token has expired for user {user.Id}");
-                throw new AuthenticationException("Refresh token has expired.");
+                throw new UnauthorizedException("Refresh token has expired.");
             }
 
             if (refreshTokenEntity.RevokedAt != null)
@@ -308,7 +308,7 @@ namespace Pixly.Services.Services
             if (refreshTokenEntity.RefreshCount >= _refreshTokenSettings.MaxRefreshCount)
             {
                 await RevokeRefreshTokenAsync(refreshToken, user.Id, ipAddress, "Max refresh count exceeded");
-                throw new AuthenticationException("Maximum token refresh limit reached. Please log in again.");
+                throw new UnauthorizedException("Maximum token refresh limit reached. Please log in again.");
             }
 
             _logger.LogInformation($"Refresh token successfully validated for user {user.Id}");

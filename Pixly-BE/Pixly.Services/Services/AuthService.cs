@@ -4,7 +4,6 @@ using Pixly.Models.Response;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
 using Pixly.Services.Interfaces;
-using System.Security.Authentication;
 
 namespace Pixly.Services.Services
 {
@@ -83,7 +82,7 @@ namespace Pixly.Services.Services
             if (!succeeded)
             {
                 _logger.LogWarning("Failed login attempt for email {Email} - invalid credentials", request.Email);
-                throw new AuthenticationException("Invalid email or password.");
+                throw new UnauthorizedException("Invalid email or password.");
             }
 
             if (requiresTwoFactor)

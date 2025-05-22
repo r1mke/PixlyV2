@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
-using Pixly.Services.Interfaces;
 using Pixly.Services.Settings;
 using System.Text;
 using System.Text.Json;
@@ -68,7 +67,7 @@ namespace Pixly.API.Exstensions
                 opts.Secret = secret;
                 opts.Issuer = issuer;
                 opts.Audience = audience;
-                opts.ExpirationInMinutes = 1;
+                opts.ExpirationInMinutes = 15;
                 opts.RefreshTokenExpirationInDays = 7;
             });
 
@@ -106,34 +105,18 @@ namespace Pixly.API.Exstensions
 
                 options.Events = new JwtBearerEvents
                 {
-                    OnAuthenticationFailed = async context =>
+                    OnAuthenticationFailed = context =>
                     {
-                        // Check if JWT is expired
                         if (context.Exception is SecurityTokenExpiredException)
                         {
-                            var httpContext = context.HttpContext;
-                            var refreshToken = httpContext.Request.Cookies["refresh_token"];
-
-                            if (string.IsNullOrEmpty(refreshToken))
-                                return;
-
-                            try
-                            {
-                                var authService = httpContext.RequestServices.GetRequiredService<IAuthService>();
-                                var logger = httpContext.RequestServices.GetRequiredService<ILogger<JwtBearerEvents>>();
-
-                                httpContext.Response.Headers.Add("X-Token-Expired", "true");
-                                logger.LogInformation("Token expired, notifying client");
-                            }
-                            catch (Exception ex)
-                            {
-                                var logger = httpContext.RequestServices.GetRequiredService<ILogger<JwtBearerEvents>>();
-                                logger.LogWarning(ex, "Error handling expired token");
-                            }
+                            context.Response.Headers.Add("X-Token-Expired", "true");
                         }
+
+                        return Task.CompletedTask;
                     },
                     OnChallenge = context =>
                     {
+                        /*
                         if (context.HttpContext.Items.ContainsKey("TokenRefreshed"))
                         {
                             context.HandleResponse();
@@ -155,6 +138,7 @@ namespace Pixly.API.Exstensions
 
                             return Task.CompletedTask;
                         }
+                        */
 
                         context.HandleResponse();
                         throw new UnauthorizedException("You are not authorized, or token is expired.");
@@ -193,7 +177,7 @@ namespace Pixly.API.Exstensions
                         partitionKey: key,
                         factory: _ => new FixedWindowRateLimiterOptions
                         {
-                            PermitLimit = 100,
+                            PermitLimit = 10,
                             Window = TimeSpan.FromMinutes(5),
                             AutoReplenishment = true
                         });
