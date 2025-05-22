@@ -19,7 +19,6 @@ namespace Pixly.Services.Middleware
         {
             _next = next;
             _logger = logger;
-
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -58,7 +57,6 @@ namespace Pixly.Services.Middleware
                     message = invalidOperationException.Message;
                     break;
                 default:
-
 #if DEBUG
                     message = exception.Message;
                     errors.Add(exception.StackTrace ?? "No stack trace available");
@@ -85,8 +83,6 @@ namespace Pixly.Services.Middleware
             var json = JsonSerializer.Serialize(response, options);
             await context.Response.WriteAsync(json);
         }
-
-
     }
 
     public static class ErrorHandlingMiddlewareExtensions

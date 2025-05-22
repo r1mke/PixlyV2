@@ -56,7 +56,7 @@ namespace Pixly.API.Exstensions
             {
                 options.AddPolicy("AllowSpecificOrigin",
                     builder => builder
-                        .WithOrigins("http://localhost:4200")
+                        .WithOrigins("http://localhost:4200", "https://localhost:4200")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
