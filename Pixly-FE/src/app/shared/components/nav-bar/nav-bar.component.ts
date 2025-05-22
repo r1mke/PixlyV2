@@ -39,19 +39,6 @@ export class NavBarComponent implements  OnInit, OnDestroy {
   currentUser: User | null = null;
   private subscription = new Subscription();
 
-  ngOnInit() {
-    this.subscription.add(
-      this.authState.isLoggedIn$.subscribe(
-        isLoggedIn => this.isLoggedIn = isLoggedIn
-      )
-    );
-
-    this.subscription.add(
-      this.authState.currentUser$.subscribe(
-        user => this.currentUser = user
-      )
-    );
-  }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
@@ -85,6 +72,18 @@ export class NavBarComponent implements  OnInit, OnDestroy {
         if(this.searchService.getSearchObject().title) {
           this.currentSearchText = this.searchService.getSearchObject().title ?? '';
         }
+
+        this.subscription.add(
+        this.authState.isLoggedIn$.subscribe(
+            isLoggedIn => this.isLoggedIn = isLoggedIn
+          )
+        );
+
+      this.subscription.add(
+        this.authState.currentUser$.subscribe(
+          user => this.currentUser = user
+        )
+      );
   }
 
   searchFocused(event: FocusEvent) {

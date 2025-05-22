@@ -1,6 +1,5 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
 import {
   provideHttpClient,
@@ -8,7 +7,6 @@ import {
   withInterceptors,
   HTTP_INTERCEPTORS,
 } from '@angular/common/http';
-
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideClientHydration } from '@angular/platform-browser';
 import { errorInterceptorFn } from './core/interceptors/error.interceptor';
