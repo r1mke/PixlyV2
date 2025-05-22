@@ -42,11 +42,11 @@ export class TextInputComponent {
     }
 
     if (errors) {
-      if (errors['required']) return 'This field is required';
-      if (errors['email']) return 'Please enter a valid email address';
-      if (errors['minlength']) return `Minimum ${errors['minlength'].requiredLength} characters`;
-      if (errors['maxlength']) return `Maximum ${errors['maxlength'].requiredLength} characters`;
-      if (errors['pattern']) return 'Invalid format';
+      if (errors['required']) return '&bull; &nbsp; Required';
+      if (errors['email']) return '&bull; &nbsp; Please enter a valid email address';
+      if (errors['minlength']) return `&bull; &nbsp; Minimum ${errors['minlength'].requiredLength} characters`;
+      if (errors['maxlength']) return `&bull; &nbsp; Maximum ${errors['maxlength'].requiredLength} characters`;
+      if (errors['pattern']) return '&bull; &nbsp; Invalid format';
     }
 
     return '';
