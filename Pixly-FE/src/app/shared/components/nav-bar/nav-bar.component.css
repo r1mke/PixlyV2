@@ -69,7 +69,7 @@ nav {
 .search-bar-suggestions.visible {
   display: block;
   animation: slideDown 300ms ease-out forwards;
-  max-height: 300px; 
+  max-height: 300px;
   opacity: 1;
   padding: 10px 0;
 }
@@ -101,6 +101,16 @@ nav {
   color: #666;
 }
 
+
+.profile-img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+  image-rendering: smooth;
+  filter: blur(0.3px);
+}
 /* --------------------------------------
    MENU
 -------------------------------------- */

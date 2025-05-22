@@ -11,5 +11,6 @@
         public List<string> Roles { get; set; } = new List<string>();
         public bool IsTwoFactorEnabled { get; set; }
         public bool EmailConfirmed { get; set; }
+        public string? ProfilePictureUrl { get; set; }
     }
 }
