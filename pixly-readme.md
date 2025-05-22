@@ -1,74 +1,267 @@
-# Pixly Backend
+# Pixly - AI-Powered Stock Photo Platform
 
-## 🚀 New in this version
+A modern stock photo sharing platform built with .NET 8 and Angular, featuring advanced search capabilities, user authentication, and intelligent image management powered by Cloudinary.
 
-The new version of the Pixly backend brings significant improvements in architecture, performance, and code maintainability:
+## 🌟 Overview
 
-- **Modular design** - The architecture is divided into three key projects (API, Services, Models) enabling better organization and maintainability
-- **Generic CRUD** - We've implemented generic controllers and services that significantly reduce code duplication
-- **Consistent API responses** - We've standardized all API responses through the ApiResponse<T> pattern
-- **Intelligent image handling** - Enhanced integration with Cloudinary for optimal display of images of different orientations and sizes
-- **Advanced filtering and sorting** - More flexible system for searching, filtering, and sorting photo collections
-- **State Machine Pattern** - Implementation of a robust state machine for photo lifecycle management
+Pixly is a comprehensive stock photo platform that allows users to discover, share, and manage high-quality images. The platform combines a robust .NET backend with a responsive Angular frontend to deliver a seamless experience for both photographers and content seekers.
 
-## 🏗️ Project architecture
+## ✨ Key Features
 
-The project is structured into three main components:
+### For Users
+- **Advanced Search & Filtering** - Search photos by title, tags, orientation (landscape, portrait, square), and file size
+- **Smart Suggestions** - Real-time search suggestions as you type
+- **Responsive Gallery** - Masonry layout that adapts to any screen size with infinite scroll
+- **User Interactions** - Like and save photos to your personal collections
+- **Photo Management** - Upload, edit, and manage your photo portfolio
 
-### Pixly.API
-The frontend for our application containing controllers and API endpoints. This layer is responsible for receiving HTTP requests, validating input data, and formatting responses.
+### For Developers
+- **Clean Architecture** - Modular design with clear separation of concerns (API, Services, Models)
+- **Generic CRUD Operations** - Reusable base controllers and services reduce code duplication
+- **State Machine Pattern** - Robust photo lifecycle management (Draft → Pending → Approved/Rejected)
+- **Consistent API Responses** - Standardized response format using `ApiResponse<T>` wrapper
+- **Advanced Caching** - In-memory caching for improved performance
+- **Real-time Email Queue** - RabbitMQ integration for asynchronous email processing
 
-### Pixly.Services
-The middle layer that implements the business logic of the application. It contains services, database interaction, and integration with external services like Cloudinary.
+## 🏗️ Architecture
 
-### Pixly.Models
-Contains data models, DTOs, and search requests. This project is shared between the API and Services layers and defines the structure of data being exchanged.
+### Backend Structure
+```
+Pixly-BE/
+├── Pixly.API/          # Web API layer with controllers and middleware
+├── Pixly.Services/     # Business logic, services, and data access
+└── Pixly.Models/       # Shared DTOs, requests, and response models
+```
 
-## 🔧 Technologies
+### Frontend Structure
+```
+Pixly-FE/
+├── src/app/
+│   ├── core/           # Services, guards, interceptors
+│   ├── features/       # Feature modules (home, search, profile, register)
+│   └── shared/         # Reusable components
+```
 
-- **.NET 8** - The latest .NET framework with support for the newest C# features
-- **Entity Framework Core 8** - ORM for database interaction
-- **Mapster** - Fast object mapping library
-- **Cloudinary** - Service for managing and optimizing images
-- **SQL Server** - Relational database
-- **Docker** - Containerization for easy deployment and scaling
+## 🛠️ Technology Stack
+
+### Backend
+- **.NET 8** - Latest framework with C# 12 features
+- **Entity Framework Core 8** - ORM with SQL Server
+- **Cloudinary** - Cloud-based image management and optimization
+- **RabbitMQ** - Message broker for email queuing
+- **JWT Authentication** - Secure token-based authentication
+- **Mapster** - High-performance object mapping
+
+### Frontend
+- **Angular 18** - Modern SPA framework
+- **RxJS** - Reactive programming
+- **Bootstrap 5** - Responsive UI framework
+- **ngx-bootstrap** - Angular Bootstrap components
+- **Font Awesome** - Icon library
+
+## 📡 API Endpoints
+
+### Authentication
+```
+POST   /api/auth/register              - Register new user
+GET    /api/auth/confirm-email         - Confirm email address
+POST   /api/auth/resend-confirmation   - Resend confirmation email
+POST   /api/auth/login                 - User login
+GET    /api/auth/current-user          - Get current user info
+POST   /api/auth/setup-2fa             - Enable two-factor authentication
+POST   /api/auth/logout                - Logout user
+GET    /api/auth/generate-2fa-code     - Generate 2FA code
+POST   /api/auth/two-factor            - Verify 2FA code
+```
+
+### Photos
+```
+GET    /api/photo                      - Get paginated photos
+GET    /api/photo/{id}                 - Get photo by ID
+GET    /api/photo/slug/{slug}          - Get photo by slug
+POST   /api/photo                      - Upload new photo
+PATCH  /api/photo/{id}                 - Update photo
+GET    /api/photo/search-suggestion    - Get search suggestions
+POST   /api/photo/{id}/like            - Like a photo
+DELETE /api/photo/{id}/like            - Unlike a photo
+POST   /api/photo/{id}/save            - Save to favorites
+DELETE /api/photo/{id}/save            - Remove from favorites
+POST   /api/photo/{id}/submit          - Submit for approval
+POST   /api/photo/{id}/approve         - Approve photo (admin)
+POST   /api/photo/{id}/reject          - Reject photo (admin)
+POST   /api/photo/{id}/hide            - Hide photo
+POST   /api/photo/{id}/delete          - Delete photo
+GET    /api/photo/{id}/allowed-actions - Get allowed actions for photo
+```
+
+### Tags
+```
+GET    /api/tag                        - Get all tags
+GET    /api/tag/{id}                   - Get tag by ID
+POST   /api/tag                        - Create new tag
+PATCH  /api/tag/{id}                   - Update tag
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+- .NET 8 SDK
+- Node.js 18+ and npm
+- SQL Server (local or remote)
+- Docker (optional, for RabbitMQ)
+- Cloudinary account
+
+### Backend Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/pixly.git
+cd pixly/Pixly-BE
+```
+
+2. Create a `.env` file in the root directory:
+```env
+# Database
+DB_CONNECTION_STRING=Server=localhost;Database=PixlyDb;Trusted_Connection=true;TrustServerCertificate=true;
+
+# JWT Settings
+JWT_SECRET=your-very-long-secret-key-at-least-32-characters
+JWT_ISSUER=Pixly
+JWT_AUDIENCE=PixlyUsers
+
+# Cloudinary
+CLOUDINARY_CLOUDNAME=your-cloudinary-cloud-name
+CLOUDINARY_APIKEY=your-cloudinary-api-key
+CLOUDINARY_APISECRET=your-cloudinary-api-secret
+
+# SMTP Settings
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+SMTP_ENABLE_SSL=true
+SMTP_FROM_EMAIL=your-email@gmail.com
+SMTP_FROM_NAME=Pixly
+
+# RabbitMQ (optional)
+RABBITMQ_HOST=localhost
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+RABBITMQ_PORT=5672
+```
+
+3. Run database migrations:
+```bash
+cd Pixly.Services
+dotnet ef database update
+```
+
+4. Start the backend:
+```bash
+cd ../Pixly.API
+dotnet run
+```
+
+The API will be available at `https://localhost:7136`
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+```bash
+cd ../Pixly-FE
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+ng serve
+```
+
+The application will be available at `http://localhost:4200`
+
+### Running with Docker (Optional)
+
+For RabbitMQ support:
+```bash
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
+
+## 🔐 Authentication Implementation
+
+The platform uses a comprehensive JWT-based authentication system with the following features:
+
+### Security Features
+- **JWT Tokens** - Short-lived access tokens (15 minutes) with refresh token rotation
+- **Email Confirmation** - Required for full account access
+- **Two-Factor Authentication** - Optional 2FA via email codes
+- **Rate Limiting** - Protection against brute force attacks
+- **Refresh Token Security** - 
+  - Automatic rotation on use
+  - Detection of token reuse
+  - Maximum 5 active sessions per user
+  - 7-day expiration
+
+### Authentication Flow
+1. User registers → Email confirmation sent
+2. User confirms email → Account activated
+3. User logs in → JWT + Refresh token issued
+4. Token expires → Automatic refresh via interceptor
+5. Optional 2FA → Email code verification
+
+### Security Middleware
+- Global error handling
+- CORS configuration
+- Rate limiting policies (auth, IP-based, email-based)
+- JWT validation and automatic token refresh
+
+## 📸 Photo Lifecycle
+
+Photos follow a state machine pattern ensuring consistent workflow:
+
+```
+Initial → Draft → Pending → Approved → Published
+                     ↓         ↓
+                  Rejected   Hidden
+                              ↓
+                           Deleted
+```
+
+Each state has specific allowed actions, ensuring data integrity and proper workflow management.
+
+## 🎯 Future Plans
+
+### Phase 1 - Enhanced User Experience
+- **User Profiles** - Public photographer portfolios
+- **Collections** - Organize saved photos into collections
+- **Advanced Analytics** - View counts, download statistics, trending photos
+- **Social Features** - Follow photographers, activity feed
+
+### Phase 2 - Content & Commerce
+- **Comments System** - Engage with the community
+- **Payment Integration** - Buy and sell premium photos
+- **Watermarking** - Automatic watermarks for non-licensed downloads
+
+### Phase 3 - AI & Advanced Features
+- **AI Tagging** - Automatic tag suggestions using machine learning
+- **Similar Photo Search** - Find visually similar images
+- **Real-time Notifications** - SignalR integration for instant updates
 
 
-## 📋 API features
+## 📄 License
 
-- **Photos**: Upload, view, update, and delete photos
-- **Search**: Advanced search by name, tags, orientation, and size
-- **Likes**: Ability to mark photos you like
-- **Users**: User account management
-- **Tags**: Organize photos using tags
-- **Photo Workflow**: Complete state management for the photo lifecycle
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 💡 Benefits of the new design
+## 🙏 Acknowledgments
 
-### For developers
-- **Less code repetition** - Generic CRUD reduces the amount of code needed for standard operations
-- **Easier maintenance** - Clear separation of responsibilities makes finding and fixing bugs easier
-- **Simple extension** - Adding new entities and APIs requires minimal effort
-- **Predictable behavior** - State machine ensures consistent photo lifecycle management
+- Built with ❤️ using .NET and Angular
+- Images optimized by Cloudinary
+- Icons by Font Awesome
+- UI components from ngx-bootstrap
 
-### For end users
-- **Faster image loading** - Optimized images depending on device and display context
-- **More flexible search** - More options for filtering and sorting content
-- **Consistent responses** - Standardized response format facilitates integration with frontend applications
+---
 
-## 🛣️ Roadmap
-
-The following improvements are planned:
-
-- **Authentication and authorization** - Implementation of JWT authentication
-- **Real-time notifications** - Using SignalR for instant notifications about new photos and activities
-- **Comments** - Ability to comment on photos
-- **Statistics** - Advanced analytics for users and their photos
-- **E-commerce integration** - Ability to buy and sell photos
-
-
-## 📝 License
-
-This project is licensed under the [MIT license](LICENSE).
-
-
+**Note**: This is an active project under development. Features and documentation are continuously being improved.
