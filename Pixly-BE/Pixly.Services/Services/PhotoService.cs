@@ -330,13 +330,42 @@ namespace Pixly.Services.Services
 
         public async Task<List<string>> SearchSuggestions(string title)
         {
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                var result = await _context.Photos.Where(p => p.Title.StartsWith(title)).Select(p => p.Title).ToListAsync();
-                return result;
-            }
+            if (string.IsNullOrWhiteSpace(title))
+                return new List<string>();
 
-            return new List<string> { };
+
+            var cacheKey = $"search_suggestions:{title.ToLower()}";
+
+            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
+            {
+                var titleResults = await _context.Photos
+                    .Where(p => p.Title.StartsWith(title) && p.State == "Approved" && !p.IsDeleted)
+                    .Select(p => p.Title)
+                    .Take(10)
+                    .ToListAsync();
+
+                var tagResults = await _context.Tags
+                    .Where(t => t.Name.StartsWith(title))
+                    .Select(t => t.Name)
+                    .Take(5)
+                    .ToListAsync();
+
+                var descriptionResults = await _context.Photos
+                    .Where(p => p.Description != null && p.Description.Contains(title)
+                          && p.State == "Approved" && !p.IsDeleted)
+                    .Select(p => p.Title)
+                    .Take(5)
+                    .ToListAsync();
+
+                var allResults = titleResults
+                    .Concat(tagResults)
+                    .Concat(descriptionResults)
+                    .Distinct()
+                    .Take(10)
+                    .ToList();
+
+                return allResults;
+            }, TimeSpan.FromMinutes(5));
         }
 
     }

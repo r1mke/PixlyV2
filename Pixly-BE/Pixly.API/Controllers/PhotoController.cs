@@ -25,11 +25,17 @@ namespace Pixly.API.Controllers
         }
 
         [HttpGet("search-suggestion/{title}")]
+        [ResponseCache(Duration = 60)]
         public async Task<ActionResult<ApiResponse<List<string>>>> GetSearchSuggestions(string title)
         {
+            if (string.IsNullOrWhiteSpace(title) || title.Length < 1)
+                return this.ApiSuccess(new List<string>());
+
             var result = await (_service as IPhotoService).SearchSuggestions(title);
 
-            if (result == null) return this.ApiNotFound<List<string>>($"Bad request");
+            if (result == null)
+                return this.ApiSuccess(new List<string>());
+
             return this.ApiSuccess(result);
         }
 

@@ -86,18 +86,24 @@ export class SearchService {
     });
   }
 
+  getSearchSuggestionsTitle(): string {
+    return this.searchSuggestionsTitle.getValue();
+  }
+
   getSearchSuggestions(title : string) : Observable<ApiResponse<string[]>> {
     if(!title) {
       return EMPTY;
     }
     let params = new HttpParams();
     params = params.set('title', title);
+    console.log("pozivam api");
     return this.http.get<ApiResponse<string[]>>(`${this.apiUrl}/search-suggestion/${title}`).pipe(
       tap({
       next:
         (response : ApiResponse<string[]>) => {
         if(response.success && response.data) {
           this.searchSuggestions.set(response.data);
+          console.log(response.data);
         } else{
           this.searchSuggestions.set([]);
         }
