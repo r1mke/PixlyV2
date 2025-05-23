@@ -5,10 +5,11 @@ import { AuthService } from './core/services/auth.service';
 import { AuthState } from './core/state/auth.state';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import {LoadingComponent} from './shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent],
+  imports: [RouterOutlet, ToastComponent, LoadingComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   standalone: true
