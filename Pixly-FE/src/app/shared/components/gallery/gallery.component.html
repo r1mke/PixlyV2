@@ -116,16 +116,20 @@
   <div #sentinel class="sentinel"></div>
 
   <!-- Loading indikator -->
+  <!--
   <div class="loading-container" *ngIf="photoService.isLoading()">
     <div class="spinner"></div>
     <p>Učitavanje...</p>
   </div>
+  -->
 
   <!-- Empty state -->
   <div class="empty-state" *ngIf="photoService.photos().length === 0 && !photoService.isLoading()">
     <p>{{ emptyStateMessage }}</p>
+    <!--
     <p *ngIf="photoService.error()" class="text-danger">
       {{ photoService.error() }}
     </p>
+    -->
   </div>
 </div>

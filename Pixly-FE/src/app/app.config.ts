@@ -13,6 +13,7 @@ import { errorInterceptorFn } from './core/interceptors/error.interceptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import {jwtInterceptorFn} from './core/interceptors/jwt.interceptor';
 import {BrowserModule} from '@angular/platform-browser';
+import {loadingInterceptorFn} from './core/interceptors/loading.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(BrowserModule),
@@ -24,6 +25,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withFetch(),
       withInterceptors([
+        loadingInterceptorFn,
         jwtInterceptorFn,
         errorInterceptorFn,
       ])

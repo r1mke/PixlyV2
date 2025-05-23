@@ -3,8 +3,6 @@ import { PhotoBasic } from '../../../core/models/DTOs/PhotoBasic';
 import { PhotoService } from '../../../core/services/photo.service';
 import { OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
-import { SimpleChanges } from '@angular/core';
 import { PhotoSearchRequest } from '../../../core/models/SearchRequest/PhotoSarchRequest';
 import { RouterModule } from '@angular/router';
 import { takeUntil } from 'rxjs';
@@ -21,14 +19,14 @@ import isEqual from 'lodash.isequal';
   styleUrl: './gallery.component.css'
 })
 export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
-  @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
+  @Input() emptyStateMessage: string = 'No photos found';
   @ViewChild('sentinel') sentinel!: ElementRef;
   private onDestroy$ = new Subject<void>();
   private _scrollHandler: (() => void) | null = null;
   private intersectionObserver?: IntersectionObserver;
   searchService = inject(SearchService);
   photoService = inject(PhotoService);
-  
+
   ngOnInit(): void {
     this.searchService.getSearchObjectAsObservable().pipe(
       takeUntil(this.onDestroy$),

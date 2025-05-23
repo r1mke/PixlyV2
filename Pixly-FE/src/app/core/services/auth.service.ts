@@ -7,11 +7,7 @@ import { AuthResponse } from '../models/Response/AuthResponse';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/DTOs/User';
 import { AuthState } from '../state/auth.state';
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
+import {LoginRequest} from '../models/Request/LoginRequest';
 
 @Injectable({
   providedIn: 'root'
