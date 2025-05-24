@@ -1,4 +1,5 @@
 <div class="form-group">
+  <label *ngIf="showLabel" [for]="label" class="form-label">{{ label }} <span class="text-danger">*</span></label>
   <input
     [type]="type"
     [formControl]="control"

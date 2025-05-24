@@ -5,6 +5,7 @@ import { SearchComponent } from './features/search/search.component';
 import { SearchGuard } from './core/guards/search.guard';
 import {RegisterComponent} from './features/register/register.component';
 import {LoginComponent} from './features/login/login.component';
+import {ProfileSettingsComponent} from './features/profile-settings/profile-settings.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -13,5 +14,6 @@ export const routes: Routes = [
   {path: 'profile', component: ProfileComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
+  {path: 'edit-profile', component: ProfileSettingsComponent},
   {path: '**', redirectTo: ''}
 ];
