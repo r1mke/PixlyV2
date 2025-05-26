@@ -2,16 +2,17 @@
 {
     public class User
     {
-        public string Username { get; set; }
-
-        public string Email { get; set; }
-
         public string FirstName { get; set; }
-
         public string LastName { get; set; }
-
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string? ProfilePictureUrl { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public string? State { get; set; }
-        public bool? isDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public bool IsActive { get; set; } = true;
 
         //public ICollection<Photo> Photos { get; set; } = new List<Photo>();
 

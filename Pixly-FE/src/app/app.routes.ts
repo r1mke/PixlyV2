@@ -6,6 +6,7 @@ import { SearchGuard } from './core/guards/search.guard';
 import {RegisterComponent} from './features/register/register.component';
 import {LoginComponent} from './features/login/login.component';
 import {ProfileSettingsComponent} from './features/profile-settings/profile-settings.component';
+import {AuthGuard} from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -14,6 +15,6 @@ export const routes: Routes = [
   {path: 'profile', component: ProfileComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'edit-profile', component: ProfileSettingsComponent},
+  {path: 'edit-profile', component: ProfileSettingsComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: ''}
 ];

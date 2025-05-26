@@ -8,7 +8,7 @@
   <div class="row mb-5 align-items-center">
     <div class="col-lg-6 text-center text-lg-end mb-3 mb-lg-0 profile-center">
       <img
-        [src]="(currentUser$ | async)?.profilePictureUrl || 'assets/img/user_def.png'"
+        [src]="profileImgUrl  || 'assets/image/user_def.png'"
         alt="Profile Image"
         class="rounded-circle profile-img"
       >
@@ -109,7 +109,7 @@
     <div class="col-md-12 text-center mt-3 mb-5">
       <app-submit-button
         [isLoading]="isLoading"
-        [isDisabled]="editProfileForm.invalid"
+        [isDisabled]="editProfileForm.invalid || editProfileForm.pristine"
         [text]="'Save Profile'"
         [fullWidth]="true"
         class="">

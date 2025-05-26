@@ -8,11 +8,12 @@ import { NavBarComponent } from '../../shared/components/nav-bar/nav-bar.compone
 import { TextInputComponent } from '../../shared/components/text-input/text-input.component';
 import { SubmitButtonComponent } from '../../shared/components/submit-button/submit-button.component';
 
-import { AuthService } from '../../core/services/auth.service';
 import { AuthState } from '../../core/state/auth.state';
 import { ToastService } from '../../core/services/toast.service';
 import { User } from '../../core/models/DTOs/User';
-import {ProfileUpdateRequest} from '../../core/models/Request/ProfileUpdateRequest';
+import {UserService} from '../../core/services/user.service';
+import {ApiResponse} from '../../core/models/Response/api-response';
+import {LoadingService} from '../../core/services/loading.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -31,30 +32,43 @@ import {ProfileUpdateRequest} from '../../core/models/Request/ProfileUpdateReque
 export class ProfileSettingsComponent implements OnInit, OnDestroy {
   editProfileForm!: FormGroup;
   isLoading = false;
-  isEmailDisabled = true;
   usernameError = '';
-  profileImgUrl = '';
+  profileImgUrl: string | null = null;
+  removeProfilePicture = false;
+  selectedImageFile: File | null = null;
 
   private destroy$ = new Subject<void>();
   private fb = inject(FormBuilder);
   private authState = inject(AuthState);
   private toastService = inject(ToastService);
+  private userService = inject(UserService);
+  private loadingService = inject(LoadingService);
 
   currentUser$ = this.authState.currentUser$;
+  private userId: any;
 
   ngOnInit(): void {
-    this.loadCurrentUser();
     this.initForm();
+    this.loadCurrentUser();
+    this.checkToastMessage();
   }
 
   loadCurrentUser(): void {
-    this.currentUser$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(user => {
+    this.currentUser$.subscribe(user => {
       if (user) {
         this.populateForm(user);
+        this.profileImgUrl = user.profilePictureUrl
+        this.userId = user.id;
       }
     });
+  }
+
+  checkToastMessage(): void {
+    const toastMessage = localStorage.getItem('showSuccessToast');
+    if (toastMessage) {
+      this.toastService.success(toastMessage);
+      localStorage.removeItem('showSuccessToast');
+    }
   }
 
   ngOnDestroy(): void {
@@ -79,7 +93,7 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
         Validators.required,
         Validators.minLength(5),
         Validators.maxLength(20)
-      ]]
+      ]],
     });
 
     this.editProfileForm.get('email')?.disable();
@@ -90,7 +104,7 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      username: user.userName
+      username: user.userName,
     });
   }
 
@@ -99,100 +113,65 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     if (input.files && input.files[0]) {
       const file = input.files[0];
 
-      // Validacija tipa fajla
+      // File Validation
       if (!file.type.startsWith('image/')) {
         this.toastService.error('Please select a valid image file');
         return;
       }
 
-      // Validacija veličine (maksimalno 5MB)
+      // SIze Validation
       if (file.size > 5 * 1024 * 1024) {
         this.toastService.error('Image size must be less than 5MB');
         return;
       }
 
-      // Kreiraj preview
+      // Preview
       const reader = new FileReader();
       reader.onload = (e) => {
         this.profileImgUrl = e.target?.result as string;
       };
       reader.readAsDataURL(file);
 
-      // TODO: Upload image to server
-      this.uploadProfileImage(file);
+      this.selectedImageFile = file;
+      this.editProfileForm.markAsDirty();
     }
-  }
-
-  private uploadProfileImage(file: File): void {
-    // TODO: Implementiraj upload logiku
-    // const formData = new FormData();
-    // formData.append('profileImage', file);
-    // this.userService.uploadProfileImage(formData).subscribe(...)
-
-    console.log('Uploading image:', file.name);
   }
 
   deleteImage(): void {
-    this.profileImgUrl = '';
-    // TODO: Pozovi API za brisanje slike
-    this.toastService.success('Profile image removed');
+    this.profileImgUrl = null;
+    this.selectedImageFile = null;
+    this.removeProfilePicture = true;
+    this.editProfileForm.markAsDirty();
+    this.toastService.info('Profile image removed');
   }
+
 
   saveProfile(): void {
-    if (this.editProfileForm.invalid || this.editProfileForm.pristine) {
-      this.toastService.error('Please make changes before saving');
-      return;
+    const formValue = this.editProfileForm.value;
+    const formData = new FormData();
+
+    formData.append('FirstName', formValue.firstName);
+    formData.append('LastName', formValue.lastName);
+    formData.append('UserName', formValue.username);
+
+    if (this.selectedImageFile) {
+      formData.append('ProfilePictureUrl', this.selectedImageFile);
     }
 
-    this.isLoading = true;
-    this.usernameError = '';
+    formData.append('RemoveProfilePicture', this.removeProfilePicture.toString());
 
-    const formValue = this.editProfileForm.value;
-    const updateRequest: ProfileUpdateRequest = {
-      firstName: formValue.firstName,
-      lastName: formValue.lastName,
-      email: formValue.email,
-      username: formValue.username
-    };
-
-    // TODO:
-    // this.userService.updateProfile(updateRequest)
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe({
-    //     next: (response) => {
-    //       this.toastService.success('Profile updated successfully');
-    //       this.authState.updateCurrentUser(response.data);
-    //       this.editProfileForm.markAsPristine();
-    //     },
-    //     error: (error) => {
-    //       if (error.status === 409 && error.error?.message?.includes('username')) {
-    //         this.usernameError = 'Username is already taken';
-    //       } else {
-    //         this.toastService.error('Failed to update profile');
-    //       }
-    //     },
-    //     complete: () => {
-    //       this.isLoading = false;
-    //     }
-    //   });
-
-    // Mock implementacija
-    setTimeout(() => {
-      this.toastService.success('Profile updated successfully');
-      this.editProfileForm.markAsPristine();
-      this.isLoading = false;
-    }, 1000);
-  }
-
-  // Helper metoda za dobijanje kontrole
-  getFormControl(controlName: string) {
-    return this.editProfileForm.get(controlName);
-  }
-
-  // Helper metoda za validaciju
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.editProfileForm.get(fieldName);
-    return !!(field && field.invalid && (field.touched || field.dirty));
+    this.userService.updateUser(this.userId, formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: ApiResponse<User>) => {},
+        error: (error) => {},
+        complete: () => {
+          this.editProfileForm.markAsPristine();
+          localStorage.setItem('showSuccessToast', 'Profile updated successfully');
+          this.loadingService.showLoaderFor(1000);
+          setTimeout(() => window.location.reload(), 1000);
+        }
+      });
   }
 
   // TODO:

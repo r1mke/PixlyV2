@@ -1,27 +1,34 @@
-﻿using MapsterMapper;
+﻿using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Pixly.Models.Request;
 using Pixly.Models.Response;
+using Pixly.Models.SearchRequest;
+using Pixly.Models.UpdateRequest;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
 using Pixly.Services.Interfaces;
 
 namespace Pixly.Services.Services
 {
-    public class UserService : IUserService
+    public class UserService : CRUDService<Models.DTOs.User, Models.DTOs.User, UserSearchRequest, Models.DTOs.User, UserUpdateRequest, Database.User, string>, IUserService
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<UserService> _logger;
         private readonly IMapper _mapper;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<UserService> logger, IMapper mapper)
+        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<UserService> logger, IMapper mapper, ApplicationDbContext context, ICacheService cacheService, ICloudinaryService cloudinaryService)
+            : base(mapper, context, cacheService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _mapper = mapper;
+            _cloudinaryService = cloudinaryService;
         }
 
         /// Helper Method
@@ -149,5 +156,55 @@ namespace Pixly.Services.Services
             _logger.LogInformation("Email confirmed for user {Email}", user.Email);
             return true;
         }
+
+        protected override async Task<IQueryable<User>> AddFilter(IQueryable<User> query, UserSearchRequest? search)
+        {
+            if (!string.IsNullOrWhiteSpace(search?.Email))
+            {
+                query = query.Where(x => x.Email.StartsWith(search.Email));
+            }
+            if (!string.IsNullOrWhiteSpace(search?.UserName))
+            {
+                query = query.Where(x => x.UserName.StartsWith(search.UserName));
+            }
+            if (!string.IsNullOrWhiteSpace(search?.LastName))
+            {
+                query = query.Where(x => x.LastName.StartsWith(search.LastName));
+            }
+            if (!string.IsNullOrWhiteSpace(search?.FirstName))
+            {
+                query = query.Where(x => x.FirstName.StartsWith(search.FirstName));
+            }
+            return query;
+        }
+
+        public override async Task<Models.DTOs.User> Update(string id, UserUpdateRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if (user == null)
+                throw new NotFoundException($"User with ID {id} not found");
+
+            var config = new TypeAdapterConfig();
+            config.ForType<UserUpdateRequest, User>()
+                  .IgnoreNullValues(true);
+
+            request.Adapt(user, config);
+
+            if (request.ProfilePictureUrl != null)
+            {
+                var imageUrl = await _cloudinaryService.UploadProfilePhoto(request.ProfilePictureUrl);
+                user.ProfilePictureUrl = imageUrl;
+            }
+
+            if (request.RemoveProfilePicture)
+            {
+                user.ProfilePictureUrl = null;
+            }
+
+
+            await _context.SaveChangesAsync();
+            return _mapper.Map<Models.DTOs.User>(user);
+        }
+
     }
 }
