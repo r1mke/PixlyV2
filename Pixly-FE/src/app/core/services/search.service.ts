@@ -37,7 +37,6 @@ export class SearchService {
   }
 
   setSearchObject(searchObject: Partial<PhotoSearchRequest>) {
-    console.log('Search object set:', searchObject);
     if(searchObject.size?.includes('All')) searchObject.size = null;
     if(searchObject.orientation?.includes('All')) searchObject.orientation = null;
     this.searchObject.next(searchObject);
@@ -96,14 +95,12 @@ export class SearchService {
     }
     let params = new HttpParams();
     params = params.set('title', title);
-    console.log("pozivam api");
     return this.http.get<ApiResponse<string[]>>(`${this.apiUrl}/search-suggestion/${title}`).pipe(
       tap({
       next:
         (response : ApiResponse<string[]>) => {
         if(response.success && response.data) {
           this.searchSuggestions.set(response.data);
-          console.log(response.data);
         } else{
           this.searchSuggestions.set([]);
         }
@@ -115,8 +112,8 @@ export class SearchService {
     );
   }
 }
-      
-      
 
-    
+
+
+
 
