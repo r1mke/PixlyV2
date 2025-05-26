@@ -50,7 +50,6 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initForm();
     this.loadCurrentUser();
-    this.checkToastMessage();
   }
 
   loadCurrentUser(): void {
@@ -61,14 +60,6 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
         this.userId = user.id;
       }
     });
-  }
-
-  checkToastMessage(): void {
-    const toastMessage = localStorage.getItem('showSuccessToast');
-    if (toastMessage) {
-      this.toastService.success(toastMessage);
-      localStorage.removeItem('showSuccessToast');
-    }
   }
 
   ngOnDestroy(): void {
@@ -167,9 +158,17 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
         error: (error) => {},
         complete: () => {
           this.editProfileForm.markAsPristine();
-          localStorage.setItem('showSuccessToast', 'Profile updated successfully');
-          this.loadingService.showLoaderFor(1000);
-          setTimeout(() => window.location.reload(), 1000);
+          this.authState.loadCurrentUser().subscribe({
+            next: (user) => {
+              this.toastService.success('Profile updated successfully');
+              this.authState.updateCurrentUser(user);
+              this.editProfileForm.markAsPristine();
+            },
+            error: () => {
+              this.toastService.error('Failed to refresh user info');
+            }
+          });
+
         }
       });
   }
