@@ -13,6 +13,7 @@ import {CommonModule} from '@angular/common';
   styleUrl: './text-input.component.css'
 })
 export class TextInputComponent {
+  @Input() showLabel: boolean = false;
   @Input() label: string | undefined;
   @Input() type = 'text';
   @Input() isRequired = false;

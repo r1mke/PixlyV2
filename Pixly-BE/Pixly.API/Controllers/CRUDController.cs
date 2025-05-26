@@ -8,12 +8,12 @@ namespace Pixly.API.Controllers
 {
 
     [ApiController]
-    public class CRUDController<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate> : ControllerBase
+    public class CRUDController<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate, TId> : ControllerBase
     {
 
-        protected ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate> _service;
+        protected ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate, TId> _service;
 
-        public CRUDController(ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate> service)
+        public CRUDController(ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate, TId> service)
         {
             _service = service;
         }
@@ -34,7 +34,7 @@ namespace Pixly.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<TModelDetail>>> GetById(int id)
+        public async Task<ActionResult<ApiResponse<TModelDetail>>> GetById(TId id)
         {
             var result = await _service.GetById(id);
 
@@ -52,7 +52,7 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ApiResponse<TModelBasic>>> Update(int id, TUpdate request)
+        public async Task<ActionResult<ApiResponse<TModelBasic>>> Update(TId id, TUpdate request)
         {
             var result = await _service.Update(id, request);
 

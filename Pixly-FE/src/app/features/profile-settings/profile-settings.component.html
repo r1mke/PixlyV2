@@ -1,0 +1,145 @@
+<!-- NavBar -->
+<app-nav-bar></app-nav-bar>
+
+<div class="container">
+  <h2 class="text-center mb-5">Profile settings</h2>
+
+  <!-- Profile Picture Section -->
+  <div class="row mb-5 align-items-center">
+    <div class="col-lg-6 text-center text-lg-end mb-3 mb-lg-0 profile-center">
+      <img
+        [src]="profileImgUrl  || 'assets/image/user_def.png'"
+        alt="Profile Image"
+        class="rounded-circle profile-img"
+      >
+    </div>
+    <div class="col-lg-6 profile-center">
+      <div class="d-flex flex-column align-items-center align-items-lg-start profile-center">
+        <button
+          class="btn btn-primary text-white responsive-btn mb-2 w-100"
+          (click)="fileInput.click()"
+          type="button"
+        >
+          Change image
+        </button>
+
+        <button
+          class="btn btn-secondary text-white responsive-btn w-100"
+          (click)="deleteImage()"
+          type="button"
+        >
+          Delete image
+        </button>
+      </div>
+
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        style="display: none"
+      />
+    </div>
+  </div>
+
+  <!-- Profile Form -->
+  <form [formGroup]="editProfileForm" (ngSubmit)="saveProfile()">
+    <div class="row">
+      <!-- First Name -->
+      <div class="col-md-6">
+        <app-text-input
+          [showLabel] = "true"
+          formControlName="firstName"
+          [label]="'First name'"
+          [isRequired]="true"
+          [minLength]="2"
+          [maxLength]="20">
+        </app-text-input>
+      </div>
+
+      <!-- Last Name -->
+      <div class="col-md-6">
+        <app-text-input
+          [showLabel] = "true"
+          formControlName="lastName"
+          [label]="'Last name'"
+          [isRequired]="true"
+          [minLength]="2"
+          [maxLength]="20">
+        </app-text-input>
+      </div>
+    </div>
+
+    <p class="form-text mt-1 mb-3 text-body-tertiary">
+      We'd like people to use real names in a community, so people would know who's who.
+    </p>
+
+    <div class="row">
+      <!-- Email -->
+      <div class="col-md-6">
+        <app-text-input
+          [showLabel] = "true"
+          formControlName="email"
+          [label]="'Email'"
+          [type]="'email'"
+          [isRequired]="true"
+          [placeholder]="'Enter your email'">
+        </app-text-input>
+      </div>
+
+      <!-- Username -->
+      <div class="col-md-6">
+        <app-text-input
+          [showLabel] = "true"
+          formControlName="username"
+          [label]="'Username'"
+          [isRequired]="true"
+          [minLength]="5"
+          [maxLength]="20"
+          [placeholder]="'Enter your username'"
+          [customError]="usernameError">
+        </app-text-input>
+        <p class="form-text mt-1 mb-4 text-body-tertiary">
+          Note that this username will be public.
+        </p>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="col-md-12 text-center mt-3 mb-5">
+      <app-submit-button
+        [isLoading]="isLoading"
+        [isDisabled]="editProfileForm.invalid || editProfileForm.pristine"
+        [text]="'Save Profile'"
+        [fullWidth]="true"
+        class="">
+      </app-submit-button>
+    </div>
+
+    <!-- Additional Settings -->
+    <div class="additional-settings my-5">
+      <h2 class="text-center mb-3">Additional settings</h2>
+      <div class="d-flex justify-content-around">
+        <div class="mb-2">
+          <a
+            class="text-danger text-decoration-none fw-bold"
+            (click)="changePassword()"
+            style="cursor: pointer;"
+          >
+            Change password
+          </a>
+        </div>
+        <div>
+          <a
+            class="text-danger text-decoration-none fw-bold"
+            (click)="removeAccount()"
+            style="cursor: pointer;"
+          >
+            Remove account
+          </a>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+

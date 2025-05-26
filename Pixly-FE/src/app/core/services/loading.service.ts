@@ -71,6 +71,17 @@ export class LoadingService {
     return this.loadingSubject.value;
   }
 
+  showLoaderFor(durationMs: number): void {
+    if (this.loadingSubject.value) return;
+
+    this.setLoading(true);
+
+    setTimeout(() => {
+      this.setLoading(false);
+    }, durationMs);
+  }
+
+
   ngOnDestroy(): void {
     if (this.showTimeout) {
       clearTimeout(this.showTimeout);
