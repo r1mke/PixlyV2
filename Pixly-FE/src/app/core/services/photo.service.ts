@@ -31,7 +31,7 @@ export class PhotoService {
   });
 
   getPhotos(searchRequest: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
-    
+
     this.currentSearchRequest.next(searchRequest);
     this.isLoading.set(true);
 
@@ -46,14 +46,14 @@ export class PhotoService {
         params = params.set(key, value.toString());
       }
     });
-
+    console.log("pozivam api", params);
     return this.http.get<ApiResponse<PhotoBasic[]>>(this.apiUrl, { observe: 'response', params }).pipe(
       tap({
         next: (response) => {
           if(response.body?.success && response.body?.data) {
             if(searchRequest.pageNumber === 1) {
               this.photos.set(response.body.data);
-              console.log(this.photos());
+              console.log(response.body.data);
             } else {
               this.photos.update((prevPhotos) => [...prevPhotos, ...response.body!.data]);
             }

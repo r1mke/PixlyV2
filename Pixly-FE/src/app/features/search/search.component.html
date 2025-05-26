@@ -1,35 +1,55 @@
+<!-- search.component.html -->
+
+<!-- Navigation Bar -->
 <app-nav-bar></app-nav-bar>
+
+<!-- Main Content Container -->
 <div class="container">
-    <h4>"{{searchService.searchObject.getValue().title}}" photos</h4>
-    <div class="filter">
-        <div class="filter-basic">
-            <div class="filter-basic-left">
-                
-            </div>
-             <div class="filter-basic-right">
-                <div (click) = "toggleCollapse()">
-                    <app-dropdown
-                        [options]="moreFilters"
-                    ></app-dropdown>
-                </div>
-                <app-dropdown
-                     [options]="dropdownPopularity"
-                ></app-dropdown>
-            </div>
+  <!-- Search Results Title -->
+  <h4>"{{searchService.searchObject.getValue().title}}" photos</h4>
+  
+  <!-- Filter Section -->
+  <div class="filter">
+    
+    <!-- Basic Filter Row -->
+    <div class="filter-basic">
+      
+      <!-- Left Side of Basic Filter (Empty for now) -->
+      <div class="filter-basic-left">
+        <!-- Future filter options can go here -->
+      </div>
+      
+      <!-- Right Side of Basic Filter -->
+      <div class="filter-basic-right">
+        
+        <!-- More Filters Toggle -->
+        <div (click)="toggleCollapse()">
+          <app-dropdown [options]="moreFilters"></app-dropdown>
         </div>
-        <div *ngIf="isCollapsed" @collapseAnimation class="filter-advance">
-            <app-dropdown 
-                     [options]="dropdownOrientation"
-            ></app-dropdown>
-            <app-dropdown
-                     [options]="dropdownSize"
-            ></app-dropdown>
-            <app-dropdown
-                     [options]="dropdownOrientation"
-            ></app-dropdown>
-        </div>
+        
+        <!-- Popularity Dropdown -->
+        <app-dropdown [options]="dropdownPopularity"></app-dropdown>
+        
+      </div>
     </div>
+    
+    <!-- Advanced Filter Row (Collapsible) -->
+    <div *ngIf="isCollapsed" 
+         @collapseAnimation 
+         class="filter-advance">
+      
+      <!-- Orientation Filter -->
+      <app-dropdown [options]="dropdownOrientation"></app-dropdown>
+      
+      <!-- Size Filter -->
+      <app-dropdown [options]="dropdownSize"></app-dropdown>
+      
+      <!-- Additional Orientation Filter (duplicate?) -->
+      <app-dropdown [options]="dropdownOrientation"></app-dropdown>
+      
+    </div>
+  </div>
 </div>
 
+<!-- Photo Gallery -->
 <app-gallery></app-gallery>
-

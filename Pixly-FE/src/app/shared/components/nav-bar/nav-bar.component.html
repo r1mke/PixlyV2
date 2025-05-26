@@ -1,35 +1,43 @@
-<!-- src/app/shared/components/nav-bar/nav-bar.component.html -->
+<!-- nav-bar.component.html -->
 <div class="container">
   <nav>
+    <!-- Logo Section -->
     <div class="logo" (click)="goToHome()">
-        <img src="assets/image/logo.png" height="50px" width="50px">
+      <img src="assets/image/logo.png" height="50px" width="50px">
     </div>
 
+    <!-- Search Bar Section -->
     <div class="search-bar" [ngClass]="isLoggedIn ? 'search-bar search-bar-logged' : 'search-bar'">
       <input
-       [(ngModel)]="currentSearchText"
-       (keyup)="getSearchSuggestions($event)"
-       [value]="searchService.getSearchObject().title"
-       (keyup)="search($event)"
-       (focus)="searchFocused($event)"
-       (blur)="searchBlured($event)"
-       type="text" placeholder="Search...">
+        [(ngModel)]="currentSearchText"
+        (keyup)="getSearchSuggestions($event)"
+        [value]="searchService.getSearchObject().title"
+        (keyup)="search($event)"
+        (focus)="searchFocused($event)"
+        (blur)="searchBlured($event)"
+        type="text" 
+        placeholder="Search...">
+      
       <i class="fas fa-search" (click)="searchByClick()"></i>
 
+      <!-- Search Suggestions -->
       <div class="search-bar-suggestions"
-      [class.visible]="isSuggesionsVisible"
-       *ngIf="searchService.searchSuggestions().length > 0">
+           [class.visible]="isSuggesionsVisible"
+           *ngIf="searchService.searchSuggestions().length > 0">
         <div class="search-bar-suggestion"
-          *ngFor="let suggestion of searchService.searchSuggestions()"
-          (click)="useSuggestion(suggestion); $event.stopPropagation()"
-          (mousedown)="$event.preventDefault()">
-           <span [innerHTML]="highlightMatches(suggestion)"></span>
+             *ngFor="let suggestion of searchService.searchSuggestions()"
+             (click)="useSuggestion(suggestion); $event.stopPropagation()"
+             (mousedown)="$event.preventDefault()">
+          <span [innerHTML]="highlightMatches(suggestion)"></span>
           <i class="fa-solid fa-arrow-up fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>
         </div>
       </div>
     </div>
 
+    <!-- Main Menu Section -->
     <div [ngClass]="isLoggedIn ? 'menu menu-logged' : 'menu'">
+      
+      <!-- Explore Dropdown -->
       <div>
         <div class="dropdown hover-dropdown">
           <div class="custom-dropdown-btn">
@@ -45,16 +53,22 @@
         </div>
       </div>
 
+      <!-- About Us -->
+      <div class="about-us">
+        <a [routerLink]="['/about-us']">About Us</a>
+      </div>
+
+      <!-- Notifications (logged in only) -->
       <div class="notification" *ngIf="isLoggedIn">
         <i class="fa-regular fa-bell fa-lg"></i>
       </div>
 
-      <!-- User section when not logged in -->
+      <!-- Join Button (not logged in) -->
       <div *ngIf="!isLoggedIn">
         <button [routerLink]="['/register']">Join</button>
       </div>
 
-      <!-- User section when logged in -->
+      <!-- User Profile Dropdown (logged in only) -->
       <div *ngIf="isLoggedIn" class="user-info dropdown hover-dropdown">
         <div class="d-flex align-items-center">
           <img src="assets/image/avatar.png" height="40px" width="70px" class="rounded-circle" alt="Profile">
@@ -67,11 +81,13 @@
         </ul>
       </div>
 
+      <!-- Upload Button (logged in only) -->
       <div *ngIf="isLoggedIn">
-        <button>Upload</button>
+        <button [routerLink]="['/upload']">Upload</button>
       </div>
     </div>
 
+    <!-- Mobile Hamburger Menu -->
     <div class="hamburger-icon" (click)="menuOpen = !menuOpen">
       <i class="fas"
          [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"
@@ -80,18 +96,24 @@
       </i>
     </div>
 
+    <!-- Mobile Menu Content -->
     <div class="hamburger-menu" *ngIf="menuOpen">
       <div class="explore-menu">
         <a href="#">Home</a>
         <a href="#">Leaderboard</a>
         <a href="#">Popular Searches</a>
         <a href="#">Pricing</a>
+        
+        <!-- Logged in user options -->
         <ng-container *ngIf="isLoggedIn">
           <hr class="bg-white">
           <a href="#">My Profile</a>
           <a href="#">Settings</a>
+          <a [routerLink]="['/upload']">Upload</a>
           <a href="#" (click)="logout()">Logout</a>
         </ng-container>
+        
+        <!-- Not logged in options -->
         <ng-container *ngIf="!isLoggedIn">
           <hr class="bg-white">
           <a [routerLink]="['/login']">Join</a>

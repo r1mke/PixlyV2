@@ -1,0 +1,16 @@
+<div class="form-group">
+  <label *ngIf="showLabel" [for]="label">
+    {{ label }}
+    <span *ngIf="isRequired" class="required">*</span>
+  </label>
+
+  <input
+    [(ngModel)]="inputValue"
+    [type]="type"
+    [disabled]="disabled"
+    class="form-control"
+    [placeholder]="placeholder || 'Add a tag and press Enter'"
+    [id]="label"
+    (keydown)="onKeyDown($event)"
+  />
+</div>

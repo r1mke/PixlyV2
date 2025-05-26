@@ -74,9 +74,6 @@ namespace Pixly.Services.Services
         {
             return query;
         }
-        protected virtual void AddFilterToSingleEntity(TDbEntity entity)
-        {
-        }
         protected virtual async Task BeforeInsert(TDbEntity entity, TInsert request)
         {
 

@@ -106,10 +106,15 @@ nav {
    MENU
 -------------------------------------- */
 .menu {
-  width: 35%;
+  width: 40%;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+}
+
+.about-us a{
+  color: #4a4a4a;
+  cursor: pointer;
 }
 
 .menu.menu-logged {

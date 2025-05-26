@@ -132,7 +132,7 @@ namespace Pixly.Services.Services
         }
 
         // transformations
-        protected override void AddFilterToSingleEntity(Database.Photo photo)
+        private void AddFilterToSingleEntity(Database.Photo photo)
         {
             TransformEntity(photo);
         }
