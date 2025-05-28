@@ -11,12 +11,18 @@ import { of } from 'rxjs';
 import isEqual from 'lodash.isequal';
 import { SearchService } from './search.service';
 import { PhotoSearchRequest } from '../models/SearchRequest/PhotoSarchRequest';
+import {AuthState} from '../state/auth.state';
+import {environment} from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class PhotoService {
   private http = inject(HttpClient);
-  private apiUrl = "https://localhost:7136/api/photo";
+  private authState = inject(AuthState);
+  private apiUrl = `${environment.apiUrl}/photo`;
+  private get currentUserId(): string | undefined{
+    return this.authState.currentUser?.id;
+  }
 
   // Signals
   photos = signal<PhotoBasic[]>([]);
@@ -31,7 +37,7 @@ export class PhotoService {
   });
 
   getPhotos(searchRequest: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
-    
+
     this.currentSearchRequest.next(searchRequest);
     this.isLoading.set(true);
 
@@ -99,5 +105,34 @@ export class PhotoService {
     const paginationHeader = response.headers.get('Pagination');
     return paginationHeader ? JSON.parse(paginationHeader) : null;
   }
+
+  likePhoto(photoId: number): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(
+      `${this.apiUrl}/${photoId}/like?userId=${this.currentUserId}`,
+      {}
+    );
+  }
+
+  unlikePhoto(photoId: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(
+      `${this.apiUrl}/${photoId}/like?userId=${this.currentUserId}`,
+      {}
+    );
+  }
+
+  savePhoto(photoId: number): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(
+      `${this.apiUrl}/${photoId}/save?userId=${this.currentUserId}`,
+      {}
+    );
+  }
+
+  unsavePhoto(photoId: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(
+      `${this.apiUrl}/${photoId}/save?userId=${this.currentUserId}`,
+      {}
+    );
+  }
+
 
 }

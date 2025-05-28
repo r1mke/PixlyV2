@@ -11,6 +11,6 @@ namespace Pixly.Models.SearchRequest
         public string? Sorting { get; set; }
         public bool? isLiked { get; set; }
         public bool? isSaved { get; set; }
-
+        public string? CurrentUserId { get; set; }
     }
 }

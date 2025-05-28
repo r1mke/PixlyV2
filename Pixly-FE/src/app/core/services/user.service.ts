@@ -22,6 +22,4 @@ export class UserService {
       { withCredentials: true }
     );
   }
-
-
 }
