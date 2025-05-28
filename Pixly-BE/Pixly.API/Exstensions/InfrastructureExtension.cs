@@ -69,7 +69,7 @@ namespace Pixly.API.Exstensions
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Pixly API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

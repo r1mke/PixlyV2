@@ -7,18 +7,23 @@
 
           <!-- Gornji lijevi ugao - korisnik -->
           <div class="photo-user" (click)="$event.stopPropagation()">
-            <img src="assets/image/avatar.png"
-                class="user-avatar"
-                alt="User avatar" />
+            <img [src]="photo.user?.profilePictureUrl || 'assets/image/user_def.png'"
+                 class="user-avatar"
+                 alt="User avatar" />
             <span class="user-name">{{ photo.user?.userName || 'Unknown' }}</span>
           </div>
 
           <!-- Gornji desni ugao - akcije -->
           <div class="photo-actions" (click)="$event.stopPropagation()">
-            <button class="action-btn like-btn" >
+            <button class="action-btn like-btn"
+                    [class.active]="photo.isCurrentUserLiked"
+                    (click)="toggleLike(photo, $event)">
               <i class="fas fa-heart"></i>
             </button>
-            <button class="action-btn save-btn" >
+
+            <button class="action-btn save-btn"
+                    [class.active]="photo.isCurrentUserSaved"
+                    (click)="toggleSave(photo, $event)">
               <i class="fas fa-bookmark"></i>
             </button>
           </div>
@@ -35,18 +40,24 @@
 
           <!-- Gornji lijevi ugao - korisnik -->
           <div class="photo-user" (click)="$event.stopPropagation()">
-            <img src="assets/image/avatar.png"
+            <img [src]="photo.user?.profilePictureUrl || 'assets/image/user_def.png'"
                 class="user-avatar"
                 alt="User avatar" />
             <span class="user-name">{{ photo.user?.userName || 'Unknown' }}</span>
           </div>
 
           <!-- Gornji desni ugao - akcije -->
+          <!-- U gallery.component.html -->
           <div class="photo-actions" (click)="$event.stopPropagation()">
-            <button class="action-btn like-btn">
+            <button class="action-btn like-btn"
+                    [class.active]="photo.isCurrentUserLiked"
+                    (click)="toggleLike(photo, $event)">
               <i class="fas fa-heart"></i>
             </button>
-            <button class="action-btn save-btn" >
+
+            <button class="action-btn save-btn"
+                    [class.active]="photo.isCurrentUserSaved"
+                    (click)="toggleSave(photo, $event)">
               <i class="fas fa-bookmark"></i>
             </button>
           </div>
@@ -63,7 +74,7 @@
 
           <!-- Gornji lijevi ugao - korisnik -->
           <div class="photo-user" (click)="$event.stopPropagation()">
-            <img src="assets/image/avatar.png"
+            <img [src]="photo.user?.profilePictureUrl || 'assets/image/user_def.png'"
                 class="user-avatar"
                 alt="User avatar" />
             <span class="user-name">{{ photo.user?.userName || 'Unknown' }}</span>
@@ -71,10 +82,14 @@
 
           <!-- Gornji desni ugao - akcije -->
           <div class="photo-actions" (click)="$event.stopPropagation()">
-            <button class="action-btn like-btn" >
+            <button class="action-btn like-btn"
+                    [class.active]="photo.isCurrentUserLiked"
+                    (click)="toggleLike(photo, $event)">
               <i class="fas fa-heart"></i>
             </button>
-            <button class="action-btn save-btn" >
+            <button class="action-btn save-btn"
+                    [class.active]="photo.isCurrentUserSaved"
+                    (click)="toggleSave(photo, $event)">
               <i class="fas fa-bookmark"></i>
             </button>
           </div>
@@ -100,10 +115,14 @@
 
         <!-- Gornji desni ugao - akcije -->
         <div class="photo-actions" (click)="$event.stopPropagation()">
-          <button class="action-btn like-btn" >
+          <button class="action-btn like-btn"
+                  [class.active]="photo.isCurrentUserLiked"
+                  (click)="toggleLike(photo, $event)">
             <i class="fas fa-heart"></i>
           </button>
-          <button class="action-btn save-btn" >
+          <button class="action-btn save-btn"
+                  [class.active]="photo.isCurrentUserSaved"
+                  (click)="toggleSave(photo, $event)">
             <i class="fas fa-bookmark"></i>
           </button>
         </div>

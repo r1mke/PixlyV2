@@ -160,11 +160,41 @@ namespace Pixly.Services.Services
             {
                 var query = _context.Photos.AsQueryable();
                 query = await AddFilter(query, search);
+
                 var modelQuery = query.Select(x => Mapper.Map<PhotoBasic>(x));
                 var result = await PagedList<PhotoBasic>.CreateAsync(
                     modelQuery, search.PageNumber, search.PageSize);
+
+                await SetUserFlags(result, search.CurrentUserId);
+
                 return await AddTransformation(result, search);
             }, TimeSpan.FromMinutes(5));
+        }
+
+        private async Task SetUserFlags(IEnumerable<PhotoBasic> photos, string? currentUserId)
+        {
+            if (string.IsNullOrEmpty(currentUserId) || !photos.Any())
+                return;
+
+            var photoSlugs = photos.Select(p => p.Slug).ToList();
+
+            var likedSlugs = await _context.Photos
+                .Where(p => photoSlugs.Contains(p.Slug) &&
+                           p.Likes.Any(l => l.UserId == currentUserId))
+                .Select(p => p.Slug)
+                .ToListAsync();
+
+            var savedSlugs = await _context.Photos
+                .Where(p => photoSlugs.Contains(p.Slug) &&
+                           p.Favorites.Any(f => f.UserId == currentUserId))
+                .Select(p => p.Slug)
+                .ToListAsync();
+
+            foreach (var photo in photos)
+            {
+                photo.IsCurrentUserLiked = likedSlugs.Contains(photo.Slug);
+                photo.IsCurrentUserSaved = savedSlugs.Contains(photo.Slug);
+            }
         }
 
         protected Task<PagedList<PhotoBasic>> AddTransformation(PagedList<PhotoBasic> photos, PhotoSearchRequest search)
@@ -315,7 +345,7 @@ namespace Pixly.Services.Services
             var entity = await _context.Photos.FindAsync(photoId);
             if (entity == null) throw new NotFoundException($"Photo with ID {photoId} not found");
             var state = BasePhotoState.CreateState(entity.State);
-            await state.LikePhoto(photoId, userId);
+            await state.UnsavePhoto(photoId, userId);
         }
 
         public async Task<PhotoDetail> GetBySlug(string slug)
