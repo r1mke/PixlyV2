@@ -107,7 +107,7 @@
   display: flex;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.6);
-  padding: 4px 10px 4px 4px;
+  padding: 4px 14px 4px 4px;
   border-radius: 20px;
   z-index: 2;
   opacity: 0;
@@ -121,8 +121,8 @@
 }
 
 .user-avatar {
-  width: 24px;
-  height: 24px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -176,20 +176,22 @@
 
 .like-btn i {
   color: #666;
+  font-size: 17px;
   transition: color 0.2s ease;
 }
 
 .like-btn.active i {
-  color: #ff3a78;
+  color: var(--pixly-color-hover);
 }
 
 .save-btn i {
   color: #666;
+  font-size: 17px;
   transition: color 0.2s ease;
 }
 
 .save-btn.active i {
-  color: #0095f6;
+  color: var(--pixly-color-hover);
 }
 
 /* Loading indikator */
@@ -239,11 +241,11 @@
   .masonry-column:nth-child(3) {
     display: none; /* Sakrij treću kolonu na tablet uređajima */
   }
-  
+
   .masonry-columns {
     gap: 12px;
   }
-  
+
   .masonry-column {
     gap: 12px;
   }
@@ -253,21 +255,21 @@
   .masonry-column:nth-child(3) {
     display: none; /* Sakrij treću kolonu */
   }
-  
+
   .masonry-columns {
     gap: 10px;
   }
-  
+
   .masonry-column {
     gap: 10px;
   }
-  
-  .photo-user, 
+
+  .photo-user,
   .photo-actions {
     opacity: 1; /* Uvijek prikaži na manjim uređajima */
     transform: translateX(0);
   }
-  
+
   .photo-overlay {
     opacity: 1; /* Uvijek prikaži overlay na manjim uređajima */
     transform: translateY(0);
@@ -278,26 +280,26 @@
   .desktop-columns {
     display: none;
   }
-  
+
   .mobile-columns {
     display: flex;
   }
-  
+
   .user-name {
     max-width: 80px;
   }
-  
+
   .sentinel {
     height: 50px; /* Veći sentinel za mobilne uređaje */
   }
-  
+
   /* Uvijek prikaži dugme za učitavanje više na mobilnim uređajima */
   .load-more-container {
     position: sticky;
     bottom: 20px;
     z-index: 10;
   }
-  
+
   .load-more-container button {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }

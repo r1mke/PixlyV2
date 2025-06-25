@@ -11,4 +11,5 @@ export interface User {
   emailConfirmed: boolean;
   state: string | null;
   isDeleted: boolean | null;
+  profilePictureUrl: string;
 }

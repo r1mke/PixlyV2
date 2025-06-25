@@ -22,8 +22,8 @@
 
       <!-- Search Suggestions -->
       <div class="search-bar-suggestions"
-           [class.visible]="isSuggesionsVisible"
-           *ngIf="searchService.searchSuggestions().length > 0">
+                [class.visible]="isSuggesionsVisible"
+               *ngIf="searchService.searchSuggestions().length > 0">
         <div class="search-bar-suggestion"
              *ngFor="let suggestion of searchService.searchSuggestions()"
              (click)="useSuggestion(suggestion); $event.stopPropagation()"
@@ -71,11 +71,15 @@
       <!-- User Profile Dropdown (logged in only) -->
       <div *ngIf="isLoggedIn" class="user-info dropdown hover-dropdown">
         <div class="d-flex align-items-center">
-          <img src="assets/image/avatar.png" height="40px" width="70px" class="rounded-circle" alt="Profile">
+          <img
+            [src]="(currentUser$ | async)?.profilePictureUrl || 'assets/image/user_def.png'"
+            class="profile-img"
+            alt="Profile"
+          />
         </div>
         <ul class="dropdown-menu custom-dropdown-menu">
           <li><a class="dropdown-item"><i class="fas fa-user"></i> My Profile</a></li>
-          <li><a class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
+          <li [routerLink]="['/edit-profile']"><a class="dropdown-item"><i class="fas fa-cog"></i>Settings</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
@@ -116,7 +120,7 @@
         <!-- Not logged in options -->
         <ng-container *ngIf="!isLoggedIn">
           <hr class="bg-white">
-          <a [routerLink]="['/login']">Join</a>
+          <a [routerLink]="['/register']">Join</a>
         </ng-container>
       </div>
     </div>

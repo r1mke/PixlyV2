@@ -7,11 +7,7 @@ import { AuthResponse } from '../models/Response/AuthResponse';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/DTOs/User';
 import { AuthState } from '../state/auth.state';
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
+import {LoginRequest} from '../models/Request/LoginRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +19,15 @@ export class AuthService {
     private http: HttpClient,
     private authState: AuthState
   ) {}
+
+  // Helper observable-e
+  get isLoggedIn$() {
+    return this.authState.isLoggedIn$;
+  }
+
+  get currentUser$() {
+    return this.authState.currentUser$;
+  }
 
   refreshToken(oldToken: string | null): Observable<ApiResponse<any>> {
     const requestBody = oldToken ? { token: oldToken } : {};
@@ -77,7 +82,6 @@ export class AuthService {
   }
 
   logout(): Observable<ApiResponse<any>> {
-    this.authState.loadCurrentUser().subscribe();
     return this.http.post<ApiResponse<any>>(`${this.baseUrl}/logout`, {}, {
       withCredentials: true
     }).pipe(

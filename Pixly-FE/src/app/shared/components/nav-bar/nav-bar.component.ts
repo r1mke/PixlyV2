@@ -1,17 +1,15 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import {  Component, OnDestroy, ViewChild, ElementRef , OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { AuthState } from '../../../core/state/auth.state';
-import { AuthService } from '../../../core/services/auth.service';
-import { Subscription } from 'rxjs';
-import { User } from '../../../core/models/DTOs/User';
-import { debounceTime, takeUntil } from 'rxjs';
+import {Router, RouterLink} from '@angular/router';
+import {AuthState} from '../../../core/state/auth.state';
+import {AuthService} from '../../../core/services/auth.service';
+import {Subscription} from 'rxjs';
+import {User} from '../../../core/models/DTOs/User';
+import { debounceTime, takeUntil, distinctUntilChanged } from 'rxjs';
 import { Subject } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs';
 import isEqual from 'lodash.isequal';
-import { HostListener } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
@@ -101,7 +99,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   search(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
+    if  (event.key === 'Enter')  {
       const searchText = (event.target as HTMLInputElement).value;
       if ((!searchText || searchText.trim().length === 0) && this.router.url.includes('/search')) {
         this.router.navigate(['/'], { queryParams: {} });
@@ -144,13 +142,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
   getSearchSuggestions(event: KeyboardEvent) {
     const inputElement = event.target as HTMLInputElement;
     const searchText = inputElement.value;
-    
-    if (searchText === '') {
-      this.isSuggesionsVisible = false;
-      this.searchService.searchSuggestions.set([]);
-      this.searchService.searchSuggestionsTitle.next('');
-      console.log(this.currentSearchText, this.searchService.searchSuggestions());
-    } else {
+    if(searchText === '')
+    {
+        this.isSuggesionsVisible = false;
+        this.searchService.searchSuggestions.set([]);
+        this.searchService.searchSuggestionsTitle.next('');
+        console.log(this.currentSearchText, this.searchService.searchSuggestions());
+    }
+    else{
       this.searchService.searchSuggestionsTitle.next(searchText);
       this.isSuggesionsVisible = true;
     }
@@ -167,7 +166,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   // ========== NAVIGATION METHODS ==========
   goToHome() {
     this.searchService.searchSuggestions.set([]);
-    this.router.navigate(['/']);
+    this.router.navigate(['/']);;
   }
 
   logout() {
@@ -178,29 +177,31 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   // ========== UTILITY METHODS ==========
   highlightMatches(suggestion: string): SafeHtml {
-   
-    if (!this.currentSearchText || this.currentSearchText.trim() === '') {
-      return this.sanitizer.bypassSecurityTrustHtml(suggestion);
-    }
-
-    const searchText = this.currentSearchText.toLowerCase();
-    const lowerSuggestion = suggestion.toLowerCase();
-
-    if (lowerSuggestion.includes(searchText)) {
-      
-      const index = lowerSuggestion.indexOf(searchText);
-
-      
-      const beforeMatch = suggestion.substring(0, index);
-      const match = suggestion.substring(index, index + searchText.length);
-      const afterMatch = suggestion.substring(index + searchText.length);
-
-      
-      return this.sanitizer.bypassSecurityTrustHtml(
-        `${beforeMatch}<strong>${match}</strong>${afterMatch}`
-      );
-    }
-
+  // Ako nema teksta za pretragu, vrati originalni suggestion
+  if (!this.currentSearchText || this.currentSearchText.trim() === '') {
     return this.sanitizer.bypassSecurityTrustHtml(suggestion);
   }
+  
+  const searchText = this.currentSearchText.toLowerCase();
+  const lowerSuggestion = suggestion.toLowerCase();
+  
+  // Provjeri sadrži li suggestion tekst za pretragu
+  if (lowerSuggestion.includes(searchText)) {
+    // Pronađi početni indeks podudaranja
+    const index = lowerSuggestion.indexOf(searchText);
+    
+    // Podijeli suggestion na tri dijela: prije podudaranja, podudaranje, poslije podudaranja
+    const beforeMatch = suggestion.substring(0, index);
+    const match = suggestion.substring(index, index + searchText.length);
+    const afterMatch = suggestion.substring(index + searchText.length);
+    
+    // Vrati HTML s podebljenim podudaranjem
+    return this.sanitizer.bypassSecurityTrustHtml(
+      `${beforeMatch}<strong>${match}</strong>${afterMatch}`
+    );
+  }
+  
+  // Ako nema podudaranja, vrati originalni suggestion
+  return this.sanitizer.bypassSecurityTrustHtml(suggestion);
+}
 }

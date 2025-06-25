@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace Pixly.Services.Services
 {
-    public class CRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate, TDbEntity> : ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate> where TDbEntity : class where TSearch : PaginationParams where TInsert : class where TUpdate : class
+    public class CRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate, TDbEntity, TId> : ICRUDService<TModelDetail, TModelBasic, TSearch, TInsert, TUpdate, TId> where TDbEntity : class where TSearch : PaginationParams where TInsert : class where TUpdate : class
     {
         protected readonly ICacheService _cacheService;
         public IMapper Mapper;
@@ -20,7 +20,7 @@ namespace Pixly.Services.Services
             _context = context;
             _cacheService = cacheService;
         }
-        public virtual async Task<TModelDetail> GetById(int id)
+        public virtual async Task<TModelDetail> GetById(TId id)
         {
             var entityName = typeof(TDbEntity).Name.ToLower();
             var cacheKey = $"{entityName}:{id}";
@@ -55,7 +55,7 @@ namespace Pixly.Services.Services
             await _context.SaveChangesAsync();
             return Mapper.Map<TModelBasic>(entity);
         }
-        public virtual async Task<TModelBasic> Update(int id, TUpdate request)
+        public virtual async Task<TModelBasic> Update(TId id, TUpdate request)
         {
             var entityName = typeof(TDbEntity).Name.ToLower();
             var cacheKey = $"{entityName}:{id}";
@@ -82,7 +82,5 @@ namespace Pixly.Services.Services
         {
 
         }
-
-
     }
 }

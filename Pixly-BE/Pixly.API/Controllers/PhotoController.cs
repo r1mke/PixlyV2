@@ -9,18 +9,18 @@ using Pixly.Services.Interfaces;
 namespace Pixly.API.Controllers
 {
     [Route("api/photo")]
-    public class PhotoController : CRUDController<Models.DTOs.PhotoDetail, Models.DTOs.PhotoBasic, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest>
+    public class PhotoController : CRUDController<PhotoDetail, PhotoBasic, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest, int>
     {
         public PhotoController(IPhotoService service) : base(service)
         {
         }
 
         [HttpGet("slug/{slug}")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoDetail>>> GetBySlug(string slug)
+        public async Task<ActionResult<ApiResponse<PhotoDetail>>> GetBySlug(string slug)
         {
             var result = await (_service as IPhotoService).GetBySlug(slug);
 
-            if (result == null) return this.ApiNotFound<Models.DTOs.PhotoDetail>($"Resource with slug {slug} not found");
+            if (result == null) return this.ApiNotFound<PhotoDetail>($"Resource with slug {slug} not found");
             return this.ApiSuccess(result);
         }
 
@@ -40,14 +40,14 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPost("{photoId}/like")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Like>>> LikePhoto(int photoId, string userId)
+        public async Task<ActionResult<ApiResponse<Like>>> LikePhoto(int photoId, string userId)
         {
             var like = await (_service as IPhotoService).LikePhoto(photoId, userId);
 
             if (like == null)
-                return this.ApiNotFound<Models.DTOs.Like>();
+                return this.ApiNotFound<Like>();
 
-            return this.ApiSuccess<Models.DTOs.Like>(like);
+            return this.ApiSuccess<Like>(like);
         }
 
         [HttpDelete("{photoId}/like")]
@@ -60,14 +60,14 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPost("{photoId}/save")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.Favorite>>> SavePhoto(int photoId, string userId)
+        public async Task<ActionResult<ApiResponse<Favorite>>> SavePhoto(int photoId, string userId)
         {
             var favorite = await (_service as IPhotoService).SavePhoto(photoId, userId);
 
             if (favorite == null)
-                return this.ApiNotFound<Models.DTOs.Favorite>();
+                return this.ApiNotFound<Favorite>();
 
-            return this.ApiSuccess<Models.DTOs.Favorite>(favorite);
+            return this.ApiSuccess<Favorite>(favorite);
         }
 
         [HttpDelete("{photoId}/save")]
@@ -79,49 +79,49 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPost("{id}/submit")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> SubmitPhoto(int id)
+        public async Task<ActionResult<ApiResponse<PhotoBasic>>> SubmitPhoto(int id)
         {
             var result = await (_service as IPhotoService).Submit(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/approve")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> ApprovePhoto(int id)
+        public async Task<ActionResult<ApiResponse<PhotoBasic>>> ApprovePhoto(int id)
         {
             var result = await (_service as IPhotoService).Approve(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/reject")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> RejectPhoto(int id)
+        public async Task<ActionResult<ApiResponse<PhotoBasic>>> RejectPhoto(int id)
         {
             var result = await (_service as IPhotoService).Reject(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/edit")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> EditPhoto(int id)
+        public async Task<ActionResult<ApiResponse<PhotoBasic>>> EditPhoto(int id)
         {
             var result = await (_service as IPhotoService).Edit(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/hide")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> HidePhoto(int id)
+        public async Task<ActionResult<ApiResponse<PhotoBasic>>> HidePhoto(int id)
         {
             var result = await (_service as IPhotoService).Hide(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/delete")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> DeletePhoto(int id)
+        public async Task<ActionResult<ApiResponse<PhotoBasic>>> DeletePhoto(int id)
         {
             var result = await (_service as IPhotoService).Delete(id);
             return this.ApiSuccess(result);
         }
 
         [HttpPost("{id}/restore")]
-        public async Task<ActionResult<ApiResponse<Models.DTOs.PhotoBasic>>> RestorePhoto(int id)
+        public async Task<ActionResult<ApiResponse<PhotoBasic>>> RestorePhoto(int id)
         {
             var result = await (_service as IPhotoService).Restore(id);
             return this.ApiSuccess(result);
@@ -133,7 +133,5 @@ namespace Pixly.API.Controllers
             var actions = await (_service as IPhotoService).AllowedActions(id);
             return this.ApiSuccess(actions);
         }
-
-
     }
 }

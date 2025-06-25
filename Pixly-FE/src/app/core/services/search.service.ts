@@ -16,6 +16,7 @@ export class SearchService {
     title: null,
     orientation: null,
     size: null,
+    isUserIncluded: true,
     pageNumber: 1,
     pageSize: 10,
   });
@@ -39,6 +40,8 @@ export class SearchService {
   setSearchObject(searchObject: Partial<PhotoSearchRequest>) {
     if(searchObject.size?.includes('All')) searchObject.size = null;
     if(searchObject.orientation?.includes('All')) searchObject.orientation = null;
+    searchObject.isUserIncluded = true;
+
     this.searchObject.next(searchObject);
   }
 

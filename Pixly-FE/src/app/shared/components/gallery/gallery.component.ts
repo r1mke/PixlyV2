@@ -3,15 +3,16 @@ import { PhotoBasic } from '../../../core/models/DTOs/PhotoBasic';
 import { PhotoService } from '../../../core/services/photo.service';
 import { OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
-import { SimpleChanges } from '@angular/core';
 import { PhotoSearchRequest } from '../../../core/models/SearchRequest/PhotoSarchRequest';
 import { RouterModule } from '@angular/router';
-import { takeUntil } from 'rxjs';
+import {filter, take, takeUntil} from 'rxjs';
 import { Subject } from 'rxjs';
 import { SearchService } from '../../../core/services/search.service';
 import { distinctUntilChanged } from 'rxjs';
 import isEqual from 'lodash.isequal';
+import {AuthState} from '../../../core/state/auth.state';
+import {switchMap} from 'rxjs/operators';
+import {LoadingService} from '../../../core/services/loading.service';
 
 @Component({
   selector: 'app-gallery',
@@ -21,21 +22,33 @@ import isEqual from 'lodash.isequal';
   styleUrl: './gallery.component.css'
 })
 export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
-  @Input() emptyStateMessage: string = 'Nema pronađenih fotografija';
+  @Input() emptyStateMessage: string = 'No photos found';
   @ViewChild('sentinel') sentinel!: ElementRef;
   private onDestroy$ = new Subject<void>();
   private _scrollHandler: (() => void) | null = null;
   private intersectionObserver?: IntersectionObserver;
+
+  authState = inject(AuthState);
   searchService = inject(SearchService);
   photoService = inject(PhotoService);
-  
+  loadingService = inject(LoadingService);
+
   ngOnInit(): void {
-    this.searchService.getSearchObjectAsObservable().pipe(
-      takeUntil(this.onDestroy$),
-      distinctUntilChanged((prev, curr) => isEqual(prev, curr))
+    this.loadingService.setLoading(true);
+
+    setTimeout(() => {
+
+      this.searchService.getSearchObjectAsObservable().pipe(
+        takeUntil(this.onDestroy$),
+        distinctUntilChanged((prev, curr) => isEqual(prev, curr))
       ).subscribe((searchObject: Partial<PhotoSearchRequest>) => {
-      this.loadPhotos(searchObject);
-    });
+        const currentUser = this.authState.currentUser;
+        if (currentUser?.id) {
+          searchObject.currentUserId = currentUser.id;
+        }
+        this.loadPhotos(searchObject);
+      });
+    }, 300)
   }
 
   ngAfterViewInit(): void {
@@ -108,6 +121,48 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   getColumnPhotos(columnIndex: number): PhotoBasic[] {
     return this.photoService.photos()
       .filter((_, index) => index % 3 === columnIndex);
+  }
+
+  toggleLike(photo: PhotoBasic, event: Event): void {
+    event.stopPropagation();
+
+    if (!photo.photoId) {
+      return;
+    }
+
+    const wasLiked = photo.isCurrentUserLiked;
+    photo.isCurrentUserLiked = !wasLiked;
+
+    const action = wasLiked ?
+      this.photoService.unlikePhoto(photo.photoId) :
+      this.photoService.likePhoto(photo.photoId);
+
+    action.pipe(takeUntil(this.onDestroy$)).subscribe({
+      error: () => {
+        photo.isCurrentUserLiked = wasLiked;
+      }
+    });
+  }
+
+  toggleSave(photo: PhotoBasic, event: Event): void {
+    event.stopPropagation();
+
+    if (!photo.photoId) {
+      return;
+    }
+
+    const wasSaved = photo.isCurrentUserSaved;
+    photo.isCurrentUserSaved = !wasSaved;
+
+    const action = wasSaved ?
+      this.photoService.unsavePhoto(photo.photoId) :
+      this.photoService.savePhoto(photo.photoId);
+
+    action.pipe(takeUntil(this.onDestroy$)).subscribe({
+      error: () => {
+        photo.isCurrentUserSaved = wasSaved;
+      }
+    });
   }
 
  ngOnDestroy(): void {
