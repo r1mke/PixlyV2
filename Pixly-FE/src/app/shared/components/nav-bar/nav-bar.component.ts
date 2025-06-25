@@ -1,4 +1,4 @@
-import {  Component, OnInit, OnDestroy, ViewChild, ElementRef , OnInit } from '@angular/core';
+import {  Component, OnInit, OnDestroy, ViewChild, ElementRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
@@ -63,11 +63,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.authService.logout().subscribe(() => {
       window.location.href = '/';
     });
-    this.subscription.add(
-      this.authState.currentUser$.subscribe(
-        user => this.currentUser = user
-      )
-    );
   }
 
   // ========== SEARCH FUNCTIONALITY ==========
