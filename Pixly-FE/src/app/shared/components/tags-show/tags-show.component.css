@@ -1,0 +1,162 @@
+/* scrollable-tags.component.css */
+
+.tags-container {
+  position: relative;
+  max-width: 100%;
+  margin: 20px 0;
+  /* DODANO: Minimum širina da se omogući overflow */
+  min-width: 0;
+}
+
+.tags-show {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 0;
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* DODANO: Minimum širina za flex container */
+  min-width: 0;
+  width: 100%;
+}
+
+.tags-show::-webkit-scrollbar {
+  display: none;
+}
+
+.tags-show-item {
+  flex-shrink: 0;
+  /* DODANO: Minimum širina da se spriječi skupljanje */
+  display: inline-block;
+}
+
+.tags-show-item a {
+  border: 1px solid #cccccc72;
+  padding: 8px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  color: black;
+  font-weight: 500;
+  text-transform: capitalize;
+  cursor: pointer;
+  display: block;
+  white-space: nowrap;
+  /* DODANO: Sprječava da se tekst lomi */
+  word-break: keep-all;
+}
+
+.tags-show-item a:hover {
+  background-color: #ffdb52;
+  border: 1px solid #ffdb52;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+  color: #222;
+  box-shadow: 0 2px 8px 0 #ffdb5233;
+}
+
+.tags-show-item span {
+  padding: 10px 0;
+}
+
+/* Navigation arrows */
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: #333;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  user-select: none;
+}
+
+.scroll-arrow:hover {
+  background-color: #ffdb52;
+  border-color: #ffdb52;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.scroll-arrow.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-left {
+  left: -15px;
+}
+
+.scroll-right {
+  right: -15px;
+}
+
+/* DODANO: Debugging klase */
+.debug-overflow {
+  border: 2px solid red !important;
+}
+
+.debug-no-overflow {
+  border: 2px solid green !important;
+}
+
+/* DODANO: Animacija za smooth prijelaz */
+.tags-show-item {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .scroll-arrow {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+  
+  .scroll-left {
+    left: -10px;
+  }
+  
+  .scroll-right {
+    right: -10px;
+  }
+
+  .tags-show {
+    gap: 3px;
+  }
+
+  .tags-show-item a {
+    padding: 6px 15px;
+    font-size: 14px;
+  }
+}
+
+/* DODANO: Za testiranje - dodajte min-width da forsirate overflow */
+.force-overflow .tags-show {
+  max-width: 300px; /* Za testiranje */
+}

@@ -1,0 +1,81 @@
+<div class="container">
+  <div class="upload-submit">
+    <div class="upload-submit-image">
+      <img src="assets/image/test2.jpg" loading="lazy" alt="" />
+    </div>
+    <form [formGroup]="photoUploadForm" class="upload-form" (ngSubmit)="onSubmit()">
+      <div class="upload-submit-form">
+        <!-- Title Input -->
+        <div class="upload-submit-input">
+          <app-text-input
+            formControlName="title"
+            [showLabel]="true"
+            [label]="'Title'"
+            [isRequired]="true"
+            [attr.minLength]="5"
+            [attr.maxLength]="30"
+            [type]="'text'"
+            [placeholder]="'Enter photo title'"
+          >
+          </app-text-input>
+        </div>
+
+        <!-- Description Input -->
+        <div class="upload-submit-input">
+          <app-text-input
+            formControlName="description"
+            [showLabel]="true"
+            [label]="'Description'"
+            [minLength]="10"
+            [maxLength]="200"
+            [type]="'text'"
+            [placeholder]="'Enter photo description'"
+          >
+          </app-text-input>
+        </div>
+
+        <!-- Location Input -->
+        <div class="upload-submit-input">
+          <app-text-input
+            formControlName="location"
+            [showLabel]="true"
+            [label]="'Location'"
+            [isRequired]="true"
+            [minLength]="2"
+            [maxLength]="50"
+            [type]="'text'"
+            [placeholder]="'Enter location'"
+          >
+          </app-text-input>
+        </div>
+        
+        <!-- Tags Input -->
+         <div class="upload-submit-input">
+          <app-tag-input
+            formControlName="tags"
+            [showLabel]="true"
+            label="Tags"
+            placeholder="Enter tags..."
+            (tagAdded)="onTagAdded($event)">
+          </app-tag-input>
+        </div>
+        
+        <div class="tags-show force-overflow">
+          <app-tags-show [tags]="currentTags"></app-tags-show>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="upload-submit-button">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="photoUploadForm.invalid"
+          >
+            Upload Photo
+          </button>
+        </div>
+      </div>
+    </form>
+    
+  </div>
+</div>

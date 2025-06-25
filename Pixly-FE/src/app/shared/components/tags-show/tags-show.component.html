@@ -1,0 +1,23 @@
+   <div class="tags-container">
+      <div class="tags-show" #tagsContainer (scroll)="onScroll()">
+        <div class="tags-show-item" *ngFor="let tag of tags">
+          <a [routerLink]="['/search', tag]">
+            <span>{{tag}}</span>
+          </a>
+        </div>
+      </div>
+      
+      <div 
+        class="scroll-arrow scroll-left"
+        [class.visible]="showLeftArrow"
+        (click)="scrollLeft()">
+        <i class="fa-solid fa-chevron-left"></i>
+      </div>
+      
+      <div 
+        class="scroll-arrow scroll-right"
+        [class.visible]="showRightArrow"
+        (click)="scrollRight()">
+        <i class="fa-solid fa-chevron-right"></i>
+      </div>
+    </div>
