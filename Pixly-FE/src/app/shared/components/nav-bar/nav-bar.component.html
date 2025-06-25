@@ -4,6 +4,7 @@
       <img src="assets/image/logo.png" height="50px" width="50px">
     </div>
 
+    <!-- Search Bar Section -->
     <div class="search-bar" [ngClass]="(isLoggedIn$ | async) ? 'search-bar search-bar-logged' : 'search-bar'">
       <input
         [(ngModel)]="currentSearchText"
@@ -15,9 +16,10 @@
         type="text" placeholder="Search...">
       <i class="fas fa-search" (click)="searchByClick()"></i>
 
+      <!-- Search Suggestions -->
       <div class="search-bar-suggestions"
-           [class.visible]="isSuggesionsVisible"
-           *ngIf="searchService.searchSuggestions().length > 0">
+                [class.visible]="isSuggesionsVisible"
+               *ngIf="searchService.searchSuggestions().length > 0">
         <div class="search-bar-suggestion"
              *ngFor="let suggestion of searchService.searchSuggestions()"
              (click)="useSuggestion(suggestion); $event.stopPropagation()"
@@ -28,7 +30,10 @@
       </div>
     </div>
 
+    <!-- Main Menu Section -->
     <div [ngClass]="(isLoggedIn$ | async) ? 'menu menu-logged' : 'menu'">
+      
+      <!-- Explore Dropdown -->
       <div>
         <div class="dropdown hover-dropdown">
           <div class="custom-dropdown-btn">
@@ -44,16 +49,22 @@
         </div>
       </div>
 
+      <!-- About Us -->
+      <div class="about-us">
+        <a [routerLink]="['/about-us']">About Us</a>
+      </div>
+
+      <!-- Notifications (logged in only) -->
       <div class="notification" *ngIf="isLoggedIn$ | async">
         <i class="fa-regular fa-bell fa-lg"></i>
       </div>
 
-      <!-- User section when not logged in -->
+      <!-- Join Button (not logged in) -->
       <div *ngIf="!(isLoggedIn$ | async)">
         <button [routerLink]="['/register']">Join</button>
       </div>
 
-      <!-- User section when logged in -->
+      <!-- User Profile Dropdown (logged in only) -->
       <div *ngIf="isLoggedIn$ | async" class="user-info dropdown hover-dropdown">
         <div class="d-flex align-items-center">
           <img
@@ -70,11 +81,13 @@
         </ul>
       </div>
 
+      <!-- Upload Button (logged in only) -->
       <div *ngIf="isLoggedIn$ | async">
-        <button>Upload</button>
+        <button [routerLink]="['/upload']">Upload</button>
       </div>
     </div>
 
+    <!-- Mobile Hamburger Menu -->
     <div class="hamburger-icon" (click)="menuOpen = !menuOpen">
       <i class="fas"
          [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"
@@ -83,18 +96,24 @@
       </i>
     </div>
 
+    <!-- Mobile Menu Content -->
     <div class="hamburger-menu" *ngIf="menuOpen">
       <div class="explore-menu">
         <a href="#">Home</a>
         <a href="#">Leaderboard</a>
         <a href="#">Popular Searches</a>
         <a href="#">Pricing</a>
+        
+        <!-- Logged in user options -->
         <ng-container *ngIf="isLoggedIn$ | async">
           <hr class="bg-white">
           <a href="#">My Profile</a>
           <a href="#">Settings</a>
+          <a [routerLink]="['/upload']">Upload</a>
           <a href="#" (click)="logout()">Logout</a>
         </ng-container>
+        
+        <!-- Not logged in options -->
         <ng-container *ngIf="!(isLoggedIn$ | async)">
           <hr class="bg-white">
           <a [routerLink]="['/register']">Join</a>

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {  Component, OnInit, OnDestroy, ViewChild, ElementRef , OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
@@ -9,8 +9,6 @@ import { debounceTime, takeUntil, distinctUntilChanged } from 'rxjs';
 import { Subject } from 'rxjs';
 import isEqual from 'lodash.isequal';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { ViewChild } from '@angular/core';
-import { ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -65,8 +63,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.authService.logout().subscribe(() => {
       window.location.href = '/';
     });
+    this.subscription.add(
+      this.authState.currentUser$.subscribe(
+        user => this.currentUser = user
+      )
+    );
   }
 
+  // ========== SEARCH FUNCTIONALITY ==========
   searchFocused(event: FocusEvent) {
     this.isSuggesionsVisible = true;
   }
@@ -96,21 +100,22 @@ export class NavBarComponent implements OnInit, OnDestroy {
   performSearch(searchText: string) {
     if (searchText.trim().length > 0) {
       this.searchService.searchSuggestions.set([]);
-      let searchObject = this.searchService.getSearchObject();
-      searchObject = {
-        ...searchObject,
-        title: searchText,
-        pageNumber: 1,
-      };
 
-      this.searchService.setSearchObject(searchObject);
+      if (this.router.url.includes('/search')) {
+        let searchObject = this.searchService.getSearchObject();
+        searchObject = {
+          ...searchObject,
+          title: searchText,
+          pageNumber: 1,
+        };
+        this.searchService.setSearchObject(searchObject);
 
-      if (!this.router.url.includes('/search')) {
-        this.router.navigate(['/search', searchText]);
-      } else {
         this.router.navigate(['/search', searchText], {
-          queryParamsHandling: 'merge'
+          queryParamsHandling: 'merge',
+          replaceUrl: true
         });
+      } else {
+        this.router.navigate(['/search', searchText]);
       }
     }
   }
