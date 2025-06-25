@@ -55,8 +55,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
+    this.subscription.unsubscribe();
   }
 
   logout() {
@@ -75,7 +74,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   search(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
+    if  (event.key === 'Enter')  {
       const searchText = (event.target as HTMLInputElement).value;
       if ((!searchText || searchText.trim().length === 0) && this.router.url.includes('/search')) {
         this.router.navigate(['/'], { queryParams: {} });
@@ -138,7 +137,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   goToHome() {
     this.searchService.searchSuggestions.set([]);
-    this.router.navigate(['/']);
+    this.router.navigate(['/']);;
   }
 
   highlightMatches(suggestion: string): SafeHtml {

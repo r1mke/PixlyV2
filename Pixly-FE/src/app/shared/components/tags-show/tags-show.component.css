@@ -4,6 +4,8 @@
   position: relative;
   max-width: 100%;
   margin: 20px 0;
+  /* DODANO: Minimum širina da se omogući overflow */
+  min-width: 0;
 }
 
 .tags-show {
@@ -18,6 +20,9 @@
   /* Hide scrollbar but keep functionality */
   scrollbar-width: none;
   -ms-overflow-style: none;
+  /* DODANO: Minimum širina za flex container */
+  min-width: 0;
+  width: 100%;
 }
 
 .tags-show::-webkit-scrollbar {
@@ -26,6 +31,8 @@
 
 .tags-show-item {
   flex-shrink: 0;
+  /* DODANO: Minimum širina da se spriječi skupljanje */
+  display: inline-block;
 }
 
 .tags-show-item a {
@@ -39,6 +46,8 @@
   cursor: pointer;
   display: block;
   white-space: nowrap;
+  /* DODANO: Sprječava da se tekst lomi */
+  word-break: keep-all;
 }
 
 .tags-show-item a:hover {
@@ -58,7 +67,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   border: 1px solid #ddd;
   border-radius: 50%;
   width: 40px;
@@ -72,14 +81,15 @@
   z-index: 10;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
   user-select: none;
 }
 
 .scroll-arrow:hover {
   background-color: #ffdb52;
   border-color: #ffdb52;
+  transform: translateY(-50%) scale(1.05);
 }
 
 .scroll-arrow.visible {
@@ -93,6 +103,31 @@
 
 .scroll-right {
   right: -15px;
+}
+
+/* DODANO: Debugging klase */
+.debug-overflow {
+  border: 2px solid red !important;
+}
+
+.debug-no-overflow {
+  border: 2px solid green !important;
+}
+
+/* DODANO: Animacija za smooth prijelaz */
+.tags-show-item {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Responsive design */
@@ -110,4 +145,18 @@
   .scroll-right {
     right: -10px;
   }
+
+  .tags-show {
+    gap: 3px;
+  }
+
+  .tags-show-item a {
+    padding: 6px 15px;
+    font-size: 14px;
+  }
+}
+
+/* DODANO: Za testiranje - dodajte min-width da forsirate overflow */
+.force-overflow .tags-show {
+  max-width: 300px; /* Za testiranje */
 }
