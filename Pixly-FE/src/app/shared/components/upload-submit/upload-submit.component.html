@@ -48,8 +48,9 @@
           >
           </app-text-input>
         </div>
-
-        <div class="upload-submit-input">
+        
+        <!-- Tags Input -->
+         <div class="upload-submit-input">
           <app-tag-input
             formControlName="tags"
             [showLabel]="true"
@@ -58,9 +59,8 @@
             (tagAdded)="onTagAdded($event)">
           </app-tag-input>
         </div>
-        <!-- Tags Input -->
         
-        <div class="tags-show">
+        <div class="tags-show force-overflow">
           <app-tags-show [tags]="currentTags"></app-tags-show>
         </div>
 

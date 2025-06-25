@@ -24,7 +24,7 @@ export class UploadSubmitComponent implements OnInit {
       this.photoUploadForm = this.fb.group({
         title: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(30)]],
         description: [null, [Validators.minLength(5), Validators.maxLength(50)]],
-        tags: [null, [Validators.required]],
+        tags: [[], [Validators.required]],
         location: [null, [Validators.required]],
       });
     }
@@ -39,15 +39,35 @@ export class UploadSubmitComponent implements OnInit {
     }
   }
 
-   onTagAdded(tag: string): void {
-    const currentTags = this.photoUploadForm.get('tags')?.value || [];
-    if (!currentTags.includes(tag)) {
-      this.currentTags = [...currentTags, tag];
+    onTagAdded(tag: string): void {
+    // POBOLJŠANO: Provjera da tag nije prazan i već ne postoji
+    if (!tag || tag.trim() === '') return;
+    
+    const trimmedTag = tag.trim();
+    if (!this.currentTags.includes(trimmedTag)) {
+      // PROMJENA: Kreiranje novog array-a da se trigguje change detection
+      this.currentTags = [...this.currentTags, trimmedTag];
+      
+      // Ažuriranje form kontrole
       this.photoUploadForm.patchValue({
         tags: this.currentTags
       });
+      
+      console.log('Tag added:', trimmedTag);
       console.log('Current tags:', this.currentTags);
+      
+      // DODANO: Markiramo field kao touched da se pokrenu validacije
+      this.photoUploadForm.get('tags')?.markAsTouched();
     }
+  }
+
+  onTagRemoved(tag: string): void {
+    this.currentTags = this.currentTags.filter(t => t !== tag);
+    this.photoUploadForm.patchValue({
+      tags: this.currentTags
+    });
+    console.log('Tag removed:', tag);
+    console.log('Current tags:', this.currentTags);
   }
 
    private markAllFieldsAsTouched(): void {
