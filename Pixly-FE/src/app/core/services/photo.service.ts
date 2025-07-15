@@ -13,6 +13,7 @@ import { SearchService } from './search.service';
 import { PhotoSearchRequest } from '../models/SearchRequest/PhotoSarchRequest';
 import {AuthState} from '../state/auth.state';
 import {environment} from '../../../environments/environment';
+import { PhotoInsertRequest } from '../models/InsertRequest/PhotoInsertRequest';
 @Injectable({
   providedIn: 'root'
 })
@@ -134,5 +135,7 @@ export class PhotoService {
     );
   }
 
-
+  uploadPhoto(formData: FormData): Observable<ApiResponse<PhotoBasic>> {
+    return this.http.post<ApiResponse<PhotoBasic>>(this.apiUrl, formData);
+  }
 }

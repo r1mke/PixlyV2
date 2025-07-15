@@ -1,66 +1,347 @@
-.upload-submit{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-items: center;
-    background-color: #f7f7f7;
-    padding: 50px 20px;
-    border-radius: 10px;
+.upload-submit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  background-color: #f7f7f7;
+  padding: 40px;
+  border-radius: 15px;
+  min-height: 600px;
 }
 
-.upload-submit-image{
-    border-radius: 10px;
+.upload-submit-image {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  background: white;
 }
 
-.upload-submit-image img{
-    max-width:500px;
-    border-radius: 10px;
-    object-fit: cover;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+.upload-submit-image img {
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+  object-fit: cover;
+  display: block;
+  border-radius: 15px;
 }
 
-.upload-form{
-    width: 40%;
+.image-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+  padding: 20px;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.upload-submit-input{
-    margin-bottom: 20px;
-    width: 100%;
+.upload-submit-image:hover .image-info-overlay {
+  opacity: 1;
 }
 
-.tags-show{
-    margin-top: 10px;
-    width: 100%;
+.image-info {
+  margin-bottom: 15px;
+}
+
+.file-name {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 5px;
+  word-break: break-word;
+}
+
+.file-size {
+  display: block;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.change-image-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.change-image-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.change-image-btn i {
+  margin-right: 6px;
+}
+
+.upload-form {
+  flex: 1;
+  min-width: 400px;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.form-header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.form-header h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.form-header p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.upload-submit-input {
+  margin-bottom: 25px;
+}
+
+.tags-show {
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.tag-help {
+  margin-top: 8px;
+}
+
+.tag-help small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6c757d;
+}
+
+.tag-help i {
+  color: #ffc107;
+}
+
+.form-actions {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #eee;
+}
+
+.main-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.main-actions app-submit-button {
+  flex: 1;
+  min-width: 150px;
 }
 
 
-@media(max-width: 1000px){
-.upload-submit-image img{
-    max-width: 350px;
-    max-height:350px;
-    }
+
+.save-as-draft-btn{
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #6c757d;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-weight: 500;
+  height: 44px;
+  font-size: 15px;
 }
 
-@media(max-width: 900px){
-    .upload-form{
-    background-color: #f7f7f7;
-    width: 100%;
-    padding: 40px 20px;
-    border-radius: 10px;
-    }
+.save-as-draft-btn:hover:not(:disabled) {
+  background: #6c757d;
+  color: white;
+}
 
-    .upload-submit{
-    width: 100%;
-    background-color: #fff;
+.btn-outline-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.secondary-actions {
+  text-align: center;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--pixly-color, #007bff);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-link:hover {
+  color: var(--pixly-color-hover, #0056b3);
+  text-decoration: underline;
+}
+
+.upload-guidelines {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid var(--pixly-color, #007bff);
+}
+
+.upload-guidelines h6 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.upload-guidelines ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.upload-guidelines li {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.upload-guidelines li:last-child {
+  margin-bottom: 0;
+}
+
+/* No file state */
+.no-file-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: #f8f9fa;
+  border-radius: 15px;
+  border: 2px dashed #dee2e6;
+}
+
+.no-file-content {
+  text-align: center;
+  padding: 40px;
+}
+
+.no-file-content i {
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.no-file-content h4 {
+  color: #495057;
+  margin-bottom: 15px;
+}
+
+.no-file-content p {
+  color: #6c757d;
+  margin-bottom: 25px;
+}
+
+.no-file-content .btn {
+  padding: 12px 24px;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .upload-submit {
     flex-direction: column;
-    }
+    gap: 30px;
+  }
 
-   .upload-submit-image{
-    max-width: 100%;
-    }
+  .main-actions{
+    flex-direction: column;
+  }
 
-    .upload-submit-image img{
+  .main-actions .draft-action{
+    width: 100%;
+  }
+  
+  .upload-submit-image {
     max-width: 100%;
-    margin-bottom: 10%;
-    }
+    align-self: center;
+  }
+  
+  .upload-form {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .upload-submit {
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .upload-form {
+    padding: 20px;
+    min-width: auto;
+  }
+  
+  .form-header h3 {
+    font-size: 20px;
+  }
+  
+  .main-actions {
+    flex-direction: column;
+  }
+  
+  .main-actions app-submit-button,
+  .btn-outline-secondary {
+    flex: none;
+    width: 100%;
+  }
+  
+  .upload-guidelines {
+    margin-top: 20px;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-submit {
+    padding: 15px;
+  }
+  
+  .upload-form {
+    padding: 15px;
+  }
+  
+  .form-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+  }
+  
+  .upload-submit-input {
+    margin-bottom: 20px;
+  }
+  
+  .form-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+  }
 }
