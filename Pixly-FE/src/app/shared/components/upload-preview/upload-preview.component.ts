@@ -22,6 +22,7 @@ export class UploadPreviewComponent implements OnDestroy, OnInit {
   private toastService = inject(ToastService);
 
    ngOnInit(): void {
+    this.uploadService.clearUploadedFile();
     this.loadUploadedFile();
   }
 

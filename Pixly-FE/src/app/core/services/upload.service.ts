@@ -40,6 +40,8 @@ export class UploadService {
     });
   }
 
+  
+
   validateFile(file: File): { isValid: boolean; error?: string } {
     // Provjera tipova fajlova
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
