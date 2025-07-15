@@ -43,7 +43,7 @@ namespace Pixly.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<TModelBasic>>> Insert(TInsert request)
+        public async Task<ActionResult<ApiResponse<TModelBasic>>> Insert([FromForm] TInsert request)
         {
             var result = await _service.Insert(request);
 

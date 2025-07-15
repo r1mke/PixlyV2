@@ -1,40 +1,78 @@
-<div class="container">
-    <div class="upload-preview">
-        <img src="assets/image/upload-preview.png" alt="">
-        <h4>Drag and drop <br> to upload, or</h4>
-        <button>Browse</button>
-
-        <div class="upload-preview-info">
-            <div class="upload-preview-info-column">
-                <div class="upload-preview-info-item">
-                    <i class="fa-regular fa-circle-check fa-sm" style="color: #02a388;"></i>
-                    <span>Original content you captured</span>
-                </div>
-                <div class="upload-preview-info-item">
-                    <i class="fa-regular fa-circle-check fa-sm" style="color: #02a388;"></i>
-                    <span>Excludes graphic nudity, violence, or hate</span>
-                </div>
-            </div>
-            <div class="upload-preview-info-column">
-                <div class="upload-preview-info-item">
-                    <i class="fa-regular fa-circle-check fa-sm" style="color: #02a388;"></i>
-                    <span>Mindful of the rights of others</span>
-                </div>
-                <div class="upload-preview-info-item">
-                    <i class="fa-regular fa-circle-check fa-sm" style="color: #02a388;"></i>
-                    <span>To be downloaded and used for free</span>
-                </div>
-            </div>
-            <div class="upload-preview-info-column">
-                <div class="upload-preview-info-item">
-                    <i class="fa-regular fa-circle-check fa-sm" style="color: #02a388;"></i>
-                    <span>High quality photos</span>
-                </div>
-                <div class="upload-preview-info-item">
-                    <i class="fa-regular fa-circle-check fa-sm" style="color: #02a388;"></i>
-                    <span>Read the Pexels Terms</span>
-                </div>
-            </div>
-        </div>
+<div *ngIf="!uploadedFile" class="container">
+  <div 
+    class="upload-preview"
+    [class.drag-over]="isDragOver"
+    [class.uploading]="isUploading"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)">
+    
+    <!-- Loading state -->
+    <div *ngIf="isUploading" class="upload-loading">
+      <div class="spinner"></div>
+      <h4>Processing your image...</h4>
+      <p>Please wait while we prepare your upload</p>
     </div>
+
+    <!-- Default upload state -->
+    <div *ngIf="!isUploading" class="upload-content">
+      <img src="assets/image/upload-preview.png" alt="Upload icon" class="upload-icon">
+      
+      <h4>
+        <span *ngIf="!isDragOver">Drag and drop</span>
+        <span *ngIf="isDragOver" class="drag-active">Drop your image here</span>
+        <br>
+        <span *ngIf="!isDragOver">to upload, or</span>
+      </h4>
+      
+      <button 
+        type="button" 
+        class="browse-button"
+        [disabled]="isUploading"
+        (click)="onBrowseClick()">
+        Browse
+      </button>
+
+      <!-- Hidden file input -->
+      <input 
+        #fileInput
+        type="file" 
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        (change)="onFileSelected($event)"
+        style="display: none;">
+
+      <div class="upload-info">
+        <div class="upload-info-column">
+          <div class="upload-info-item">
+            <i class="fa-regular fa-circle-check fa-sm"></i>
+            <span>Original content you captured</span>
+          </div>
+          <div class="upload-info-item">
+            <i class="fa-regular fa-circle-check fa-sm"></i>
+            <span>Excludes graphic nudity, violence, or hate</span>
+          </div>
+        </div>
+        <div class="upload-info-column">
+          <div class="upload-info-item">
+            <i class="fa-regular fa-circle-check fa-sm"></i>
+            <span>Mindful of the rights of others</span>
+          </div>
+          <div class="upload-info-item">
+            <i class="fa-regular fa-circle-check fa-sm"></i>
+            <span>To be downloaded and used for free</span>
+          </div>
+        </div>
+        <div class="upload-info-column">
+          <div class="upload-info-item">
+            <i class="fa-regular fa-circle-check fa-sm"></i>
+            <span>High quality photos (min 100KB, max 10MB)</span>
+          </div>
+          <div class="upload-info-item">
+            <i class="fa-regular fa-circle-check fa-sm"></i>
+            <span>JPEG, PNG, WebP formats only</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

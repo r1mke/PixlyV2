@@ -56,7 +56,7 @@ export class ToastService {
     this.toasts.next([...this.toasts.value, toast]);
 
     if (autoDismiss) {
-      setTimeout(() => this.remove(id), 5000);
+      setTimeout(() => this.remove(id), 2500);
     }
   }
 

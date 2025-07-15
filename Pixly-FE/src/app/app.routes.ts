@@ -14,10 +14,19 @@ export const routes: Routes = [
   {path: 'profile', component: ProfileComponent},
   { path: 'search/:title', component: SearchComponent},
   {path: 'profile', component: ProfileComponent},
-  {path: 'upload', component: UploadComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
   {path: 'edit-profile', component: ProfileSettingsComponent, canActivate: [AuthGuard]},
+  { 
+    path: 'upload', 
+    component: UploadComponent, 
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', redirectTo: 'select', pathMatch: 'full' },
+      { path: 'select', loadComponent: () => import('./shared/components/upload-preview/upload-preview.component').then(c => c.UploadPreviewComponent) },
+      { path: 'edit', loadComponent: () => import('./shared/components/upload-submit/upload-submit.component').then(c => c.UploadSubmitComponent) }
+    ]
+  },
   {path: '**', redirectTo: ''}
 
 ];

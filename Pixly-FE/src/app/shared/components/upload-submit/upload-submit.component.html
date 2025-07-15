@@ -1,81 +1,134 @@
-<div class="container">
-  <div class="upload-submit">
+<div *ngIf="uploadedFile != null" class="container">
+  <div class="upload-submit" *ngIf="uploadedFile">
+    
+    <!-- Image Preview Section -->
     <div class="upload-submit-image">
-      <img src="assets/image/test2.jpg" loading="lazy" alt="" />
+      <img 
+        [src]="uploadedFile.preview" 
+        loading="lazy" />
+      
+      <!-- Image Info Overlay -->
+      <div class="image-info-overlay">
+        <button 
+          type="button" 
+          class="change-image-btn"
+          (click)="onChangeImage()">
+          <i class="fas fa-edit"></i>
+          Change Image
+        </button>
+      </div>
     </div>
+
+    <!-- Form Section -->
     <form [formGroup]="photoUploadForm" class="upload-form" (ngSubmit)="onSubmit()">
-      <div class="upload-submit-form">
-        <!-- Title Input -->
-        <div class="upload-submit-input">
-          <app-text-input
-            formControlName="title"
-            [showLabel]="true"
-            [label]="'Title'"
-            [isRequired]="true"
-            [attr.minLength]="5"
-            [attr.maxLength]="30"
-            [type]="'text'"
-            [placeholder]="'Enter photo title'"
-          >
-          </app-text-input>
-        </div>
+      <div class="form-header">
+        <h4>Photo Details</h4>
+        <p>Add information about your photo to help others discover it.</p>
+      </div>
 
-        <!-- Description Input -->
-        <div class="upload-submit-input">
-          <app-text-input
-            formControlName="description"
-            [showLabel]="true"
-            [label]="'Description'"
-            [minLength]="10"
-            [maxLength]="200"
-            [type]="'text'"
-            [placeholder]="'Enter photo description'"
-          >
-          </app-text-input>
-        </div>
+      <!-- Title Input -->
+      <div class="upload-submit-input">
+        <app-text-input
+          formControlName="title"
+          [showLabel]="true"
+          [label]="'Title'"
+          [isRequired]="true"
+          [minLength]="5"
+          [maxLength]="30"
+          [type]="'text'"
+          [placeholder]="'Give your photo a descriptive title'">
+        </app-text-input>
+      </div>
 
-        <!-- Location Input -->
-        <div class="upload-submit-input">
-          <app-text-input
-            formControlName="location"
-            [showLabel]="true"
-            [label]="'Location'"
-            [isRequired]="true"
-            [minLength]="2"
-            [maxLength]="50"
-            [type]="'text'"
-            [placeholder]="'Enter location'"
-          >
-          </app-text-input>
-        </div>
+      <!-- Description Input -->
+      <div class="upload-submit-input">
+        <app-text-input
+          formControlName="description"
+          [showLabel]="true"
+          [label]="'Description'"
+          [maxLength]="200"
+          [type]="'text'"
+          [placeholder]="'Tell the story behind your photo'">
+        </app-text-input>
+      </div>
         
-        <!-- Tags Input -->
-         <div class="upload-submit-input">
-          <app-tag-input
-            formControlName="tags"
-            [showLabel]="true"
-            label="Tags"
-            placeholder="Enter tags..."
-            (tagAdded)="onTagAdded($event)">
-          </app-tag-input>
-        </div>
+      <!-- Tags Input -->
+      <div class="upload-submit-input">
+        <app-tag-input
+          formControlName="tags"
+          [showLabel]="true"
+          label="Tags"
+          placeholder="Add tags to help people find your photo..."
+          (tagAdded)="onTagAdded($event)">
+        </app-tag-input>
         
-        <div class="tags-show force-overflow">
+        <!-- Tags Display -->
+        <div class="tags-show" *ngIf="currentTags.length > 0">
           <app-tags-show [tags]="currentTags"></app-tags-show>
         </div>
-
-        <!-- Submit Button -->
-        <div class="upload-submit-button">
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="photoUploadForm.invalid"
-          >
-            Upload Photo
-          </button>
+        
+        <!-- Tag suggestions or requirements -->
+        <div class="tag-help">
+          <small class="text-muted">
+            <i class="fas fa-lightbulb"></i>
+            Use specific words that describe what's in your photo.
+          </small>
         </div>
       </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <div class="main-actions">
+          <div class="submit-action">
+            <app-submit-button
+              [isLoading]="isSubmitting"
+              [isDisabled]="photoUploadForm.invalid"
+              [text]="'Publish Photo'"
+              [buttonType]="'submit'"
+              [fullWidth]="true">
+            </app-submit-button>
+          </div>
+          <div class="draft-action">
+            <button
+              class="save-as-draft-btn"
+              type="button"
+              [disabled]="isSubmitting"
+              (click)="onSaveAsDraft()">
+              Save as Draft
+            </button>
+          </div>
+
+          
+        </div>
+        
+      </div>
+
+      <!-- Upload Guidelines -->
+      <div class="upload-guidelines">
+        <h6>Upload Guidelines</h6>
+        <ul>
+          <li>Make sure you have the right to share this image</li>
+          <li>Don't upload copyrighted content</li>
+          <li>Keep it appropriate for all audiences</li>
+          <li>Use descriptive titles and relevant tags</li>
+        </ul>
+      </div>
     </form>
-    
+  </div>
+
+  <!-- No file state -->
+  <div class="no-file-state" *ngIf="!uploadedFile">
+    <div class="no-file-content">
+      <i class="fas fa-image fa-3x"></i>
+      <h4>No Image Selected</h4>
+      <p>Please go back and select an image to upload.</p>
+      <button 
+        type="button" 
+        class="btn btn-primary"
+        (click)="onChangeImage()">
+        <i class="fas fa-upload"></i>
+        Select Image
+      </button>
+    </div>
   </div>
 </div>
