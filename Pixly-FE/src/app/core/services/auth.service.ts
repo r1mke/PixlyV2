@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RegisterRequest } from '../models/Request/RegisterRequest';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, of } from 'rxjs';
 import { ApiResponse } from '../models/Response/api-response';
 import { AuthResponse } from '../models/Response/AuthResponse';
 import { environment } from '../../../environments/environment';
 import { User } from '../models/DTOs/User';
 import { AuthState } from '../state/auth.state';
-import {LoginRequest} from '../models/Request/LoginRequest';
+import { LoginRequest } from '../models/Request/LoginRequest';
+import { switchMap, map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -18,15 +19,36 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private authState: AuthState
-  ) {}
+  ) { }
 
-  // Helper observable-e
   get isLoggedIn$() {
     return this.authState.isLoggedIn$;
   }
 
   get currentUser$() {
     return this.authState.currentUser$;
+  }
+
+  initializeAuthIfNeeded(): Observable<boolean> {
+    if (this.authState.currentUser) {
+      return of(true);
+    }
+
+    if (this.authState.hasToken()) {
+      return this.refreshToken(null).pipe(
+        switchMap(refreshResponse => {
+          if (refreshResponse.success) {
+            return this.getCurrentUser().pipe(
+              map(userResponse => userResponse.success && !!userResponse.data)
+            );
+          }
+          return of(false);
+        }),
+        catchError(() => of(false))
+      );
+    }
+
+    return of(false);
   }
 
   refreshToken(oldToken: string | null): Observable<ApiResponse<any>> {
