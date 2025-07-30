@@ -29,6 +29,8 @@ html {
   --pixly-backround-color:#f8f8f8;
 }
 
+/* 2 163 136 */
+
 button {
   background-color: var(--pixly-color);
   color: white;

@@ -1,0 +1,37 @@
+
+<!-- Sidebar navigation -->
+<nav>
+    <div class="logo">
+        <img src="assets/image/logo.png" height="50px" width="50px" alt="Logo">
+    </div>
+    
+    <ul>
+        <div class="sidebar-link" (click)="sendTitleToParent('Overview')">
+            <li><a routerLink="overview">Overview</a></li>
+            <i class="fa-solid fa-house fa-xl" style="color: #02a388;"></i>
+        </div>
+        <div class="sidebar-link" (click)="sendTitleToParent('Content')">
+            <li><a routerLink="content">Content</a></li>
+            <i class="fa-solid fa-file-lines fa-xl" style="color: #02a388;"></i>
+        </div>
+        <div class="sidebar-link" (click)="sendTitleToParent('Users')">
+            <li><a routerLink="users">Users</a></li>
+            <i class="fa-solid fa-user fa-xl" style="color: #02a388;"></i>
+        </div>
+        <div class="sidebar-link"  (click)="sendTitleToParent('Photos')">
+            <li><a routerLink="photos">Photos</a></li>
+            <i class="fa-solid fa-image fa-xl" style="color: #02a388;"></i>
+        </div>
+        <div class="sidebar-link" (click)="sendTitleToParent('Tags')">
+            <li><a routerLink="tags">Tags</a></li>
+            <i class="fa-solid fa-tags fa-xl" style="color: #02a388;"></i>
+        </div>
+        <div class="sidebar-link" (click)="sendTitleToParent('Settings')">
+            <li><a routerLink="settings">Settings</a></li>
+            <i class="fa-solid fa-gear fa-xl" style="color: #02a388;"></i>
+        </div>
+    </ul>
+
+   
+</nav>
+

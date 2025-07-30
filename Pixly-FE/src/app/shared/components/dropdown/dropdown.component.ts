@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component } from '@angular/core';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Input } from '@angular/core';
 import { OnInit } from '@angular/core';
@@ -6,6 +6,7 @@ import { SearchService } from '../../../core/services/search.service';
 import { inject } from '@angular/core';
 import { DropdownValue } from '../../../core/models/Dropdown/DropdownValue';
 import { CommonModule } from '@angular/common';
+import { output } from '@angular/core';
 @Component({
   selector: 'app-dropdown',
   standalone: true,
@@ -15,12 +16,18 @@ import { CommonModule } from '@angular/common';
 })
 export class DropdownComponent implements OnInit {
    @Input() options: DropdownValue | null = null;
+   selectedValue = output<string>();
    searchService = inject(SearchService);
 
   ngOnInit() {
+    
   }
 
+
   selectTrending(option: string) {
+    console.log('Selected option:', option);
+    this.selectedValue.emit(option);
+
     if (this.options && option !== this.options.selectedOption) {
 
       this.options.selectedOption = option;

@@ -1,0 +1,90 @@
+
+/* Sidebar */
+nav {
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    background: white;
+    border-right: 1px solid #ddd;
+    z-index: 1000;
+    box-shadow: 1px 0px 5px rgba(0, 0, 0, 0.1);
+    background-color: var(--pixly-backround-color);
+}
+
+
+
+/* Vaši postojeći stilovi */
+.logo {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px;
+    background: linear-gradient(135deg, #02a388, #029f87);
+    color: white;
+}
+
+
+ul {
+    list-style: none;
+    padding:  0 20px;
+    margin-top: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sidebar-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 40px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+
+.sidebar-link i {
+    margin-bottom: 20px;
+    text-align: center;
+    order: -1;
+}
+
+.sidebar-link li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.sidebar-link a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 12px;
+    width: 100%;
+    text-align: center;
+}
+
+.logout button{
+    background-color: red;
+    width: 80%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    nav.visible {
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+    }
+}

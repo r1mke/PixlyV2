@@ -18,9 +18,7 @@
 
       <!-- Search Suggestions -->
       <div class="search-bar-suggestions"
-                [class.visible]="isSuggesionsVisible"
-               *ngIf="searchService.searchSuggestions().length > 0">
-                [class.visible]="isSuggesionsVisible"
+                [class.visible]='isSuggesionsVisible'
                *ngIf="searchService.searchSuggestions().length > 0">
         <div class="search-bar-suggestion"
              *ngFor="let suggestion of searchService.searchSuggestions()"

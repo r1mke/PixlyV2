@@ -1,0 +1,27 @@
+.card-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 20px;
+    align-items: flex-end;
+    order: +1;
+}
+
+.chart-container{
+    width: 40%;
+}
+
+.row-1-charts{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.filter {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+

@@ -1,0 +1,43 @@
+<div class="admin-layout">
+  <div class="header">
+    <div class="header-title">
+        <h3>{{title}}</h3>
+    </div>
+    <div class="header-info">
+        <div class="header-user">
+            <span>Elmir {{ currentUser?.lastName }}</span>
+            <img
+              [src]="currentUser?.profilePictureUrl || 'assets/image/user_def.png'"
+              class="profile-img"
+              alt="Profile"
+            />
+        </div>
+        <div (click)="logout()" class="logout">
+          <li>
+            <a class="dropdown-item"
+              ><i class="fas fa-sign-out-alt fa-lg"></i> Logout</a
+            >
+          </li>
+        </div>
+    </div>
+</div>
+
+
+  <div class="sidebar">
+    <app-side-bar
+    (title) = "sendTitleToParent($event)"
+    >
+    </app-side-bar>
+    
+  </div>
+
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+
+<div class="mobile-warning">
+  <h2>Admin Dashboard is not available</h2>
+  <p>Please use a device with a screen wider than 1000px to access the admin panel.</p>
+</div>

@@ -100,7 +100,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
         let searchObject = this.searchService.getSearchObject();
         searchObject = {
           ...searchObject,
-          title: searchText,
+          title: searchText.toLowerCase(),
           pageNumber: 1,
         };
         this.searchService.setSearchObject(searchObject);

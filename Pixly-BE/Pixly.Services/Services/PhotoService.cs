@@ -136,11 +136,12 @@ namespace Pixly.Services.Services
         // transformations
         private void AddFilterToSingleEntity(Database.Photo photo)
         {
-            TransformEntity(photo);
+            TransformEntity(photo, addWatermark: true);
         }
-        private void TransformEntity(Database.Photo photo)
+
+        private void TransformEntity(Database.Photo photo, bool addWatermark = true)
         {
-            string transformation = photo.Url.ToLower() switch
+            string transformation = photo.Orientation.ToLower() switch
             {
                 "portrait" => "c_fit,w_1080,h_1620,f_auto,q_auto:good",
                 "square" => "c_fit,w_1200,h_1200,f_auto,q_auto:good",
@@ -148,8 +149,7 @@ namespace Pixly.Services.Services
                 _ => "c_fit,w_1600,h_1200,f_auto,q_auto:good"
             };
 
-            photo.Url = TransformUrl(photo.Url, transformation);
-
+            photo.Url = TransformUrl(photo.Url, transformation, addWatermark);
         }
 
         public override async Task<PagedList<PhotoBasic>> GetPaged(PhotoSearchRequest search)
@@ -208,16 +208,16 @@ namespace Pixly.Services.Services
             {
                 string transformation = photo.Orientation.ToLower() switch
                 {
-                    "portrait" => $"c_fit,w_{300},h_{450},f_auto,q_auto",
-                    "square" => $"c_fit,w_{350},h_{350},f_auto,q_auto",
-                    "landscape" => $"c_fit,w_{450},h_{300},f_auto,q_auto",
-                    _ => "c_fill,w_350,h_300,f_auto,q_auto"
+                    "portrait" => $"c_fit,w_{300},h_{450},f_auto,q_100,dpr_auto,fl_progressive",
+                    "square" => $"c_fit,w_{350},h_{350},f_auto,q_100,dpr_auto,fl_progressive",
+                    "landscape" => $"c_fit,w_{450},h_{300},f_auto,q_100,dpr_auto,fl_progressive",
+                    _ => "c_fill,w_350,h_300,f_auto,q_100,dpr_auto,fl_progressive"
                 };
 
-                photo.Url = TransformUrl(photo.Url, transformation);
+                photo.Url = TransformUrl(photo.Url, transformation, addWatermark: true);
             }
         }
-        private string TransformUrl(string url, string transformation)
+        private string TransformUrl(string url, string transformation, bool addWatermark = true)
         {
             if (string.IsNullOrEmpty(url))
                 return url;
@@ -225,7 +225,13 @@ namespace Pixly.Services.Services
             int uploadIndex = url.IndexOf("upload/");
             if (uploadIndex == -1) return url;
 
-            return url.Substring(0, uploadIndex + 7) + transformation + "/" + url.Substring(uploadIndex + 7);
+            string watermarkTransformation = "";
+            if (addWatermark)
+            {
+                watermarkTransformation = "l_text:Arial_20_bold:Pixly,co_white,o_40,g_south_east,x_20,y_20/";
+            }
+
+            return url.Substring(0, uploadIndex + 7) + transformation + "/" + watermarkTransformation + url.Substring(uploadIndex + 7);
         }
 
         // state machine
@@ -395,6 +401,16 @@ namespace Pixly.Services.Services
                     .Distinct()
                     .Take(10)
                     .ToList();
+
+
+                List<string> allResultDistinct = new List<string>();
+
+                foreach (var s in allResults)
+                {
+                    allResultDistinct.Add(s.ToLower());
+                }
+
+                allResults = allResultDistinct.Distinct().ToList();
 
                 return allResults;
             }, TimeSpan.FromMinutes(5));

@@ -1,0 +1,66 @@
+<div class="main-content">
+    <div class="filter">
+        <app-dropdown (selectedValue) = "saveSelectedValueFromDropdown($event)" class="dropdown-filter" [options]="dropdownDays"></app-dropdown>
+    </div>
+    <div class="row-1-charts">
+
+        <div class="card-container">
+    
+            <app-total-card
+                title="Users"
+                value="{{dashboardOverview?.totalUsers}}"
+                icon="fa-users"    
+            >
+            </app-total-card>
+    
+            <app-total-card
+                title="Uploads"
+                value="{{dashboardOverview?.totalPhotos}}"
+                icon="fa-file-upload"
+            >
+            </app-total-card>
+    
+            <app-total-card
+                title="Likes"
+                value="{{dashboardOverview?.totalLikes}}"
+                icon="fa-thumbs-up"
+            >
+            </app-total-card>
+    
+            <app-total-card
+                title="Sales"
+                value="{{32552}}"
+                icon="fa-dollar-sign"
+            ></app-total-card>
+    
+             <app-total-card
+                title="Pending"
+                value="{{dashboardOverview?.pendingPhotos}}"
+                icon="fa-clock"
+            >
+            </app-total-card>
+        </div>
+    
+        <div class="chart-container">
+            <app-line-chart
+                [data]="lineChartData"
+                [title]="'Daily Uploads'"
+                [height]="400">
+            >  
+            </app-line-chart>
+        </div>
+
+        <div class="chart-container">
+            <app-line-chart
+                [data]="lineChartData"
+                [title]="'Daily Reports'"
+                [height]="400"
+                [borderColor]="'#7B68EE'"
+                backgroundColor="'rgba(123, 104, 238, 0.1)'"
+                pointBackgroundColor="'#7B68EE'"
+                pointBorderColor="'#ffffff'"
+            >  
+            </app-line-chart>
+        </div>
+    </div>
+</div>

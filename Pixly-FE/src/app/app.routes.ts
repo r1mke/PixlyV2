@@ -8,6 +8,7 @@ import {LoginComponent} from './features/login/login.component';
 import {ProfileSettingsComponent} from './features/profile-settings/profile-settings.component';
 import {AuthGuard} from './core/guards/auth.guard';
 import { UploadComponent } from './features/upload/upload.component';
+import { AdminComponent } from '../app/features/admin/admin.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -26,6 +27,37 @@ export const routes: Routes = [
       { path: 'select', loadComponent: () => import('./shared/components/upload-preview/upload-preview.component').then(c => c.UploadPreviewComponent) },
       { path: 'edit', loadComponent: () => import('./shared/components/upload-submit/upload-submit.component').then(c => c.UploadSubmitComponent) }
     ]
+  },
+  {
+  path: 'admin',
+  component: AdminComponent,
+  children: [
+    { path: '', redirectTo: 'overview', pathMatch: 'full' },
+    { 
+      path: 'overview', 
+      loadComponent: () => import('./features/admin/overview/overview.component').then(c => c.OverviewComponent) 
+    },
+    { 
+       path: 'content', 
+       loadComponent: () => import('./features/admin/content/content.component').then(c => c.ContentComponent) 
+    },
+    // { 
+    //   path: 'users', 
+    //   loadComponent: () => import('./features/admin/users/users.component').then(c => c.UsersComponent) 
+    // },
+    // { 
+    //   path: 'photos', 
+    //   loadComponent: () => import('./features/admin/photos/photos.component').then(c => c.PhotosComponent) 
+    // },
+    // { 
+    //   path: 'tags', 
+    //   loadComponent: () => import('./features/admin/tags/tags.component').then(c => c.TagsComponent) 
+    // },
+    // { 
+    //   path: 'settings', 
+    //   loadComponent: () => import('./features/admin/settings/settings.component').then(c => c.SettingsComponent) 
+    // }
+  ]
   },
   {path: '**', redirectTo: ''}
 

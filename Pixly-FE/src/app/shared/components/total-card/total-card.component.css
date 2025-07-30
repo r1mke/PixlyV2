@@ -1,0 +1,128 @@
+ .card-container {
+      display: flex;
+      align-items: center;
+      width: 250px;
+      height: 90px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      border: 1px solid rgba(2, 163, 136, 0.1);
+    }
+
+    .card-container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-icon {
+      background: linear-gradient(135deg, var(--pixly-color) 0%, var(--pixly-color-hover) 100%);
+      width: 35%;
+      height: 90px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .card-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    }
+
+    .card-icon i {
+      font-size: 28px;
+      color: white;
+      z-index: 1;
+      position: relative;
+    }
+
+    .card-info {
+      flex: 1;
+      padding: 20px;
+      text-align: right;
+      background: white;
+    }
+
+    .card-info h5 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--pixly-text-secondary-color);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-info p {
+      margin: 0;
+      font-weight: 700;
+      color: var(--pixly-text-primary-color);
+      line-height: 1;
+    }
+
+    /* Responsive za 1000px i više */
+    @media (min-width: 1000px) {
+      .card-container {
+        width: 280px;
+      }
+      
+      .card-info {
+        padding: 24px;
+      }
+      
+      .card-info p {
+        font-size: 20px;
+      }
+    }
+
+    /* Responsive za tablet (768px - 999px) */
+    @media (min-width: 768px) and (max-width: 999px) {
+      .card-container {
+        width: 240px;
+      }
+      
+      .card-info {
+        padding: 18px;
+      }
+      
+      .card-info p {
+        font-size: 26px;
+      }
+      
+      .card-icon i {
+        font-size: 24px;
+      }
+    }
+
+    /* Responsive za mobile (do 767px) */
+    @media (max-width: 767px) {
+      .card-container {
+        width: 220px;
+      }
+      
+      .card-icon {
+        height: 80px;
+      }
+      
+      .card-info {
+        padding: 16px;
+      }
+      
+      .card-info h5 {
+        font-size: 12px;
+      }
+      
+      .card-info p {
+        font-size: 24px;
+      }
+      
+      .card-icon i {
+        font-size: 20px;
+      }
+    }
