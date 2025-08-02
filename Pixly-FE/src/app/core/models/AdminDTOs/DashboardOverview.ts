@@ -6,5 +6,6 @@ export interface DashboardOverview {
     pendingPhotos: number;
     totalLikes: number;
     totalDownload: number;
+    reportedPhotos: number;
     lastFewDayInfo : DailyUploadedPhotos[] ;
 }

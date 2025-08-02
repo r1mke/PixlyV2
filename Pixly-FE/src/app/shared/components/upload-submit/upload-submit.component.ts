@@ -26,7 +26,7 @@ import { SelectFilterComponent } from "../select-filter/select-filter.component"
     TagsShowComponent,
     TagInputComponent,
     SubmitButtonComponent,
-    SelectFilterComponent
+    
 ],
   templateUrl: './upload-submit.component.html',
   styleUrls: ['./upload-submit.component.css']

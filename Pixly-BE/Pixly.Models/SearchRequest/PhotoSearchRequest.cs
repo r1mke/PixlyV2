@@ -12,5 +12,7 @@ namespace Pixly.Models.SearchRequest
         public bool? isLiked { get; set; }
         public bool? isSaved { get; set; }
         public string? CurrentUserId { get; set; }
+        public string State { get; set; } = "Approved";
+        public bool isAdmin { get; set; } = false;
     }
 }

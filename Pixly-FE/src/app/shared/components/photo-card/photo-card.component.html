@@ -1,0 +1,50 @@
+<div class="photo-card-container">
+    <img [src]="photo.url"  alt="">
+    <div class="photo-card-details">
+        <div class="bacis-info">
+            <p>{{getTimeAgo(photo.uploadedAt)}}</p>
+            <span>{{photo?.user?.userName}}</span>
+        </div>
+
+        <div *ngIf="state == 'Pending'" class="photo-card-actions-pending">
+            <div class="photo-card-action">
+                <app-submit-button
+                    (click) = "approvePhoto()"
+                    text="Approve"
+                    [isLoading]="false"
+                    [isDisabled]="false"
+                    [fullWidth]="true"
+                    icon="fa-check"
+                >
+                </app-submit-button>
+            </div>
+            <div class="photo-card-action">
+                <app-submit-button
+                    (click) = "rejectPhoto()"
+                    text="Reject"
+                    [isLoading]="false"
+                    [isDisabled]="false"
+                    [fullWidth]="true"
+                    icon="fa-times"
+                    backGroundColor="#FF4D4D"
+                >
+                </app-submit-button>
+            </div>
+        </div>
+
+        <div *ngIf="state == 'Approved'" class="photo-card-actions-approved">
+            <div class="photo-card-action">
+                <app-submit-button
+                    (click) = "deletePhoto()"
+                    text="Delete"
+                    [isLoading]="false"
+                    [isDisabled]="false"
+                    [fullWidth]="true"
+                    backGroundColor="#FF4D4D"
+                >
+                </app-submit-button>
+            </div>
+        </div>
+
+    </div>
+</div>

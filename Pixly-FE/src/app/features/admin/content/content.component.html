@@ -1,1 +1,40 @@
-<p>content works!</p>
+<div class="main-container">
+    <div *ngIf="dashBoardData" class="card-container">
+        <app-total-card
+            title="Photos"
+            value="{{dashBoardData.totalPhotos}}"
+            icon="fa-image"
+        >
+        </app-total-card>
+
+        <app-total-card
+            title="Reports"
+            value="{{dashBoardData.reportedPhotos}}"
+            backGroundColor="#FF5733"
+            icon="fa-exclamation-triangle"
+        >
+        </app-total-card> 
+        
+        <app-total-card
+            title="Pending"
+            value="{{dashBoardData.pendingPhotos}}"
+            backGroundColor="#F1C40F"
+            icon="fa-clock"
+        >
+        </app-total-card> 
+    </div>
+
+    <div class="content-moderation">
+        <div class="filter">
+            <app-dropdown (selectedValue)="saveSelectedValueFromDropdown($event)" class="dropdown-filter" [options]="dropdownOptions"></app-dropdown>
+        </div>
+        <div *ngIf="photos" class="photo-cards">
+            <app-photo-card
+            *ngFor="let photo of photos; index as i"
+            [state]="dropDownOption"
+            [photo]="photo"
+            (photoActionCompleted)="handlePhotoActionCompleted($event)"
+            ></app-photo-card>
+        </div>
+    </div>
+</div>

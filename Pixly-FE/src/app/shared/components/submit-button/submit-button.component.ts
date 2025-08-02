@@ -18,4 +18,6 @@ export class SubmitButtonComponent {
   @Input() loadingText: string = 'Loading...';
   @Input() fullWidth: boolean = true;
   @Input() buttonType: 'submit' | 'button' = 'submit';
+  @Input() icon: string = '';
+  @Input() backGroundColor: string = '#02A388';
 }

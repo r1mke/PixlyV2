@@ -17,7 +17,6 @@
     }
 
     .card-icon {
-      background: linear-gradient(135deg, var(--pixly-color) 0%, var(--pixly-color-hover) 100%);
       width: 35%;
       height: 90px;
       display: flex;

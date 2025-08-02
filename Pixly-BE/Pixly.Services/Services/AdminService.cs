@@ -43,6 +43,7 @@ namespace Pixly.Services.Services
             var totalPhotos = await _context.Photos.Where(img => img.UploadedAt >= sinceDate && img.State == "Approved").CountAsync();
             var totalLikes = await _context.Likes.Where(like => like.LikedAt >= sinceDate).CountAsync();
             var pendingPhotos = await _context.Photos.Where(img => img.UploadedAt >= sinceDate && img.State == "Pending").CountAsync();
+            var reportedPhotos = await _context.Photos.Where(img => img.UploadedAt >= sinceDate && img.State == "Reported").CountAsync();
             var totalDownload = 10;
 
             var dashboardOverview = new DashboardOverview()
@@ -51,7 +52,8 @@ namespace Pixly.Services.Services
                 TotalPhotos = totalPhotos,
                 TotalLikes = totalLikes,
                 TotalDownload = totalDownload,
-                PendingPhotos = pendingPhotos
+                PendingPhotos = pendingPhotos,
+                ReportedPhotos = reportedPhotos
             };
 
             return dashboardOverview;

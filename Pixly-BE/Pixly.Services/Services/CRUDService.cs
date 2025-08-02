@@ -23,13 +23,9 @@ namespace Pixly.Services.Services
         public virtual async Task<TModelDetail> GetById(TId id)
         {
             var entityName = typeof(TDbEntity).Name.ToLower();
-            var cacheKey = $"{entityName}:{id}";
-            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
-            {
-                var entity = await _context.Set<TDbEntity>().FindAsync(id);
-                if (entity == null) throw new NotFoundException($"Entity with ID {id} not exist");
-                return Mapper.Map<TModelDetail>(entity);
-            }, TimeSpan.FromMinutes(10));
+            var entity = await _context.Set<TDbEntity>().FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Entity with ID {id} not exist");
+            return Mapper.Map<TModelDetail>(entity);
         }
         public virtual async Task<PagedList<TModelBasic>> GetPaged(TSearch search)
         {

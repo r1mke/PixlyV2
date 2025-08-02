@@ -9,7 +9,8 @@
             <app-total-card
                 title="Users"
                 value="{{dashboardOverview?.totalUsers}}"
-                icon="fa-users"    
+                icon="fa-users"
+                backGroundColor="#02A388"    
             >
             </app-total-card>
     
@@ -17,6 +18,7 @@
                 title="Uploads"
                 value="{{dashboardOverview?.totalPhotos}}"
                 icon="fa-file-upload"
+                backGroundColor="#0099CC"
             >
             </app-total-card>
     
@@ -24,6 +26,7 @@
                 title="Likes"
                 value="{{dashboardOverview?.totalLikes}}"
                 icon="fa-thumbs-up"
+                backGroundColor="#28C76F"
             >
             </app-total-card>
     
@@ -31,36 +34,40 @@
                 title="Sales"
                 value="{{32552}}"
                 icon="fa-dollar-sign"
+                backGroundColor="#FFB84C "
             ></app-total-card>
     
              <app-total-card
                 title="Pending"
                 value="{{dashboardOverview?.pendingPhotos}}"
                 icon="fa-clock"
+                backGroundColor="#FFC107"
             >
             </app-total-card>
         </div>
     
         <div class="chart-container">
-            <app-line-chart
-                [data]="lineChartData"
-                [title]="'Daily Uploads'"
-                [height]="400">
-            >  
-            </app-line-chart>
+            <div class="single-chart">
+                <app-line-chart
+                    [data]="lineChartData"
+                    [title]="'Daily Uploads'"
+                    [height]="400">
+                >  
+                </app-line-chart>
+            </div>
+            <div class="single-chart">
+                <app-line-chart
+                   [data]="lineChartData"
+                   [title]="'Daily Reports'"
+                   [height]="400"
+                   [borderColor]="'#7B68EE'"
+                   backgroundColor="'rgba(123, 104, 238, 0.1)'"
+                   pointBackgroundColor="'#7B68EE'"
+                   pointBorderColor="'#ffffff'"
+               >  
+               </app-line-chart>
+            </div>
         </div>
 
-        <div class="chart-container">
-            <app-line-chart
-                [data]="lineChartData"
-                [title]="'Daily Reports'"
-                [height]="400"
-                [borderColor]="'#7B68EE'"
-                backgroundColor="'rgba(123, 104, 238, 0.1)'"
-                pointBackgroundColor="'#7B68EE'"
-                pointBorderColor="'#ffffff'"
-            >  
-            </app-line-chart>
-        </div>
     </div>
 </div>

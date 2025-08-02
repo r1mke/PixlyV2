@@ -138,4 +138,28 @@ export class PhotoService {
   uploadPhoto(formData: FormData): Observable<ApiResponse<PhotoBasic>> {
     return this.http.post<ApiResponse<PhotoBasic>>(this.apiUrl, formData);
   }
+
+  approvePhoto(photoId: number): Observable<ApiResponse<PhotoBasic>> {
+    return this.http.post<ApiResponse<PhotoBasic>>(`${this.apiUrl}/${photoId}/approve`, {});
+  }
+
+  rejectPhoto(photoId: number): Observable<ApiResponse<PhotoBasic>> {
+    return this.http.post<ApiResponse<PhotoBasic>>(`${this.apiUrl}/${photoId}/reject`, {});
+  }
+
+  editPhoto(photoId: number): Observable<ApiResponse<PhotoBasic>> {
+    return this.http.post<ApiResponse<PhotoBasic>>(`${this.apiUrl}/${photoId}/edit`, {});
+  }
+
+  hidePhoto(photoId: number): Observable<ApiResponse<PhotoBasic>> {
+    return this.http.post<ApiResponse<PhotoBasic>>(`${this.apiUrl}/${photoId}/hide`, {});
+  }
+
+  deletePhoto(photoId: number): Observable<ApiResponse<PhotoBasic>> {
+    return this.http.post<ApiResponse<PhotoBasic>>(`${this.apiUrl}/${photoId}/delete`, {});
+  }
+
+  restorePhoto(photoId: number): Observable<ApiResponse<PhotoBasic>> {
+    return this.http.post<ApiResponse<PhotoBasic>>(`${this.apiUrl}/${photoId}/restore`, {});
+  }
 }
