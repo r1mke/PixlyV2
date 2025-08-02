@@ -1,20 +1,25 @@
 .card-container{
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    gap: 20px;
-    align-items: flex-end;
-    order: +1;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 5px;
 }
 
 .chart-container{
-    width: 40%;
+    margin-top: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.single-chart{
+    width: 45%;
 }
 
 .row-1-charts{
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: flex-start;
     gap: 20px;
 }
 

@@ -10,6 +10,8 @@ export interface PhotoSearchRequest{
     isLiked: boolean | null;
     isSaved: boolean | null;
     currentUserId: string | null;
+    state: string | null;
     pageNumber: number ;
     pageSize: number;
+    isAdmin : boolean | null;
 }

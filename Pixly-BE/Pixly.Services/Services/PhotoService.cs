@@ -9,7 +9,6 @@ using Pixly.Services.Exceptions;
 using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
 using Pixly.Services.StateMachines.PhotoStateMachine;
-using System.Text.Json;
 using Favorite = Pixly.Models.DTOs.Favorite;
 using Like = Pixly.Models.DTOs.Like;
 
@@ -128,7 +127,7 @@ namespace Pixly.Services.Services
                 }
             }
 
-            query = query.Where(p => p.State == "Approved");
+            query = query.Where(p => p.State == search.State);
 
             return query;
         }
@@ -154,21 +153,17 @@ namespace Pixly.Services.Services
 
         public override async Task<PagedList<PhotoBasic>> GetPaged(PhotoSearchRequest search)
         {
-            var cacheKey = $"photo:paged:{JsonSerializer.Serialize(search)}";
 
-            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
-            {
-                var query = _context.Photos.AsQueryable();
-                query = await AddFilter(query, search);
+            var query = _context.Photos.AsQueryable();
+            query = await AddFilter(query, search);
 
-                var modelQuery = query.Select(x => Mapper.Map<PhotoBasic>(x));
-                var result = await PagedList<PhotoBasic>.CreateAsync(
-                    modelQuery, search.PageNumber, search.PageSize);
+            var modelQuery = query.Select(x => Mapper.Map<PhotoBasic>(x));
+            var result = await PagedList<PhotoBasic>.CreateAsync(
+                modelQuery, search.PageNumber, search.PageSize);
 
-                await SetUserFlags(result, search.CurrentUserId);
+            await SetUserFlags(result, search.CurrentUserId);
 
-                return await AddTransformation(result, search);
-            }, TimeSpan.FromMinutes(5));
+            return await AddTransformation(result, search);
         }
 
         private async Task SetUserFlags(IEnumerable<PhotoBasic> photos, string? currentUserId)
@@ -199,9 +194,27 @@ namespace Pixly.Services.Services
 
         protected Task<PagedList<PhotoBasic>> AddTransformation(PagedList<PhotoBasic> photos, PhotoSearchRequest search)
         {
-            TransformEntities(photos);
+            if (search.State == "Approved" && search.isAdmin == false) TransformEntities(photos);
+            else TransformEntitiesToAdmin(photos);
             return Task.FromResult(photos);
         }
+
+        private void TransformEntitiesToAdmin(PagedList<PhotoBasic> list)
+        {
+            foreach (var photo in list)
+            {
+                string transformation = photo.Orientation.ToLower() switch
+                {
+                    "portrait" => "c_fill,w_200,h_300,f_auto,q_80,dpr_auto,fl_progressive",
+                    "square" => "c_fill,w_250,h_250,f_auto,q_80,dpr_auto,fl_progressive",
+                    "landscape" => "c_fill,w_300,h_200,f_auto,q_80,dpr_auto,fl_progressive",
+                    _ => "c_fill,w_250,h_250,f_auto,q_80,dpr_auto,fl_progressive"
+                };
+
+                photo.Url = TransformUrl(photo.Url, transformation, addWatermark: false);
+            }
+        }
+
         private void TransformEntities(PagedList<PhotoBasic> list)
         {
             foreach (var photo in list)
@@ -418,6 +431,3 @@ namespace Pixly.Services.Services
 
     }
 }
-
-
-

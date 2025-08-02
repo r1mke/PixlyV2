@@ -11,5 +11,7 @@
         public string Orientation { get; set; }
         public bool IsCurrentUserLiked { get; set; }
         public bool IsCurrentUserSaved { get; set; }
+        public DateTime UploadedAt { get; set; }
+
     }
 }

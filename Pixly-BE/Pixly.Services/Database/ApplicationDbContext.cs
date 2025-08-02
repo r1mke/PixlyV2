@@ -17,6 +17,7 @@ namespace Pixly.Services.Database
         public DbSet<Like> Likes { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Report> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

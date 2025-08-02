@@ -1,7 +1,7 @@
 import { User } from "./User";
 
 export interface PhotoBasic {
-  photoId?: number;
+  photoId: number;
   title: string;
   url: string;
   slug: string;
@@ -10,4 +10,5 @@ export interface PhotoBasic {
   orientation: string;
   isCurrentUserLiked: boolean;
   isCurrentUserSaved: boolean;
+  uploadedAt: string;
 }

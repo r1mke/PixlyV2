@@ -1,0 +1,28 @@
+.card-container{
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.content-moderation{
+    max-width: 1025px;
+    margin: 20px 0;
+    border: 1px solid #ddd;
+    box-shadow: 1px 0px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 20px;
+}
+
+.filter{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.photo-cards{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: flex-start;
+}

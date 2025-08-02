@@ -36,6 +36,7 @@ namespace Pixly.API.Exstensions
         private static IServiceCollection AddDomainServices(this IServiceCollection services)
         {
             services.AddTransient<IPhotoService, PhotoService>();
+            services.AddTransient<IReportService, ReportService>();
             services.AddTransient<ITagService, TagService>();
             services.AddTransient<IAdminService, AdminService>();
             services.AddScoped<IUserService, UserService>();

@@ -7,6 +7,7 @@
         public int TotalLikes { get; set; }
         public int TotalDownload { get; set; }
         public int PendingPhotos { get; set; }
+        public int ReportedPhotos { get; set; }
         public List<DailyUploadedPhotos> LastFewDayInfo { get; set; } = new();
     }
 }

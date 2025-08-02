@@ -1,0 +1,51 @@
+.photo-card-container {
+    background-color: var(--pixly-backround-color);
+    
+}
+
+.photo-card-container img {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.photo-card-details{
+    border: 1px solid #ddd;
+    box-shadow: 1px 0px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.bacis-info{
+    padding: 10px;
+}
+
+.photo-card-details span {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--pixly-text-color);
+}
+
+.photo-card-details p {
+    margin-bottom: 5px;
+    color: var(--pixly-text-color);
+    font-size: 13px;
+}
+
+.photo-card-actions-pending, .photo-card-actions-approved{
+    width: 100%;
+    display: flex;
+    padding: 10px;
+}
+
+.photo-card-actions-pending{
+    justify-content: space-around;
+}
+
+.photo-card-actions-approved{
+    justify-content: center;
+}
+
+.photo-card-action{
+    width: 45%;
+}
