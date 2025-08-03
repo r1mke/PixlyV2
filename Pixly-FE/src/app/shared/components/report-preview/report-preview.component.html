@@ -1,0 +1,78 @@
+<!-- Template - report-preview.component.html -->
+<div class="report-preview-container">
+  <!-- Header -->
+  <div [style.background]="helperService.getGradient('#02A388')"
+    class="report-header">
+    <div class="report-type-badge">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ report.reportType?.reportTypeName }}
+    </div>
+    <button class="close-btn" (click)="closeActiveReport.emit(false)">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="report-content">
+    <div class="reported-image">
+      <img [src]="report?.photo?.url" [alt]="report?.photo?.title || 'Prijavljena slika'">
+      <div class="photo-info">
+        <span class="photo-title">{{ report?.photo?.title || 'Bez naziva' }}</span>
+      </div>
+    </div>
+
+    <div class="report-details">
+      <div class="report-meta">
+        <div class="report-status">
+          <i class="fas fa-clock"></i>
+          {{ report.reportStatus?.reportStatusName || 'Pending' }}
+        </div>
+        <span class="report-date">
+          <i class="fas fa-calendar"></i>
+          {{ report.createdAt | date:'dd.MM.yyyy HH:mm' }}
+        </span>
+      </div>
+
+      <div class="report-message">
+        <h4>Razlog prijave:</h4>
+        <p>{{ report.reportMessage }}</p>
+      </div>
+
+      <div class="report-users">
+        <div class="user-info">
+          <span class="label">Prijavio:</span>
+          <div class="user-tag reporter">
+            <i class="fas fa-user"></i>
+            {{ report.reportedByUser?.userName }}
+          </div>
+        </div>
+        <div class="user-info">
+          <span class="label">Prijavljeni korisnik:</span>
+          <div class="user-tag reported">
+            <i class="fas fa-user"></i>
+            {{ report.reportedUser?.userName }}
+          </div>
+        </div>
+      </div>   
+      <div class="admin-actions">
+        <div class="admin-action-button">
+          <app-submit-button
+            text="Reject"
+            icon="fa-times"
+            backGroundColor="#FF4D4D"
+            [fullWidth]="true"
+            (click)="closeActiveReport.emit(false)">
+          </app-submit-button>
+        </div>
+        <div class="admin-action-button">
+          <app-submit-button
+            text="Accept"
+            icon="fa-check"
+            backGroundColor="#02A388"
+            [fullWidth]="true"
+            (click)="closeActiveReport.emit(false)">
+          </app-submit-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

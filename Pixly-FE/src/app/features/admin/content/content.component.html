@@ -25,16 +25,41 @@
     </div>
 
     <div class="content-moderation">
-        <div class="filter">
-            <app-dropdown (selectedValue)="saveSelectedValueFromDropdown($event)" class="dropdown-filter" [options]="dropdownOptions"></app-dropdown>
+        <div class="content-container">
+            <div class="filter">
+                <h5>{{dropDownOption}} photos</h5>
+                <app-dropdown (selectedValue)="saveSelectedValueFromDropdown($event)" class="dropdown-filter" [options]="dropdownOptions"></app-dropdown>
+            </div>
+            <div *ngIf="photos" class="photo-cards">
+                <app-photo-card
+                *ngFor="let photo of photos; index as i"
+                [state]="dropDownOption"
+                [photo]="photo"
+                (photoActionCompleted)="handlePhotoActionCompleted($event)"
+                ></app-photo-card>
+            </div>
         </div>
-        <div *ngIf="photos" class="photo-cards">
-            <app-photo-card
-            *ngFor="let photo of photos; index as i"
-            [state]="dropDownOption"
-            [photo]="photo"
-            (photoActionCompleted)="handlePhotoActionCompleted($event)"
-            ></app-photo-card>
+        <div *ngIf="reports.length>0" class="report-container">
+            <h5>Active reports</h5>
+            <div class="report-cards-container">
+                <app-report-card
+                *ngFor="let report of reports"
+                [report]="report"
+                (reportPreviewActive)="handleReportPreviewActive($event)">
+                </app-report-card>
+            </div>
         </div>
     </div>
 </div>
+<div 
+  class="report-preview"
+  [class.active]="activePreviewReport.active"
+  (click)="onOverlayClick($event)">
+  
+  <app-report-preview
+    *ngIf="activePreviewReport.active"
+    (closeActiveReport)="closeActiveReport($event)"
+    [report]="activePreviewReport.report ">
+  </app-report-preview>
+</div>
+

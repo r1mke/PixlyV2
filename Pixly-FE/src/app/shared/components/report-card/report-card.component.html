@@ -1,0 +1,26 @@
+<div  class="report-container">
+    <div class="report-info">
+        <div class="report-header">
+            <h6 class="report-type">{{report?.reportType?.reportTypeName}}</h6>
+            <span class="report-date">{{this.helperService.getTimeAgo(report.createdAt)}}</span>    
+        </div>
+        <p>{{report?.reportMessage}}</p>
+        <div class="report-details">
+            <div class="report-user">
+                <span>Prijavio: &#64;{{report.reportedByUser.userName}}</span>
+                <span>Korisnik: &#64;{{report.reportedUser.userName}}</span>
+            </div>
+            <div class="report-actions">
+                <app-submit-button
+                    (click)="reportPreviewActive.emit({active: true, report: report})"
+                    text="Pregledaj"
+                    [isLoading]="false"
+                    [isDisabled]="false"
+                    [fullWidth]="true"
+                    icon="fa-eye"
+                    backGroundColor="#3498db"
+                ></app-submit-button>
+            </div>
+        </div>
+    </div>
+</div>

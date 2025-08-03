@@ -12,10 +12,21 @@ import { LoadingService } from '../../../core/services/loading.service';
 import { AdminService } from '../../../core/services/admin.service';
 import { DashboardOverview } from '../../../core/models/AdminDTOs/DashboardOverview';
 import { ApiResponse } from '../../../core/models/Response/api-response';
+import { ReportService } from '../../../core/services/report.service';
+import { Report } from '../../../core/models/DTOs/Report';
+import { ReportSearchRequest } from '../../../core/models/SearchRequest/ReportSearchRequest';
+import { ReportCardComponent } from "../../../shared/components/report-card/report-card.component";
+import { ReportPreviewComponent } from "../../../shared/components/report-preview/report-preview.component";
+
+interface activePreviewReport {
+  active: boolean,
+  report: Report
+}
+
 @Component({
   selector: 'app-content',
   standalone: true,
-  imports: [TotalCardComponent, DropdownComponent, PhotoCardComponent, CommonModule],
+  imports: [TotalCardComponent, DropdownComponent, PhotoCardComponent, CommonModule, ReportCardComponent, ReportPreviewComponent],
   templateUrl: './content.component.html',
   styleUrl: './content.component.css'
 })
@@ -23,6 +34,9 @@ export class ContentComponent implements OnInit, OnDestroy {
   loadingService = inject(LoadingService);
   photoService = inject(PhotoService);
   adminService = inject(AdminService);
+  reportService = inject(ReportService);
+  reports: Report[] = [];
+  activePreviewReport : activePreviewReport = {active: false, report: {} as Report};
   private destroy$ = new Subject<void>();
   dropDownOption: string = 'Pending';
   dashBoardData! : DashboardOverview;
@@ -37,7 +51,9 @@ export class ContentComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getDataForCard();
     this.getPhotosByState("Pending");
+    this.getReports();
   }
+    
 
   getDataForCard() {
     this.loadingService.setLoading(true);
@@ -81,4 +97,51 @@ export class ContentComponent implements OnInit, OnDestroy {
   handlePhotoActionCompleted(event: {action: string, photoId: number}): void {
     this.getPhotosByState(this.dropDownOption);
   }
+
+
+  getReports() : void {
+    let reportSearchRequest: ReportSearchRequest = {
+      pageSize: 20,
+      pageNumber: 1,
+      isUserIncluded: true,
+      isPhotoIncluded: true
+    };
+
+    this.reportService.getReports(reportSearchRequest).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res:any) => {
+        if (res.success) {
+          console.log(res);
+          this.reports = res.data;
+          console.log(this.reports);
+        } else {
+          this.reports = [];
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching reports:', error);
+      }
+    })
+  }
+
+  handleReportPreviewActive(event : {active: boolean, report: Report}) : void {
+    console.log(event);
+    this.activePreviewReport = event;
+    document.body.classList.add('modal-open');
+  }
+
+  onOverlayClick(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.closeActiveReport();
+    }
+  }
+
+  closeActiveReport(event?: any) {
+    this.activePreviewReport.active = false;
+    setTimeout(() => {
+      this.activePreviewReport.report = {} as Report;
+    }, 500);
+    
+    document.body.classList.remove('modal-open');
+  }
+  
 }

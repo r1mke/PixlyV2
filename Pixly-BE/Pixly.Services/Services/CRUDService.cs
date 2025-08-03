@@ -4,7 +4,6 @@ using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
 using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
-using System.Text.Json;
 
 namespace Pixly.Services.Services
 {
@@ -30,17 +29,12 @@ namespace Pixly.Services.Services
         public virtual async Task<PagedList<TModelBasic>> GetPaged(TSearch search)
         {
             var entityName = typeof(TDbEntity).Name.ToLower();
-            var cacheKey = $"{entityName}:paged:{JsonSerializer.Serialize(search)}";
-
-            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
-            {
-                var query = _context.Set<TDbEntity>().AsQueryable();
-                query = await AddFilter(query, search);
-                var modelQuery = query.Select(x => Mapper.Map<TModelBasic>(x));
-                var result = await PagedList<TModelBasic>.CreateAsync(
+            var query = _context.Set<TDbEntity>().AsQueryable();
+            query = await AddFilter(query, search);
+            var modelQuery = query.Select(x => Mapper.Map<TModelBasic>(x));
+            var result = await PagedList<TModelBasic>.CreateAsync(
                     modelQuery, search.PageNumber, search.PageSize);
-                return result;
-            }, TimeSpan.FromMinutes(5));
+            return result;
 
         }
         public virtual async Task<TModelBasic> Insert(TInsert request)

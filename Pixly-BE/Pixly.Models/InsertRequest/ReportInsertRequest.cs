@@ -12,8 +12,13 @@ namespace Pixly.Models.InsertRequest
         [StringLength(100, ErrorMessage = "Report message cannot be longer than 30 characters.")]
         public string ReportMessage { get; set; }
         [Required(ErrorMessage = "User ID is required.")]
-        public string UserId { get; set; }
+        public string ReportedByUserId { get; set; }
+
+        [Required(ErrorMessage = "Reported user ID is required.")]
+        public string ReportedUserId { get; set; }
         [Required(ErrorMessage = "Photo ID is required.")]
         public int PhotoId { get; set; }
+        [Required(ErrorMessage = "Report type ID is required.")]
+        public int ReportTypeId { get; set; }
     }
 }

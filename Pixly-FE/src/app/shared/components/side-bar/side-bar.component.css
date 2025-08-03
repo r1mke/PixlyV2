@@ -62,9 +62,6 @@ ul {
     align-items: center;
     justify-content: center;
     width: 100%;
-}
-
-.sidebar-link a {
     text-decoration: none;
     color: #333;
     font-weight: 500;
@@ -72,6 +69,7 @@ ul {
     width: 100%;
     text-align: center;
 }
+
 
 .logout button{
     background-color: red;
