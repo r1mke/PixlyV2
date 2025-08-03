@@ -1,11 +1,12 @@
 .photo-card-container {
     background-color: var(--pixly-backround-color);
-    
+    box-sizing: border-box;
 }
 
 .photo-card-container img {
-    max-width: 300px;
-    max-height: 300px;
+    width: 250px;
+    height: 200px;
+    object-fit: cover;
 }
 
 .photo-card-details{

@@ -2,7 +2,7 @@
     <img [src]="photo.url"  alt="">
     <div class="photo-card-details">
         <div class="bacis-info">
-            <p>{{getTimeAgo(photo.uploadedAt)}}</p>
+            <p>{{helperService.getTimeAgo(photo.uploadedAt)}}</p>
             <span>{{photo?.user?.userName}}</span>
         </div>
 

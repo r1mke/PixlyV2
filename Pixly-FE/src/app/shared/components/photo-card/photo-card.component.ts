@@ -6,6 +6,7 @@ import { PhotoService } from '../../../core/services/photo.service';
 import { inject } from '@angular/core';
 import { takeUntil } from 'rxjs';
 import { Subject } from 'rxjs';
+import { HelperService } from '../../../core/services/helper.service';
 import { LoadingService } from '../../../core/services/loading.service';
 import { EventEmitter } from '@angular/core';
 @Component({
@@ -23,7 +24,7 @@ export class PhotoCardComponent implements OnInit, OnDestroy{
   private destroy$ = new Subject<void>();
   photoService = inject(PhotoService);
   loadingService = inject(LoadingService);
-  
+  helperService = inject(HelperService);
   deletePhoto() {
     this.loadingService.setLoading(true);
     this.photoService.deletePhoto(this.photo.photoId).pipe(takeUntil(this.destroy$)).subscribe({
@@ -72,24 +73,5 @@ export class PhotoCardComponent implements OnInit, OnDestroy{
     this.destroy$.complete();
   }
 
-  getTimeAgo(dateString: string): string {
-    const now = new Date();
-    const past = new Date(dateString);
-    const diffMs = now.getTime() - past.getTime();
-
-    const seconds = Math.floor(diffMs / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const months = Math.floor(days / 30);
-    const years = Math.floor(days / 365);
-
-    if (seconds < 60) return `${seconds} seconds ago`;
-    if (minutes < 60) return `${minutes} minutes ago`;
-    if (hours < 24) return `${hours} hours ago`;
-    if (days < 30) return `${days} days ago`;
-    if (months < 12) return `${months} months ago`;
-    return `${years} years ago`;
-  }
-
+  
 }

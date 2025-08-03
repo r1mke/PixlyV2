@@ -19,8 +19,8 @@ import { PhotoInsertRequest } from '../models/InsertRequest/PhotoInsertRequest';
 })
 export class PhotoService {
   private http = inject(HttpClient);
-  private authState = inject(AuthState);
   private apiUrl = `${environment.apiUrl}/photo`;
+  private authState = inject(AuthState);
   private get currentUserId(): string | undefined{
     return this.authState.currentUser?.id;
   }

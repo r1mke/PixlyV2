@@ -5,8 +5,8 @@ export interface PhotoBasic {
   title: string;
   url: string;
   slug: string;
-  user: User | null;
-  state: string | null;
+  user: User;
+  state: string;
   orientation: string;
   isCurrentUserLiked: boolean;
   isCurrentUserSaved: boolean;

@@ -8,29 +8,571 @@ namespace Pixly.Services
     {
         public static void Seed(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    UserName = "r1mke",
-                    Email = "r1mke@example.com",
-                    FirstName = "Kerim",
-                    LastName = "Begic",
-                    ProfilePictureUrl = "https://example.com/images/user1.jpg",
-                    DateOfBirth = new DateTime(2000, 1, 1),
-                    State = "Bosnia and Herzegovina",
-                },
-                new User
-                {
-                    Email = "sedin@example.com",
-                    FirstName = "Sedin",
-                    LastName = "Smajic",
-                    ProfilePictureUrl = "https://example.com/images/user2.jpg",
-                    DateOfBirth = new DateTime(1999, 5, 12),
-                    State = "Bosnia and Herzegovina",
-                    PasswordHash = "testhash2",
-                }
-            );
+            // Seed Users first
+            SeedUsers(modelBuilder);
 
+            // Seed Tags
+            SeedTags(modelBuilder);
+
+            // Seed Report Types
+            SeedReportTypes(modelBuilder);
+
+            // Seed Report Statuses
+            SeedReportStatuses(modelBuilder);
+
+            // Seed Photos (depends on Users and Tags)
+            SeedPhotos(modelBuilder);
+
+            // Seed Reports (depends on Users, Photos, ReportTypes and ReportStatuses)
+            SeedReports(modelBuilder);
+        }
+
+        private static void SeedUsers(ModelBuilder modelBuilder)
+        {
+            var passwordHasher = new PasswordHasher<User>();
+
+            var user1 = new User
+            {
+                Id = "user-1-guid-12345",
+                UserName = "r1mke@example.com",
+                NormalizedUserName = "R1MKE@EXAMPLE.COM",
+                Email = "r1mke@example.com",
+                NormalizedEmail = "R1MKE@EXAMPLE.COM",
+                EmailConfirmed = true,
+                FirstName = "Kerim",
+                LastName = "Begic",
+                ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+                DateOfBirth = new DateTime(2000, 1, 1),
+                State = "Bosnia and Herzegovina",
+                CreatedAt = DateTime.UtcNow.AddDays(-30),
+                IsActive = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            };
+            user1.PasswordHash = passwordHasher.HashPassword(user1, "Password123!");
+
+            var user2 = new User
+            {
+                Id = "user-2-guid-67890",
+                UserName = "sedin@example.com",
+                NormalizedUserName = "SEDIN@EXAMPLE.COM",
+                Email = "sedin@example.com",
+                NormalizedEmail = "SEDIN@EXAMPLE.COM",
+                EmailConfirmed = true,
+                FirstName = "Sedin",
+                LastName = "Smajic",
+                ProfilePictureUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+                DateOfBirth = new DateTime(1999, 5, 12),
+                State = "Bosnia and Herzegovina",
+                CreatedAt = DateTime.UtcNow.AddDays(-25),
+                IsActive = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            };
+            user2.PasswordHash = passwordHasher.HashPassword(user2, "Password123!");
+
+            var user3 = new User
+            {
+                Id = "user-3-guid-11111",
+                UserName = "ana@example.com",
+                NormalizedUserName = "ANA@EXAMPLE.COM",
+                Email = "ana@example.com",
+                NormalizedEmail = "ANA@EXAMPLE.COM",
+                EmailConfirmed = true,
+                FirstName = "Ana",
+                LastName = "Petrovic",
+                ProfilePictureUrl = "https://images.unsplash.com/photo-1494790108755-2616c31e4fb6?w=400",
+                DateOfBirth = new DateTime(1998, 8, 20),
+                State = "Serbia",
+                CreatedAt = DateTime.UtcNow.AddDays(-20),
+                IsActive = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ConcurrencyStamp = Guid.NewGuid().ToString()
+            };
+            user3.PasswordHash = passwordHasher.HashPassword(user3, "Password123!");
+
+            modelBuilder.Entity<User>().HasData(user1, user2, user3);
+        }
+
+        private static void SeedTags(ModelBuilder modelBuilder)
+        {
+            var tags = new[]
+            {
+                new Tag { TagId = 1, Name = "Nature" },
+                new Tag { TagId = 2, Name = "Architecture" },
+                new Tag { TagId = 3, Name = "Portrait" },
+                new Tag { TagId = 4, Name = "Street" },
+                new Tag { TagId = 5, Name = "Landscape" },
+                new Tag { TagId = 6, Name = "Urban" },
+                new Tag { TagId = 7, Name = "Travel" },
+                new Tag { TagId = 8, Name = "Art" },
+                new Tag { TagId = 9, Name = "Black and White" },
+                new Tag { TagId = 10, Name = "Sunset" },
+                new Tag { TagId = 11, Name = "Ocean" },
+                new Tag { TagId = 12, Name = "Mountains" },
+                new Tag { TagId = 13, Name = "City" },
+                new Tag { TagId = 14, Name = "Abstract" },
+                new Tag { TagId = 15, Name = "Minimalist" },
+                new Tag { TagId = 16, Name = "Vintage" },
+                new Tag { TagId = 17, Name = "Modern" },
+                new Tag { TagId = 18, Name = "Colorful" },
+                new Tag { TagId = 19, Name = "Wildlife" },
+                new Tag { TagId = 20, Name = "Fashion" }
+            };
+
+            modelBuilder.Entity<Tag>().HasData(tags);
+        }
+
+        private static void SeedReportTypes(ModelBuilder modelBuilder)
+        {
+            var reportTypes = new[]
+            {
+                new ReportType { ReportTypeId = 1, ReportTypeName = "Inappropriate Content" },
+                new ReportType { ReportTypeId = 2, ReportTypeName = "Copyright Violation" },
+                new ReportType { ReportTypeId = 3, ReportTypeName = "Nudity or Sexual Content" },
+                new ReportType { ReportTypeId = 4, ReportTypeName = "Violence or Graphic Content" },
+                new ReportType { ReportTypeId = 5, ReportTypeName = "Hate Speech or Discrimination" },
+                new ReportType { ReportTypeId = 6, ReportTypeName = "Spam or Misleading" },
+                new ReportType { ReportTypeId = 7, ReportTypeName = "Privacy Violation" },
+                new ReportType { ReportTypeId = 8, ReportTypeName = "Stolen or Unauthorized Use" },
+                new ReportType { ReportTypeId = 9, ReportTypeName = "Low Quality or Irrelevant" },
+                new ReportType { ReportTypeId = 10, ReportTypeName = "Other" }
+            };
+
+            modelBuilder.Entity<ReportType>().HasData(reportTypes);
+        }
+
+        private static void SeedReportStatuses(ModelBuilder modelBuilder)
+        {
+            var reportStatuses = new[]
+            {
+                new ReportStatus { ReportStatusId = 1, ReportStatusName = "Pending" },
+                new ReportStatus { ReportStatusId = 2, ReportStatusName = "Under Review" },
+                new ReportStatus { ReportStatusId = 3, ReportStatusName = "Resolved" },
+                new ReportStatus { ReportStatusId = 4, ReportStatusName = "Dismissed" },
+                new ReportStatus { ReportStatusId = 5, ReportStatusName = "In Progress" },
+            };
+
+            modelBuilder.Entity<ReportStatus>().HasData(reportStatuses);
+        }
+
+        private static void SeedPhotos(ModelBuilder modelBuilder)
+        {
+            var currentDate = DateTime.UtcNow;
+            var random = new Random(42); // Fixed seed for consistent results
+
+            var photos = new[]
+            {
+                new Photo
+                {
+                    PhotoId = 1,
+                    Title = "Golden Hour Mountain View",
+                    Description = "Breathtaking mountain landscape during golden hour",
+                    Url = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4",
+                    Slug = "golden-hour-mountain-view-123456",
+                    Width = 1920,
+                    Height = 1280,
+                    Format = "jpg",
+                    FileSize = 2500000,
+                    UploadedAt = currentDate.AddDays(-15),
+                    UserId = "user-1-guid-12345",
+                    State = "Approved",
+                    ViewCount = random.Next(100, 500),
+                    LikeCount = random.Next(20, 100),
+                    DownloadCount = random.Next(5, 50),
+                    Orientation = "landscape",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 2,
+                    Title = "Urban Architecture",
+                    Description = "Modern building with clean lines and geometric patterns",
+                    Url = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab",
+                    Slug = "urban-architecture-234567",
+                    Width = 1080,
+                    Height = 1620,
+                    Format = "jpg",
+                    FileSize = 1800000,
+                    UploadedAt = currentDate.AddDays(-12),
+                    UserId = "user-2-guid-67890",
+                    State = "Approved",
+                    ViewCount = random.Next(100, 500),
+                    LikeCount = random.Next(20, 100),
+                    DownloadCount = random.Next(5, 50),
+                    Orientation = "portrait",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 3,
+                    Title = "Ocean Waves",
+                    Description = "Powerful ocean waves crashing against the shore",
+                    Url = "https://images.unsplash.com/photo-1505142468610-359e7d316be0",
+                    Slug = "ocean-waves-345678",
+                    Width = 1920,
+                    Height = 1080,
+                    Format = "jpg",
+                    FileSize = 2200000,
+                    UploadedAt = currentDate.AddDays(-10),
+                    UserId = "user-3-guid-11111",
+                    State = "Approved",
+                    ViewCount = random.Next(100, 500),
+                    LikeCount = random.Next(20, 100),
+                    DownloadCount = random.Next(5, 50),
+                    Orientation = "landscape",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 4,
+                    Title = "Street Art Portrait",
+                    Description = "Vibrant street art mural in downtown area",
+                    Url = "https://images.unsplash.com/photo-1541961017774-22349e4a1262",
+                    Slug = "street-art-portrait-456789",
+                    Width = 1080,
+                    Height = 1080,
+                    Format = "jpg",
+                    FileSize = 1600000,
+                    UploadedAt = currentDate.AddDays(-8),
+                    UserId = "user-1-guid-12345",
+                    State = "Approved",
+                    ViewCount = random.Next(100, 500),
+                    LikeCount = random.Next(20, 100),
+                    DownloadCount = random.Next(5, 50),
+                    Orientation = "square",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 5,
+                    Title = "Forest Path",
+                    Description = "Mysterious forest path surrounded by tall trees",
+                    Url = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e",
+                    Slug = "forest-path-567890",
+                    Width = 1600,
+                    Height = 1200,
+                    Format = "jpg",
+                    FileSize = 2000000,
+                    UploadedAt = currentDate.AddDays(-6),
+                    UserId = "user-2-guid-67890",
+                    State = "Approved",
+                    ViewCount = random.Next(100, 500),
+                    LikeCount = random.Next(20, 100),
+                    DownloadCount = random.Next(5, 50),
+                    Orientation = "landscape",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 6,
+                    Title = "City Skyline at Night",
+                    Description = "Illuminated city skyline with reflections on water",
+                    Url = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000",
+                    Slug = "city-skyline-night-678901",
+                    Width = 2000,
+                    Height = 1333,
+                    Format = "jpg",
+                    FileSize = 2800000,
+                    UploadedAt = currentDate.AddDays(-4),
+                    UserId = "user-3-guid-11111",
+                    State = "Approved",
+                    ViewCount = random.Next(100, 500),
+                    LikeCount = random.Next(20, 100),
+                    DownloadCount = random.Next(5, 50),
+                    Orientation = "landscape",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 7,
+                    Title = "Minimalist Design",
+                    Description = "Clean and simple minimalist composition",
+                    Url = "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f",
+                    Slug = "minimalist-design-789012",
+                    Width = 1200,
+                    Height = 1800,
+                    Format = "jpg",
+                    FileSize = 1400000,
+                    UploadedAt = currentDate.AddDays(-3),
+                    UserId = "user-1-guid-12345",
+                    State = "Pending",
+                    ViewCount = 0,
+                    LikeCount = 0,
+                    DownloadCount = 0,
+                    Orientation = "portrait",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 8,
+                    Title = "Abstract Colors",
+                    Description = "Vibrant abstract composition with flowing colors",
+                    Url = "https://images.unsplash.com/photo-1541961017774-22349e4a1262",
+                    Slug = "abstract-colors-890123",
+                    Width = 1500,
+                    Height = 1500,
+                    Format = "jpg",
+                    FileSize = 1900000,
+                    UploadedAt = currentDate.AddDays(-2),
+                    UserId = "user-2-guid-67890",
+                    State = "Draft",
+                    ViewCount = 0,
+                    LikeCount = 0,
+                    DownloadCount = 0,
+                    Orientation = "square",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 9,
+                    Title = "Vintage Car",
+                    Description = "Classic vintage car in perfect condition",
+                    Url = "https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+                    Slug = "vintage-car-901234",
+                    Width = 1920,
+                    Height = 1280,
+                    Format = "jpg",
+                    FileSize = 2300000,
+                    UploadedAt = currentDate.AddDays(-1),
+                    UserId = "user-3-guid-11111",
+                    State = "Approved",
+                    ViewCount = random.Next(100, 500),
+                    LikeCount = random.Next(20, 100),
+                    DownloadCount = random.Next(5, 50),
+                    Orientation = "landscape",
+                    IsDeleted = false
+                },
+                new Photo
+                {
+                    PhotoId = 10,
+                    Title = "Fashion Portrait",
+                    Description = "Professional fashion portrait with dramatic lighting",
+                    Url = "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
+                    Slug = "fashion-portrait-012345",
+                    Width = 1200,
+                    Height = 1600,
+                    Format = "jpg",
+                    FileSize = 2100000,
+                    UploadedAt = currentDate,
+                    UserId = "user-1-guid-12345",
+                    State = "Approved",
+                    ViewCount = random.Next(50, 200),
+                    LikeCount = random.Next(10, 50),
+                    DownloadCount = random.Next(2, 20),
+                    Orientation = "portrait",
+                    IsDeleted = false
+                }
+            };
+
+            modelBuilder.Entity<Photo>().HasData(photos);
+
+            // Seed PhotoTags
+            SeedPhotoTags(modelBuilder);
+        }
+
+        private static void SeedPhotoTags(ModelBuilder modelBuilder)
+        {
+            var photoTags = new[]
+            {
+                // Photo 1 - Golden Hour Mountain View
+                new PhotoTag { PhotoTagId = 1, PhotoId = 1, TagId = 5 }, // Landscape
+                new PhotoTag { PhotoTagId = 2, PhotoId = 1, TagId = 1 }, // Nature
+                new PhotoTag { PhotoTagId = 3, PhotoId = 1, TagId = 12 }, // Mountains
+                new PhotoTag { PhotoTagId = 4, PhotoId = 1, TagId = 10 }, // Sunset
+
+                // Photo 2 - Urban Architecture
+                new PhotoTag { PhotoTagId = 5, PhotoId = 2, TagId = 2 }, // Architecture
+                new PhotoTag { PhotoTagId = 6, PhotoId = 2, TagId = 6 }, // Urban
+                new PhotoTag { PhotoTagId = 7, PhotoId = 2, TagId = 17 }, // Modern
+
+                // Photo 3 - Ocean Waves
+                new PhotoTag { PhotoTagId = 8, PhotoId = 3, TagId = 11 }, // Ocean
+                new PhotoTag { PhotoTagId = 9, PhotoId = 3, TagId = 1 }, // Nature
+                new PhotoTag { PhotoTagId = 10, PhotoId = 3, TagId = 5 }, // Landscape
+
+                // Photo 4 - Street Art Portrait
+                new PhotoTag { PhotoTagId = 11, PhotoId = 4, TagId = 4 }, // Street
+                new PhotoTag { PhotoTagId = 12, PhotoId = 4, TagId = 8 }, // Art
+                new PhotoTag { PhotoTagId = 13, PhotoId = 4, TagId = 18 }, // Colorful
+
+                // Photo 5 - Forest Path
+                new PhotoTag { PhotoTagId = 14, PhotoId = 5, TagId = 1 }, // Nature
+                new PhotoTag { PhotoTagId = 15, PhotoId = 5, TagId = 5 }, // Landscape
+                new PhotoTag { PhotoTagId = 16, PhotoId = 5, TagId = 7 }, // Travel
+
+                // Photo 6 - City Skyline at Night
+                new PhotoTag { PhotoTagId = 17, PhotoId = 6, TagId = 13 }, // City
+                new PhotoTag { PhotoTagId = 18, PhotoId = 6, TagId = 6 }, // Urban
+                new PhotoTag { PhotoTagId = 19, PhotoId = 6, TagId = 2 }, // Architecture
+
+                // Photo 7 - Minimalist Design
+                new PhotoTag { PhotoTagId = 20, PhotoId = 7, TagId = 15 }, // Minimalist
+                new PhotoTag { PhotoTagId = 21, PhotoId = 7, TagId = 8 }, // Art
+                new PhotoTag { PhotoTagId = 22, PhotoId = 7, TagId = 14 }, // Abstract
+
+                // Photo 8 - Abstract Colors
+                new PhotoTag { PhotoTagId = 23, PhotoId = 8, TagId = 14 }, // Abstract
+                new PhotoTag { PhotoTagId = 24, PhotoId = 8, TagId = 18 }, // Colorful
+                new PhotoTag { PhotoTagId = 25, PhotoId = 8, TagId = 8 }, // Art
+
+                // Photo 9 - Vintage Car
+                new PhotoTag { PhotoTagId = 26, PhotoId = 9, TagId = 16 }, // Vintage
+                new PhotoTag { PhotoTagId = 27, PhotoId = 9, TagId = 7 }, // Travel
+
+                // Photo 10 - Fashion Portrait
+                new PhotoTag { PhotoTagId = 28, PhotoId = 10, TagId = 3 }, // Portrait
+                new PhotoTag { PhotoTagId = 29, PhotoId = 10, TagId = 20 }, // Fashion
+                new PhotoTag { PhotoTagId = 30, PhotoId = 10, TagId = 17 } // Modern
+            };
+
+            modelBuilder.Entity<PhotoTag>().HasData(photoTags);
+        }
+
+        private static void SeedReports(ModelBuilder modelBuilder)
+        {
+            var currentDate = DateTime.UtcNow;
+
+            var reports = new[]
+            {
+                new Report
+                {
+                    ReportId = 1,
+                    ReportTitle = "Inappropriate image content",
+                    ReportMessage = "This image contains content that violates community guidelines. The subject matter is not suitable for public viewing.",
+                    ReportedByUserId = "user-2-guid-67890", // Sedin reporting
+                    ReportedUserId = "user-1-guid-12345", // Kerim being reported
+                    PhotoId = 1,
+                    ReportTypeId = 1, // Inappropriate Content
+                    ReportStatusId = 2, // Under Review
+                    CreatedAt = currentDate.AddDays(-5),
+                    AdminNotes = "Under investigation by content team."
+                },
+                new Report
+                {
+                    ReportId = 2,
+                    ReportTitle = "Copyright infringement",
+                    ReportMessage = "This photo was taken from my portfolio without permission. I own the original copyright to this image.",
+                    ReportedByUserId = "user-3-guid-11111", // Ana reporting
+                    ReportedUserId = "user-2-guid-67890", // Sedin being reported
+                    PhotoId = 2,
+                    ReportTypeId = 2, // Copyright Violation
+                    ReportStatusId = 3, // Resolved
+                    CreatedAt = currentDate.AddDays(-4),
+                    AdminNotes = "Copyright claim verified. Photo removed.",
+                    AdminUserId = "user-2-guid-67890",
+                    ResolvedAt = currentDate.AddDays(-3)
+                },
+                new Report
+                {
+                    ReportId = 3,
+                    ReportTitle = "Stolen artwork",
+                    ReportMessage = "This user has uploaded my artwork without crediting me or asking for permission.",
+                    ReportedByUserId = "user-1-guid-12345", // Kerim reporting
+                    ReportedUserId = "user-3-guid-11111", // Ana being reported
+                    PhotoId = 4,
+                    ReportTypeId = 8, // Stolen or Unauthorized Use
+                    ReportStatusId = 1, // Pending
+                    CreatedAt = currentDate.AddDays(-3)
+                },
+                new Report
+                {
+                    ReportId = 4,
+                    ReportTitle = "Privacy violation",
+                    ReportMessage = "This photo was taken of me without my consent and posted without permission.",
+                    ReportedByUserId = "user-2-guid-67890", // Sedin reporting
+                    ReportedUserId = "user-1-guid-12345", // Kerim being reported
+                    PhotoId = 5,
+                    ReportTypeId = 7, // Privacy Violation
+                    ReportStatusId = 5, // Escalated
+                    CreatedAt = currentDate.AddDays(-3),
+                    AdminNotes = "Escalated to legal team for review."
+                },
+                new Report
+                {
+                    ReportId = 5,
+                    ReportTitle = "Low quality spam",
+                    ReportMessage = "This image is very low quality and seems to be uploaded just to spam the platform.",
+                    ReportedByUserId = "user-3-guid-11111", // Ana reporting
+                    ReportedUserId = "user-2-guid-67890", // Sedin being reported
+                    PhotoId = 6,
+                    ReportTypeId = 6, // Spam or Misleading
+                    ReportStatusId = 4, // Dismissed
+                    CreatedAt = currentDate.AddDays(-2),
+                    AdminNotes = "Report dismissed - image quality acceptable.",
+                    AdminUserId = "user-2-guid-67890",
+                    ResolvedAt = currentDate.AddDays(-1)
+                },
+                new Report
+                {
+                    ReportId = 6,
+                    ReportTitle = "Offensive content",
+                    ReportMessage = "The content of this image promotes hate speech and discrimination against certain groups.",
+                    ReportedByUserId = "user-1-guid-12345", // Kerim reporting
+                    ReportedUserId = "user-3-guid-11111", // Ana being reported
+                    PhotoId = 9,
+                    ReportTypeId = 5, // Hate Speech or Discrimination
+                    ReportStatusId = 3, // Resolved
+                    CreatedAt = currentDate.AddDays(-2),
+                    AdminNotes = "Content removed for policy violation.",
+                    AdminUserId = "user-2-guid-67890",
+                    ResolvedAt = currentDate.AddDays(-1)
+                },
+                new Report
+                {
+                    ReportId = 7,
+                    ReportTitle = "Graphic violent content",
+                    ReportMessage = "This image contains graphic violence that should not be displayed on this platform.",
+                    ReportedByUserId = "user-2-guid-67890", // Sedin reporting
+                    ReportedUserId = "user-1-guid-12345", // Kerim being reported
+                    PhotoId = 3,
+                    ReportTypeId = 4, // Violence or Graphic Content
+                    ReportStatusId = 5, // In Progress
+                    CreatedAt = currentDate.AddDays(-1),
+                    AdminNotes = "Reviewing content for policy compliance."
+                },
+                new Report
+                {
+                    ReportId = 8,
+                    ReportTitle = "Nudity violation",
+                    ReportMessage = "This photo contains nudity which violates the platform's content policy.",
+                    ReportedByUserId = "user-3-guid-11111", // Ana reporting
+                    ReportedUserId = "user-2-guid-67890", // Sedin being reported
+                    PhotoId = 10,
+                    ReportTypeId = 3, // Nudity or Sexual Content
+                    ReportStatusId = 1, // Pending
+                    CreatedAt = currentDate.AddHours(-12)
+                },
+                new Report
+                {
+                    ReportId = 9,
+                    ReportTitle = "Irrelevant content",
+                    ReportMessage = "This image doesn't belong on a photography platform. It's completely irrelevant to the site's purpose.",
+                    ReportedByUserId = "user-1-guid-12345", // Kerim reporting
+                    ReportedUserId = "user-3-guid-11111", // Ana being reported
+                    PhotoId = 7,
+                    ReportTypeId = 9, // Low Quality or Irrelevant
+                    ReportStatusId = 4, // Dismissed
+                    CreatedAt = currentDate.AddHours(-6),
+                    AdminNotes = "Content is relevant to platform.",
+                    AdminUserId = "user-2-guid-67890",
+                    ResolvedAt = currentDate.AddHours(-3)
+                },
+                new Report
+                {
+                    ReportId = 10,
+                    ReportTitle = "Multiple policy violations",
+                    ReportMessage = "This image violates multiple community guidelines including inappropriate content and privacy violations.",
+                    ReportedByUserId = "user-2-guid-67890", // Sedin reporting
+                    ReportedUserId = "user-1-guid-12345", // Kerim being reported
+                    PhotoId = 8,
+                    ReportTypeId = 10, // Other
+                    ReportStatusId = 5, // Awaiting User Response
+                    CreatedAt = currentDate.AddHours(-2)
+                }
+            };
+
+            modelBuilder.Entity<Report>().HasData(reports);
         }
 
         public static void SeedRoles(ModelBuilder modelBuilder)
@@ -38,225 +580,38 @@ namespace Pixly.Services
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole
                 {
-                    Id = "1",
+                    Id = "admin-role-guid-1",
                     Name = "Admin",
-                    NormalizedName = "ADMIN"
+                    NormalizedName = "ADMIN",
+                    ConcurrencyStamp = Guid.NewGuid().ToString()
                 },
                 new IdentityRole
                 {
-                    Id = "2",
+                    Id = "user-role-guid-2",
                     Name = "User",
-                    NormalizedName = "USER"
+                    NormalizedName = "USER",
+                    ConcurrencyStamp = Guid.NewGuid().ToString()
+                }
+            );
+
+            // Assign roles to users
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    UserId = "user-1-guid-12345",
+                    RoleId = "user-role-guid-2"
+                },
+                new IdentityUserRole<string>
+                {
+                    UserId = "user-2-guid-67890",
+                    RoleId = "admin-role-guid-1"
+                },
+                new IdentityUserRole<string>
+                {
+                    UserId = "user-3-guid-11111",
+                    RoleId = "user-role-guid-2"
                 }
             );
         }
-
-        /* public static void SeedTags(ModelBuilder modelBuilder)
-         {
-             modelBuilder.Entity<Tag>().HasData(
-                 new Tag { Name = "AI" },
-                 new Tag { Name = "Machine Learning" },
-                 new Tag { Name = "Deep Learning" },
-                 new Tag { Name = "Image Generation" },
-                 new Tag { Name = "Neural Networks" },
-                 new Tag { Name = "Computer Vision" },
-                 new Tag { Name = "Photo Enhancement" },
-                 new Tag { Name = "Art" },
-                 new Tag { Name = "Digital Art" },
-                 new Tag { Name = "Creative AI" },
-                 new Tag { Name = "Automation" },
-                 new Tag { Name = "Innovation" },
-                 new Tag { Name = "Futuristic" },
-                 new Tag { Name = "Generative Art" },
-                 new Tag { Name = "Augmented Reality" }
-             );
-         }
-
-         public static void SeedPhotos(ModelBuilder modelBuilder)
-         {
-
-             var random = new Random();
-             var currentDate = DateTime.UtcNow;
-             string[] slugs = GenerateSlugs(20);
-
-             var photos = new List<Photo>();
-
-
-             photos.Add(CreatePhoto(1, "Urban Landscape at Night", "A stunning cityscape with illuminated buildings at night",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747487348/Pixly/pexels-roodzn-31731013.jpg",
-                 slugs[0], 1920, 1080, "jpg", 2500000, currentDate.AddDays(-10), "1", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(2, "Abstract Architecture", "Modern building with unique architectural features",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747487435/Pixly/pexels-blak7ta-31969691.jpg",
-                 slugs[1], 2000, 3000, "jpg", 3200000, currentDate.AddDays(-9), "1", "Approved", "portrait"));
-
-             photos.Add(CreatePhoto(3, "Mountain Landscape", "Majestic mountain range with snow-capped peaks",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747515588/Pixly/pexels-riccardo-toso-2151342566-31630076.jpg",
-                 slugs[2], 2400, 1600, "jpg", 4100000, currentDate.AddDays(-8), "1", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(4, "Beach Sunset", "Beautiful sunset view over the ocean",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747487464/Pixly/pexels-marina-endzhirgli-725723515-31449901.jpg",
-                 slugs[3], 2200, 1400, "jpg", 2800000, currentDate.AddDays(-7), "2", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(5, "Urban Street Art", "Colorful graffiti on city wall",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747516069/Pixly/pexels-oz-art-266259698-27658797.jpg",
-                 slugs[4], 1800, 2700, "jpg", 3500000, currentDate.AddDays(-6), "2", "Approved", "portrait"));
-
-             photos.Add(CreatePhoto(6, "Forest Path", "Serene walking path through dense forest",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747487409/Pixly/pexels-miff-ibra-387362143-31212418.jpg",
-                 slugs[5], 2100, 1400, "jpg", 2900000, currentDate.AddDays(-5), "1", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(7, "Spring Flowers", "Closeup of colorful spring blooms",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565066/Pixly/20230420133522_IMG_1465.jpg",
-                 slugs[6], 1600, 1600, "jpg", 2200000, currentDate.AddDays(-4), "2", "Approved", "square"));
-
-             photos.Add(CreatePhoto(8, "Ancient Architecture", "Historic building with ornate details",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565125/Pixly/20230420122643_IMG_1253.jpg",
-                 slugs[7], 1900, 1200, "jpg", 2600000, currentDate.AddDays(-4), "1", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(9, "Wildlife Portrait", "Close-up of a wild animal in natural habitat",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565167/Pixly/20230420130548_IMG_1329.jpg",
-                 slugs[8], 2000, 1500, "jpg", 3000000, currentDate.AddDays(-3), "2", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(10, "Morning Fog", "Misty landscape at dawn",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565212/Pixly/20230420123247_IMG_1285.jpg",
-                 slugs[9], 2400, 1600, "jpg", 3400000, currentDate.AddDays(-3), "1", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(11, "Urban Exploration", "Abandoned industrial site with unique textures",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565257/Pixly/20230420123654_IMG_1293.jpg",
-                 slugs[10], 1800, 2700, "jpg", 3800000, currentDate.AddDays(-2), "2", "Approved", "portrait"));
-
-             photos.Add(CreatePhoto(12, "Northern Lights", "Aurora borealis over snowy landscape",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565289/Pixly/20230420130449_IMG_1320.jpg",
-                 slugs[11], 2200, 1400, "jpg", 3100000, currentDate.AddDays(-2), "1", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(13, "Desert Landscape", "Sandy dunes under clear blue sky",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565343/Pixly/20230420121826_IMG_1202.jpg",
-                 slugs[12], 2000, 1333, "jpg", 2700000, currentDate.AddDays(-1), "2", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(14, "Reflections", "Mountain landscape mirrored in still lake water",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747487292/Pixly/pexels-melike-baran-407276327-32080139.jpg",
-                 slugs[13], 2100, 1400, "jpg", 2900000, currentDate.AddDays(-1), "1", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(15, "Cityscape", "Panoramic view of a modern city skyline",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565432/Pixly/pexels-davdkuko-27738667.jpg",
-                 slugs[14], 2400, 1200, "jpg", 3200000, currentDate, "2", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(16, "Macro Nature", "Extreme close-up of natural elements",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565452/Pixly/pexels-daniel-gubo-2150904441-31388903.jpg",
-                 slugs[15], 1600, 1600, "jpg", 2400000, currentDate, "1", "Approved", "square"));
-
-             photos.Add(CreatePhoto(17, "Minimalist Architecture", "Clean lines and simple shapes of modern building",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565500/Pixly/pexels-jean-daniel-31737021.jpg",
-                 slugs[16], 1800, 2700, "jpg", 3500000, currentDate, "2", "Approved", "portrait"));
-
-             photos.Add(CreatePhoto(18, "Aerial View", "Drone shot of landscape from above",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747565521/Pixly/pexels-ebrart-p-748409988-31587340.jpg",
-                 slugs[17], 2200, 1500, "jpg", 3300000, currentDate, "1", "Approved", "landscape"));
-
-             photos.Add(CreatePhoto(19, "Street Photography", "Candid urban scene with interesting composition",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747487355/Pixly/pexels-luis-dv-1453683203-31747630.jpg",
-                 slugs[18], 1900, 2800, "jpg", 3700000, currentDate, "2", "Approved", "portrait"));
-
-             photos.Add(CreatePhoto(20, "Golden Hour Portrait", "Person photographed during sunset light",
-                 "https://res.cloudinary.com/dkplibgol/image/upload/v1747487366/Pixly/pexels-ibrahim-can-duran-562239220-31675650.jpg",
-                 slugs[19], 2000, 3000, "jpg", 3900000, currentDate, "1", "Approved", "portrait"));
-
-             modelBuilder.Entity<Photo>().HasData(photos);
-
-             var photoTags = new List<PhotoTag>();
-             int photoTagId = 1;
-
-
-             AddPhotoTags(photoTags, 1, new[] { 1, 5, 9, 12 }, ref photoTagId);  // Urban, Digital Art, Art, Innovation
-             AddPhotoTags(photoTags, 2, new[] { 5, 8, 12, 14 }, ref photoTagId); // Digital Art, Art, Innovation, Generative Art
-             AddPhotoTags(photoTags, 3, new[] { 8, 9, 13, 14 }, ref photoTagId); // Art, Art, Futuristic, Generative Art
-             AddPhotoTags(photoTags, 4, new[] { 8, 9, 10, 14 }, ref photoTagId); // Art, Art, Creative AI, Generative Art
-             AddPhotoTags(photoTags, 5, new[] { 5, 8, 9, 10 }, ref photoTagId);  // Digital Art, Art, Art, Creative AI
-             AddPhotoTags(photoTags, 6, new[] { 8, 9, 14, 15 }, ref photoTagId); // Art, Art, Generative Art, Augmented Reality
-             AddPhotoTags(photoTags, 7, new[] { 7, 8, 9, 10 }, ref photoTagId);  // Photo Enhancement, Art, Art, Creative AI
-             AddPhotoTags(photoTags, 8, new[] { 6, 7, 8, 9 }, ref photoTagId);   // Computer Vision, Photo Enhancement, Art, Art
-             AddPhotoTags(photoTags, 9, new[] { 4, 6, 7, 9 }, ref photoTagId);   // Image Generation, Computer Vision, Photo Enhancement, Art
-             AddPhotoTags(photoTags, 10, new[] { 4, 7, 9, 14 }, ref photoTagId); // Image Generation, Photo Enhancement, Art, Generative Art
-             AddPhotoTags(photoTags, 11, new[] { 4, 5, 9, 10 }, ref photoTagId); // Image Generation, Digital Art, Art, Creative AI
-             AddPhotoTags(photoTags, 12, new[] { 4, 8, 13, 14 }, ref photoTagId); // Image Generation, Art, Futuristic, Generative Art
-             AddPhotoTags(photoTags, 13, new[] { 1, 4, 9, 14 }, ref photoTagId); // AI, Image Generation, Art, Generative Art
-             AddPhotoTags(photoTags, 14, new[] { 1, 2, 4, 14 }, ref photoTagId); // AI, Machine Learning, Image Generation, Generative Art
-             AddPhotoTags(photoTags, 15, new[] { 1, 2, 3, 4 }, ref photoTagId);  // AI, Machine Learning, Deep Learning, Image Generation
-             AddPhotoTags(photoTags, 16, new[] { 2, 3, 6, 7 }, ref photoTagId);  // Machine Learning, Deep Learning, Computer Vision, Photo Enhancement
-             AddPhotoTags(photoTags, 17, new[] { 3, 6, 9, 12 }, ref photoTagId); // Deep Learning, Computer Vision, Art, Innovation
-             AddPhotoTags(photoTags, 18, new[] { 4, 9, 14, 15 }, ref photoTagId); // Image Generation, Art, Generative Art, Augmented Reality
-             AddPhotoTags(photoTags, 19, new[] { 5, 8, 9, 10 }, ref photoTagId); // Digital Art, Art, Art, Creative AI
-             AddPhotoTags(photoTags, 20, new[] { 7, 8, 9, 11 }, ref photoTagId); // Photo Enhancement, Art, Art, Automation
-
-
-             modelBuilder.Entity<PhotoTag>().HasData(photoTags);
-         }
-
-         private static Photo CreatePhoto(
-             int photoId,
-             string title,
-             string description,
-             string url,
-             string slug,
-             int width,
-             int height,
-             string format,
-             long fileSize,
-             DateTime uploadedAt,
-             string userId,
-             string state,
-             string orientation)
-         {
-             return new Photo
-             {
-                 PhotoId = photoId,
-                 Title = title,
-                 Description = description,
-                 Url = url,
-                 Slug = slug,
-                 Width = width,
-                 Height = height,
-                 Format = format,
-                 FileSize = fileSize,
-                 UploadedAt = uploadedAt,
-                 UserId = userId,
-                 State = state,
-                 ViewCount = new Random().Next(50, 1000),
-                 LikeCount = new Random().Next(10, 200),
-                 DownloadCount = new Random().Next(5, 100),
-                 Orientation = orientation,
-                 IsDeleted = false
-             };
-         }
-
-         private static void AddPhotoTags(List<PhotoTag> photoTags, int photoId, int[] tagIds, ref int photoTagId)
-         {
-             foreach (var tagId in tagIds)
-             {
-                 photoTags.Add(new PhotoTag
-                 {
-                     PhotoTagId = photoTagId++,
-                     PhotoId = photoId,
-                     TagId = tagId
-                 });
-             }
-         }
-
-         private static string[] GenerateSlugs(int count)
-         {
-             var slugs = new string[count];
-             var rand = new Random();
-
-             for (int i = 0; i < count; i++)
-             {
-                 int randomNumber = rand.Next(100000, 1000000);
-                 slugs[i] = $"photo-title-{i + 1}-{randomNumber}";
-             }
-
-             return slugs;
-         }*/
-
-
     }
 }
