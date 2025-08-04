@@ -509,10 +509,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Documentation**: [Wiki](https://github.com/yourusername/pixly/wiki)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/pixly/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/pixly/discussions)
-- **Email**: support@pixly.com
+- **Email**: teampixly@gmail.com
 
 ---
 
