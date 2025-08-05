@@ -143,5 +143,17 @@ export class ContentComponent implements OnInit, OnDestroy {
     
     document.body.classList.remove('modal-open');
   }
+
+  trackByReportId(index: number, report: Report) {
+  return report.reportId;
+}
+
+  deleteReport(event : {reportId: number}) {
+    this.reports = this.reports.filter(report => report.reportId !== event.reportId);
+     if (this.activePreviewReport.report.reportId === event.reportId) {
+      this.closeActiveReport();
+    }
+    this.getPhotosByState(this.dropDownOption);
+  }
   
 }

@@ -3,6 +3,7 @@ import { User } from './User';
 import { ReportType } from './ReportType';
 import { ReportStatus } from './ReportStatus';
 export interface Report {
+    reportId: number;
     reportedByUser: User;
     reportedUser: User;
     photo: PhotoBasic;
