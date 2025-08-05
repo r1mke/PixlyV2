@@ -66,6 +66,12 @@ export class SearchComponent implements OnInit, OnDestroy {
     selectedOption: "All Orientation"
   };
 
+  dropdownColors: DropdownValue = {
+    mode: 'Colors',
+    value: ["All Colors", "Landscape", "Portrait", "Square"],
+    selectedOption: "All Colors"
+  };
+
   dropdownSize: DropdownValue = {
     mode: 'Size',
     value: ["All Size", "Large", "Medium", "Small"],

@@ -18,6 +18,14 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             await _context.SaveChangesAsync();
             return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
         }
+
+        public override async Task<Models.DTOs.PhotoBasic> Reject(int id)
+        {
+            var entity = await SetState(id, PhotoState.Rejected.ToString());
+            await _context.SaveChangesAsync();
+            return Mapper.Map<Models.DTOs.PhotoBasic>(entity);
+        }
+
         public override async Task<Models.DTOs.PhotoBasic> Edit(int id)
         {
             var entity = await SetState(id, PhotoState.Draft.ToString());
@@ -134,6 +142,7 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
             return Task.FromResult(new List<string>() { nameof(Hide),
                                     nameof(Edit),
                                     nameof(Delete),
+                                    nameof(Reject),
                                     nameof(LikePhoto),
                                     nameof(UnlikePhoto),
                                     nameof(SavePhoto),

@@ -3,6 +3,8 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
+import { Report } from '../models/DTOs/Report';
+import { ReportUpdateRequest } from '../models/UpdateRequest/ReportUpdateRequest';
 import { ApiResponse } from '../models/Response/api-response';
 import { ReportSearchRequest } from '../models/SearchRequest/ReportSearchRequest';
 @Injectable({
@@ -24,6 +26,11 @@ export class ReportService {
     });
 
      return this.http.get<ApiResponse<Report[]>>(`${this.apiUrl}`, { params });
+  }
+
+  updateReport(reportId : number,reportUpdateRequest : ReportUpdateRequest): Observable<ApiResponse<Report>> {
+    console.log(reportId);
+    return this.http.patch<ApiResponse<Report>>(`${this.apiUrl}/${reportId}`, reportUpdateRequest);
   }
 
 }

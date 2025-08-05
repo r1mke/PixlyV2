@@ -47,18 +47,12 @@ namespace Pixly.Services.Services
         }
         public virtual async Task<TModelBasic> Update(TId id, TUpdate request)
         {
-            var entityName = typeof(TDbEntity).Name.ToLower();
-            var cacheKey = $"{entityName}:{id}";
+            var entity = await _context.Set<TDbEntity>().FindAsync(id);
+            await BeforeUpdate(request, entity);
 
-            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
-            {
-                var entity = await _context.Set<TDbEntity>().FindAsync(id);
-                await BeforeUpdate(request, entity);
+            await _context.SaveChangesAsync();
 
-                await _context.SaveChangesAsync();
-
-                return Mapper.Map<TModelBasic>(entity);
-            }, TimeSpan.FromMinutes(10));
+            return Mapper.Map<TModelBasic>(entity);
         }
         protected virtual async Task<IQueryable<TDbEntity>> AddFilter(IQueryable<TDbEntity> query, TSearch? search)
         {

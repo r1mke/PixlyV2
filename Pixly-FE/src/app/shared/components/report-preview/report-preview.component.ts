@@ -5,6 +5,11 @@ import { Output, EventEmitter } from '@angular/core';
 import { Report } from '../../../core/models/DTOs/Report';
 import { HelperService } from '../../../core/services/helper.service';
 import { inject } from '@angular/core';
+import { ReportService } from '../../../core/services/report.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { AuthState } from '../../../core/state/auth.state';
+import { ReportUpdateRequest } from '../../../core/models/UpdateRequest/ReportUpdateRequest';
+import { PhotoService } from '../../../core/services/photo.service';
 @Component({
   selector: 'app-report-preview',
   standalone: true,
@@ -16,11 +21,14 @@ export class ReportPreviewComponent {
    @Input() report!: Report;
   @Input() canModifyReport: boolean = true;
   @Output() closeActiveReport = new EventEmitter<boolean>();
-
+  @Output() deleteReport = new EventEmitter<{reportId: number}>();
+  reportService = inject(ReportService);
+  authService = inject(AuthService);
   helperService = inject(HelperService);
   isProcessing = false;
   isViewingPhoto = false;
-
+  authState = inject(AuthState);
+  photoService = inject(PhotoService);
   closeReport(): void {
     this.closeActiveReport.emit(false);
   }
@@ -86,10 +94,29 @@ export class ReportPreviewComponent {
   }
 
   
+  resolveReport() {
+    const userId = this.authState.currentUser?.id;
+    let reportUpdateRequest : ReportUpdateRequest = {
+      reportStatusId: 3,
+      adminUserId: userId!,
+    };
 
- 
+    this.reportService.updateReport(this.report.reportId,reportUpdateRequest).subscribe({
+      next: (res: any) => {
+        
+      },
+      error: (error) => {
+        console.log(error);
+      },
+      complete: () => {
+        this.deleteReport.emit({reportId: this.report.reportId});
+      }
+    });
+  }
 
-  
-
- 
+  acceptReport() {
+    this.resolveReport();
+    this.photoService.rejectPhoto(this.report.photo.photoId).subscribe();
+  }
 }
+ 
