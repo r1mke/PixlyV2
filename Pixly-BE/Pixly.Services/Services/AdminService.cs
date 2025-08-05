@@ -40,10 +40,10 @@ namespace Pixly.Services.Services
         private async Task<DashboardOverview> GetTotalInfo(DateTime sinceDate)
         {
             var totalUsers = await _context.Users.Where(user => user.CreatedAt >= sinceDate).CountAsync();
-            var totalPhotos = await _context.Photos.Where(img => img.UploadedAt >= sinceDate && img.State == "Approved").CountAsync();
+            var totalPhotos = await _context.Photos.Where(img => img.UploadedAt >= sinceDate).CountAsync();
             var totalLikes = await _context.Likes.Where(like => like.LikedAt >= sinceDate).CountAsync();
             var pendingPhotos = await _context.Photos.Where(img => img.UploadedAt >= sinceDate && img.State == "Pending").CountAsync();
-            var reportedPhotos = await _context.Reports.Where(img => img.CreatedAt >= sinceDate).CountAsync();
+            var reportedPhotos = await _context.Reports.Where(report => report.CreatedAt >= sinceDate && report.Status.ReportStatusName == "Pending").CountAsync();
 
             var totalDownload = 10;
 

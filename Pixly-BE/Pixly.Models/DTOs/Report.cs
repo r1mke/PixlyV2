@@ -2,6 +2,7 @@
 {
     public class Report
     {
+        public int ReportId { get; set; }
         public string ReportMessage { get; set; }
         public string ReportTitle { get; set; }
         public User ReportedByUser { get; set; }

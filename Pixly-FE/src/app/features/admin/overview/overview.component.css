@@ -9,7 +9,7 @@
     margin-top: 50px;
     width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
 }
 
 .single-chart{

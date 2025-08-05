@@ -1,26 +1,24 @@
 <div class="main-container">
+    <!-- Total cards ostaju isti -->
     <div *ngIf="dashBoardData" class="card-container">
         <app-total-card
             title="Photos"
             value="{{dashBoardData.totalPhotos}}"
-            icon="fa-image"
-        >
+            icon="fa-image">
         </app-total-card>
 
         <app-total-card
             title="Reports"
             value="{{dashBoardData.reportedPhotos}}"
             backGroundColor="#FF5733"
-            icon="fa-exclamation-triangle"
-        >
+            icon="fa-exclamation-triangle">
         </app-total-card> 
         
         <app-total-card
             title="Pending"
             value="{{dashBoardData.pendingPhotos}}"
             backGroundColor="#F1C40F"
-            icon="fa-clock"
-        >
+            icon="fa-clock">
         </app-total-card> 
     </div>
 
@@ -28,22 +26,27 @@
         <div class="content-container">
             <div class="filter">
                 <h5>{{dropDownOption}} photos</h5>
-                <app-dropdown (selectedValue)="saveSelectedValueFromDropdown($event)" class="dropdown-filter" [options]="dropdownOptions"></app-dropdown>
+                <app-dropdown (selectedValue)="saveSelectedValueFromDropdown($event)" 
+                             class="dropdown-filter" 
+                             [options]="dropdownOptions">
+                </app-dropdown>
             </div>
             <div *ngIf="photos" class="photo-cards">
                 <app-photo-card
                 *ngFor="let photo of photos; index as i"
                 [state]="dropDownOption"
                 [photo]="photo"
-                (photoActionCompleted)="handlePhotoActionCompleted($event)"
-                ></app-photo-card>
+                (photoActionCompleted)="handlePhotoActionCompleted($event)">
+                </app-photo-card>
             </div>
         </div>
-        <div *ngIf="reports.length>0" class="report-container">
-            <h5>Active reports</h5>
-            <div class="report-cards-container">
+        
+        <div class="report-container">
+            <h5>Active reports ({{reports.length}})</h5>
+            <div *ngIf="reports.length > 0" class="report-cards-container">
+                <!-- Koristi samo jedan pristup -->
                 <app-report-card
-                *ngFor="let report of reports"
+                *ngFor="let report of reports; trackBy: trackByReportId"
                 [report]="report"
                 (reportPreviewActive)="handleReportPreviewActive($event)">
                 </app-report-card>
@@ -51,15 +54,15 @@
         </div>
     </div>
 </div>
-<div 
-  class="report-preview"
-  [class.active]="activePreviewReport.active"
-  (click)="onOverlayClick($event)">
+
+<div class="report-preview"
+     [class.active]="activePreviewReport.active"
+     (click)="onOverlayClick($event)">
   
   <app-report-preview
     *ngIf="activePreviewReport.active"
     (closeActiveReport)="closeActiveReport($event)"
-    [report]="activePreviewReport.report ">
+    (deleteReport)="deleteReport($event)"
+    [report]="activePreviewReport.report">
   </app-report-preview>
 </div>
-

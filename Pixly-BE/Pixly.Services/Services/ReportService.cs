@@ -88,7 +88,7 @@ namespace Pixly.Services.Services
                 query = query.Include(report => report.ReportType);
             }
 
-
+            query = query.Where(report => report.Status.ReportStatusName == "Pending");
 
             return query;
         }
@@ -113,6 +113,19 @@ namespace Pixly.Services.Services
             entity.ReportedUser = reportedUser;
             entity.ReportType = reportType;
             entity.Photo = photo;
+        }
+
+        protected override async Task BeforeUpdate(ReportUpdateRequest? request, Report? entity)
+        {
+            var admin = await _context.Users.FindAsync(request.AdminUserId);
+            var reportStatus = await _context.ReportStatuses.FindAsync(request.ReportStatusId);
+
+            entity.AdminUser = admin;
+            entity.Status = reportStatus;
+            entity.ResolvedAt = request.ResolvedAt;
+
+            if (request.IsDeleted != null) entity.IsDeleted = entity.IsDeleted;
+            if (!string.IsNullOrWhiteSpace(request?.AdminNotes)) entity.AdminNotes = request.AdminNotes;
         }
 
     }
