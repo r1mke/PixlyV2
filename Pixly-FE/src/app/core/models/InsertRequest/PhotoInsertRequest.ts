@@ -5,6 +5,7 @@ export interface PhotoInsertRequest {
     description: string | null;
     userId: string;
     file: File;
-    tagIds: Array<number>;
+    price: number;
+    tags: Array<string>;
     isDraft: boolean | null;
 }

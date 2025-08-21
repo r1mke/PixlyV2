@@ -14,12 +14,6 @@
         public bool IsDeleted { get; set; } = false;
         public bool IsActive { get; set; } = true;
 
-        //public ICollection<Photo> Photos { get; set; } = new List<Photo>();
-
-        //public ICollection<Like> Likes { get; set; } = new List<Like>();
-
-        //public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
-        //public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
     }
 }

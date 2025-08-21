@@ -24,8 +24,8 @@ import {LoadingService} from '../../../core/services/loading.service';
 export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   @Input() emptyStateMessage: string = 'No photos found';
   @ViewChild('sentinel') sentinel!: ElementRef;
+  
   private onDestroy$ = new Subject<void>();
-  private _scrollHandler: (() => void) | null = null;
   private intersectionObserver?: IntersectionObserver;
 
   authState = inject(AuthState);
@@ -36,8 +36,10 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   ngOnInit(): void {
     this.loadingService.setLoading(true);
 
-    setTimeout(() => {
+    // Initialize photo service
+    this.photoService.initialize();
 
+    setTimeout(() => {
       this.searchService.getSearchObjectAsObservable().pipe(
         takeUntil(this.onDestroy$),
         distinctUntilChanged((prev, curr) => isEqual(prev, curr))
@@ -48,7 +50,7 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
         }
         this.loadPhotos(searchObject);
       });
-    }, 300)
+    }, 300);
   }
 
   ngAfterViewInit(): void {
@@ -70,10 +72,9 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
 
   setupIntersectionObserver(): void {
     if (!this.sentinel || !('IntersectionObserver' in window)) {
-        console.log('Sentinel element missing or IntersectionObserver not supported');
-        this.setupScrollListener();
-        return;
-      }
+      console.log('Sentinel element missing or IntersectionObserver not supported');
+      return;
+    }
 
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
@@ -92,32 +93,6 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
     this.intersectionObserver.observe(this.sentinel.nativeElement);
   }
 
-  setupScrollListener(): void {
-    const handleScroll = () => {
-    if (this.photoService.isLoading()) return;
-    const scrollPosition = window.scrollY + window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
-    if (documentHeight - scrollPosition < 200) {
-      this.loadMore();
-    }
-    };
-    window.addEventListener('scroll', handleScroll);
-    this._scrollHandler = handleScroll;
-  }
-
-  getColumnClass(photo: PhotoBasic): string {
-    switch (photo.orientation?.toLowerCase()) {
-      case 'portrait':
-        return 'grid-item-portrait';
-      case 'landscape':
-        return 'grid-item-landscape';
-      case 'square':
-        return 'grid-item-square';
-      default:
-        return 'grid-item-landscape';
-    }
-  }
-
   getColumnPhotos(columnIndex: number): PhotoBasic[] {
     return this.photoService.photos()
       .filter((_, index) => index % 3 === columnIndex);
@@ -126,12 +101,15 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   toggleLike(photo: PhotoBasic, event: Event): void {
     event.stopPropagation();
 
-    if (!photo.photoId) {
-      return;
-    }
+    if (!photo.photoId) return;
 
     const wasLiked = photo.isCurrentUserLiked;
-    photo.isCurrentUserLiked = !wasLiked;
+    
+    // Optimistically update UI
+    this.photoService.updatePhotoInList(photo.photoId, (p) => ({
+      ...p,
+      isCurrentUserLiked: !wasLiked
+    }));
 
     const action = wasLiked ?
       this.photoService.unlikePhoto(photo.photoId) :
@@ -139,7 +117,11 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
 
     action.pipe(takeUntil(this.onDestroy$)).subscribe({
       error: () => {
-        photo.isCurrentUserLiked = wasLiked;
+        // Revert on error
+        this.photoService.updatePhotoInList(photo.photoId, (p) => ({
+          ...p,
+          isCurrentUserLiked: wasLiked
+        }));
       }
     });
   }
@@ -147,12 +129,15 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   toggleSave(photo: PhotoBasic, event: Event): void {
     event.stopPropagation();
 
-    if (!photo.photoId) {
-      return;
-    }
+    if (!photo.photoId) return;
 
     const wasSaved = photo.isCurrentUserSaved;
-    photo.isCurrentUserSaved = !wasSaved;
+    
+    // Optimistically update UI
+    this.photoService.updatePhotoInList(photo.photoId, (p) => ({
+      ...p,
+      isCurrentUserSaved: !wasSaved
+    }));
 
     const action = wasSaved ?
       this.photoService.unsavePhoto(photo.photoId) :
@@ -160,21 +145,21 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
 
     action.pipe(takeUntil(this.onDestroy$)).subscribe({
       error: () => {
-        photo.isCurrentUserSaved = wasSaved;
+        // Revert on error
+        this.photoService.updatePhotoInList(photo.photoId, (p) => ({
+          ...p,
+          isCurrentUserSaved: wasSaved
+        }));
       }
     });
   }
 
- ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
 
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
-    }
-
-    if (this._scrollHandler) {
-      window.removeEventListener('scroll', this._scrollHandler);
     }
   }
 

@@ -1,19 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { PhotoBasic } from '../models/DTOs/PhotoBasic';
-import { PaginationResponse } from '../models/Pagination/PaginationResponse';
-import { signal } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
-import { PaginationHeader } from '../models/Pagination/PaginationHeader';
+import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/Response/api-response';
-import { tap } from 'rxjs';
-import { of } from 'rxjs';
-import isEqual from 'lodash.isequal';
-import { SearchService } from './search.service';
 import { PhotoSearchRequest } from '../models/SearchRequest/PhotoSarchRequest';
-import {AuthState} from '../state/auth.state';
-import {environment} from '../../../environments/environment';
+import { AuthState } from '../state/auth.state';
+import { environment } from '../../../environments/environment';
 import { PhotoInsertRequest } from '../models/InsertRequest/PhotoInsertRequest';
+import { PaginationService } from './pagination.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,92 +16,54 @@ export class PhotoService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/photo`;
   private authState = inject(AuthState);
-  private get currentUserId(): string | undefined{
+  private paginationService = inject(PaginationService<PhotoBasic, PhotoSearchRequest>);
+
+  private get currentUserId(): string | undefined {
     return this.authState.currentUser?.id;
   }
 
-  // Signals
-  photos = signal<PhotoBasic[]>([]);
-  paginationHeader = signal<PaginationHeader | null>(null);
-  isLoading = signal<boolean>(false);
-  error = signal<string | null>(null);
-  searchService = inject(SearchService);
-  private currentSearchRequest = new BehaviorSubject<Partial<PhotoSearchRequest>>({
-    sorting: 'Popular',
-    pageNumber: 1,
-    pageSize: 5
-  });
+  get photos() { return this.paginationService.items; }
+  get paginationHeader() { return this.paginationService.paginationHeader; }
+  get isLoading() { return this.paginationService.isLoading; }
+  get error() { return this.paginationService.error; }
 
-  getPhotos(searchRequest: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
-
-    this.currentSearchRequest.next(searchRequest);
-    this.isLoading.set(true);
-
-    if (searchRequest.pageNumber === 1) {
-      this.photos.set([]);
-    }
-
-    let params = new HttpParams();
-
-    Object.entries(searchRequest).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        params = params.set(key, value.toString());
+  initialize(initialSearchRequest?: Partial<PhotoSearchRequest>): void {
+    this.paginationService.initialize({
+      baseUrl: this.apiUrl,
+      initialSearchRequest: {
+        sorting: 'Popular',
+        pageNumber: 1,
+        pageSize: 10,
+        ...initialSearchRequest
       }
     });
-    console.log("pozivam api", params);
-    return this.http.get<ApiResponse<PhotoBasic[]>>(this.apiUrl, { observe: 'response', params }).pipe(
-      tap({
-        next: (response) => {
-          if(response.body?.success && response.body?.data) {
-            if(searchRequest.pageNumber === 1) {
-              this.photos.set(response.body.data);
-              console.log(response.body.data);
-            } else {
-              this.photos.update((prevPhotos) => [...prevPhotos, ...response.body!.data]);
-            }
+  }
 
-            const paginationHeader = this.getPagionationFromResponse(response);
-            if (paginationHeader) {
-              this.paginationHeader.set(paginationHeader);
-            }
-          }
-          this.isLoading.set(false);
-          this.error.set(null);
-        },
-        error: (err) => {
-          this.isLoading.set(false);
-          this.error.set(err.message);
-        }
-      })
-    );
+  getPhotos(searchRequest: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
+    return this.paginationService.getItems(this.apiUrl, searchRequest);
   }
 
   loadMorePhotos(): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
-    if (this.isLoading()) {
-      return EMPTY;
-    }
-
-    const currentPage = this.paginationHeader()?.currentPage || 0;
-    const nextPage = currentPage + 1;
-    const totalPages = this.paginationHeader()?.totalPages || 0;
-
-    if (nextPage > totalPages) {
-      return EMPTY;
-    }
-
-    const currentRequest = this.searchService.getSearchObject();
-
-    return this.getPhotos({
-      ...currentRequest,
-      pageNumber: nextPage
-    });
+    return this.paginationService.loadMore(this.apiUrl);
   }
 
-  getPagionationFromResponse(response: HttpResponse<any>): PaginationHeader | null {
-    const paginationHeader = response.headers.get('Pagination');
-    return paginationHeader ? JSON.parse(paginationHeader) : null;
+  refreshPhotos(): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
+    return this.paginationService.refresh(this.apiUrl);
   }
 
+  updatePhotoSearch(searchUpdates: Partial<PhotoSearchRequest>): Observable<HttpResponse<ApiResponse<PhotoBasic[]>>> {
+    return this.paginationService.updateSearch(this.apiUrl, searchUpdates);
+  }
+
+  getCurrentSearchRequest(): Partial<PhotoSearchRequest> {
+    return this.paginationService.getCurrentSearchRequest();
+  }
+
+  clearPhotos(): void {
+    this.paginationService.clear();
+  }
+
+  // Photo actions
   likePhoto(photoId: number): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(
       `${this.apiUrl}/${photoId}/like?userId=${this.currentUserId}`,
@@ -139,6 +96,7 @@ export class PhotoService {
     return this.http.post<ApiResponse<PhotoBasic>>(this.apiUrl, formData);
   }
 
+  // Admin actions
   approvePhoto(photoId: number): Observable<ApiResponse<PhotoBasic>> {
     return this.http.post<ApiResponse<PhotoBasic>>(`${this.apiUrl}/${photoId}/approve`, {});
   }
@@ -161,5 +119,21 @@ export class PhotoService {
 
   restorePhoto(photoId: number): Observable<ApiResponse<PhotoBasic>> {
     return this.http.post<ApiResponse<PhotoBasic>>(`${this.apiUrl}/${photoId}/restore`, {});
+  }
+
+  // Helper methods for updating local state after actions
+  updatePhotoInList(photoId: number, updater: (photo: PhotoBasic) => PhotoBasic): void {
+    this.paginationService.updateItem(
+      photo => photo.photoId === photoId,
+      updater
+    );
+  }
+
+  removePhotoFromList(photoId: number): void {
+    this.paginationService.removeItem(photo => photo.photoId === photoId);
+  }
+
+  addPhotoToList(photo: PhotoBasic): void {
+    this.paginationService.addItem(photo);
   }
 }

@@ -56,22 +56,20 @@
       <div class="admin-actions">
         <div class="admin-action-button">
           <app-submit-button
-            (click)="resolveReport()"
             text="Reject"
             icon="fa-times"
             backGroundColor="#FF4D4D"
             [fullWidth]="true"
-            (click)="closeActiveReport.emit(false)">
+            (click)="resolveReport.emit({reportId: report.reportId, reportStatusId: 3,photoId: report.photo.photoId, message: 'Rejected'})">
           </app-submit-button>
         </div>
         <div class="admin-action-button">
           <app-submit-button
-            (click)="acceptReport()"
             text="Accept"
             icon="fa-check"
             backGroundColor="#02A388"
             [fullWidth]="true"
-            (click)="closeActiveReport.emit(false)">
+            (click)="resolveReport.emit({reportId: report.reportId, reportStatusId: 3, photoId: report.photo.photoId, message: 'Approved'})">
           </app-submit-button>
         </div>
       </div>

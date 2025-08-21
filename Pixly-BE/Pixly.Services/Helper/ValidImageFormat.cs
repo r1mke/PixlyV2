@@ -14,7 +14,7 @@ namespace Pixly.Services.Helper
                     throw new Exception("Allowed formats are: JPEG and PNG");
 
                 if (file.Length < 1 * 1024 * 1024)
-                    throw new Exception("The minimum allowed image size is 4MB.");
+                    throw new Exception("The minimum allowed image size is 1MB.");
 
             }
             else

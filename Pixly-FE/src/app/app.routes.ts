@@ -9,6 +9,7 @@ import {ProfileSettingsComponent} from './features/profile-settings/profile-sett
 import {AuthGuard} from './core/guards/auth.guard';
 import { UploadComponent } from './features/upload/upload.component';
 import { AdminComponent } from '../app/features/admin/admin.component';
+import { RoleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -21,7 +22,10 @@ export const routes: Routes = [
   { 
     path: 'upload', 
     component: UploadComponent, 
-    canActivate: [AuthGuard],
+    canActivate: [RoleGuard],
+    data: { roles: ['Admin'],
+            allowAnonymous: true,
+            redirectTo: '/' },
     children: [
       { path: '', redirectTo: 'select', pathMatch: 'full' },
       { path: 'select', loadComponent: () => import('./shared/components/upload-preview/upload-preview.component').then(c => c.UploadPreviewComponent) },
@@ -31,6 +35,10 @@ export const routes: Routes = [
   {
   path: 'admin',
   component: AdminComponent,
+  canActivate: [RoleGuard],
+  data: { roles: ['User'],
+          allowAnonymous: false,
+          redirectTo: '/' },
   children: [
     { path: '', redirectTo: 'overview', pathMatch: 'full' },
     { 
@@ -41,10 +49,9 @@ export const routes: Routes = [
        path: 'content', 
        loadComponent: () => import('./features/admin/content/content.component').then(c => c.ContentComponent) 
     },
-    // { 
-    //   path: 'users', 
-    //   loadComponent: () => import('./features/admin/users/users.component').then(c => c.UsersComponent) 
-    // },
+     { 
+       path: 'users', 
+       loadComponent: () => import('./features/admin/users/users.component').then(c => c.UsersComponent)},
     // { 
     //   path: 'photos', 
     //   loadComponent: () => import('./features/admin/photos/photos.component').then(c => c.PhotosComponent) 

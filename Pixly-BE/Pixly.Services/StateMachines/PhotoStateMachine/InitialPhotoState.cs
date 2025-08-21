@@ -1,4 +1,5 @@
 ﻿using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Pixly.Models.InsertRequest;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
@@ -36,23 +37,42 @@ namespace Pixly.Services.StateMachines.PhotoStateMachine
         private async Task BeforeInsert(Database.Photo entity, PhotoInsertRequest request)
         {
             var user = await _context.Users.FindAsync(request.UserId);
-            if (user == null) throw new NotFoundException($"User with ID {request.UserId} not found");
+            if (user == null)
+                throw new NotFoundException($"User with ID {request.UserId} not found");
 
             ValidImageFormat.IsImageValid(request.File);
             entity = await _cloudinary.UploadImageAsync(request.File, "Pixly", entity);
 
             entity.Slug = GenerateSlug(entity.Title);
-
             entity.User = user;
 
-            foreach (var tagId in request.TagIds)
+            foreach (var tagName in request.Tags)
             {
+
+                var normalizedTagName = tagName.Trim().ToLower();
+
+
+                var existingTag = await _context.Tags
+                    .FirstOrDefaultAsync(t => t.Name.ToLower() == normalizedTagName);
+
+                Tag tagEntity;
+                if (existingTag != null)
+                {
+                    tagEntity = existingTag;
+                }
+                else
+                {
+
+                    tagEntity = new Tag { Name = normalizedTagName };
+                    _context.Tags.Add(tagEntity);
+                }
                 entity.PhotoTags.Add(new PhotoTag
                 {
-                    TagId = tagId
+                    Tag = tagEntity
                 });
             }
         }
+
 
         private string GenerateSlug(string title)
         {

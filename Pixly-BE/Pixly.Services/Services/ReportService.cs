@@ -122,7 +122,7 @@ namespace Pixly.Services.Services
 
             entity.AdminUser = admin;
             entity.Status = reportStatus;
-            entity.ResolvedAt = request.ResolvedAt;
+            entity.ResolvedAt = DateTime.Now;
 
             if (request.IsDeleted != null) entity.IsDeleted = entity.IsDeleted;
             if (!string.IsNullOrWhiteSpace(request?.AdminNotes)) entity.AdminNotes = request.AdminNotes;

@@ -51,6 +51,17 @@
           [placeholder]="'Tell the story behind your photo'">
         </app-text-input>
       </div>
+
+      <div class="upload-submit-input">
+        <app-text-input
+          formControlName="price"
+          [showLabel]="true"
+          [label]="'Price'"
+          [isRequired]="true"
+          [type]="'number'"
+          [placeholder]="'How much does your photo cost?'">
+        </app-text-input>
+      </div>
         
       <!-- Tags Input -->
       <div class="upload-submit-input">
