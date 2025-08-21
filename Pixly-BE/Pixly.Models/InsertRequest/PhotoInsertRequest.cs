@@ -16,12 +16,15 @@ namespace Pixly.Models.InsertRequest
         //[Range(1, int.MaxValue, ErrorMessage = "Invalid user ID.")]
         public string UserId { get; set; }
 
+        [Required(ErrorMessage = "Price is required.")]
+        public int Price { get; set; }
+
         [Required(ErrorMessage = "File is required.")]
         public IFormFile File { get; set; }
 
         [Required(ErrorMessage = "At least one tag must be selected.")]
         [MinLength(1, ErrorMessage = "At least one tag must be selected.")]
-        public List<int> TagIds { get; set; } = new();
+        public List<string> Tags { get; set; } = new();
 
         public bool? IsDraft { get; set; }
 

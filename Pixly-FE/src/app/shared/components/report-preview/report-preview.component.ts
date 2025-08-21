@@ -18,10 +18,10 @@ import { PhotoService } from '../../../core/services/photo.service';
   styleUrl: './report-preview.component.css'
 })
 export class ReportPreviewComponent {
-   @Input() report!: Report;
+  @Input() report!: Report;
   @Input() canModifyReport: boolean = true;
   @Output() closeActiveReport = new EventEmitter<boolean>();
-  @Output() deleteReport = new EventEmitter<{reportId: number}>();
+  @Output() resolveReport = new EventEmitter<{reportId: number, reportStatusId: number,photoId: number, message: string}>();
   reportService = inject(ReportService);
   authService = inject(AuthService);
   helperService = inject(HelperService);
@@ -29,9 +29,6 @@ export class ReportPreviewComponent {
   isViewingPhoto = false;
   authState = inject(AuthState);
   photoService = inject(PhotoService);
-  closeReport(): void {
-    this.closeActiveReport.emit(false);
-  }
 
   formatDate(dateString: string): string {
     const date = new Date(dateString);
@@ -93,30 +90,6 @@ export class ReportPreviewComponent {
     }
   }
 
-  
-  resolveReport() {
-    const userId = this.authState.currentUser?.id;
-    let reportUpdateRequest : ReportUpdateRequest = {
-      reportStatusId: 3,
-      adminUserId: userId!,
-    };
 
-    this.reportService.updateReport(this.report.reportId,reportUpdateRequest).subscribe({
-      next: (res: any) => {
-        
-      },
-      error: (error) => {
-        console.log(error);
-      },
-      complete: () => {
-        this.deleteReport.emit({reportId: this.report.reportId});
-      }
-    });
-  }
-
-  acceptReport() {
-    this.resolveReport();
-    this.photoService.rejectPhoto(this.report.photo.photoId).subscribe();
-  }
 }
  

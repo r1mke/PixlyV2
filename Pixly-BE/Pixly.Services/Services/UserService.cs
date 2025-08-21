@@ -9,6 +9,7 @@ using Pixly.Models.SearchRequest;
 using Pixly.Models.UpdateRequest;
 using Pixly.Services.Database;
 using Pixly.Services.Exceptions;
+using Pixly.Services.Helper;
 using Pixly.Services.Interfaces;
 
 namespace Pixly.Services.Services
@@ -157,8 +158,20 @@ namespace Pixly.Services.Services
             return true;
         }
 
+
+        public override async Task<PagedList<Models.DTOs.User>> GetPaged(UserSearchRequest search)
+        {
+            var query = _context.Users.AsQueryable();
+            query = await AddFilter(query, search);
+            var modelQuery = query.Select(x => Mapper.Map<Models.DTOs.User>(x));
+            var result = await PagedList<Models.DTOs.User>.CreateAsync(
+                    modelQuery, search.PageNumber, search.PageSize);
+            return result;
+        }
+
         protected override async Task<IQueryable<User>> AddFilter(IQueryable<User> query, UserSearchRequest? search)
         {
+
             if (!string.IsNullOrWhiteSpace(search?.Email))
             {
                 query = query.Where(x => x.Email.StartsWith(search.Email));
@@ -175,8 +188,45 @@ namespace Pixly.Services.Services
             {
                 query = query.Where(x => x.FirstName.StartsWith(search.FirstName));
             }
+            if (search.IsActive.HasValue)
+                query = query.Where(x => x.IsActive == search.IsActive.Value);
+
+            if (search.EmailConfirmed.HasValue)
+                query = query.Where(x => x.EmailConfirmed == search.EmailConfirmed.Value);
+
+            if (!string.IsNullOrEmpty(search.State))
+                query = query.Where(x => x.State == search.State);
+
+            query = query.Where(x => !x.IsDeleted);
             return query;
         }
+
+        public async Task<bool> BlockUserAsync(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.IsActive = false;
+            user.State = "Blocked";
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UnblockUserAsync(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.IsActive = true;
+            user.State = "Active";
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
 
         public override async Task<Models.DTOs.User> Update(string id, UserUpdateRequest request)
         {

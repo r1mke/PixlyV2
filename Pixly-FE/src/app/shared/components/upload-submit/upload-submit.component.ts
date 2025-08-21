@@ -60,8 +60,14 @@ export class UploadSubmitComponent implements OnInit, OnDestroy {
     this.photoUploadForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(30)]],
       description: ['', [Validators.maxLength(200)]],
+      price: [null, [Validators.required, Validators.min(1)]],
       tags: [[], [Validators.required, Validators.minLength(1)]],
     });
+  }
+
+  private resertForm(): void {
+    this.photoUploadForm.reset();
+    this.currentTags = [];
   }
 
   private loadUploadedFile(): void {
@@ -121,12 +127,13 @@ export class UploadSubmitComponent implements OnInit, OnDestroy {
   const formData = new FormData();
   formData.append("userId", currentUser.id);
   formData.append("title", this.photoUploadForm.get('title')?.value);
+  formData.append("price", this.photoUploadForm.get('price')?.value);
   formData.append("description", this.photoUploadForm.get('description')?.value || '');
   formData.append("file", this.uploadedFile.file);
   formData.append("isDraft", 'false');
-
-  const tagIds = [1, 2]; // ili iz forme
-  tagIds.forEach(id => formData.append("tagIds", id.toString()));
+  this.currentTags.forEach(tag => {
+    formData.append("tags", tag);
+  });
 
   this.isSubmitting = true;
 
@@ -136,10 +143,15 @@ export class UploadSubmitComponent implements OnInit, OnDestroy {
       console.log("Upload prošao");
     },
     error: (err) => {
-      this.toastService.error(err.message);
+      console.error('Upload failed:', err);
+      this.isSubmitting = false;
+      this.uploadService.clearUploadedFile();
+      this.resertForm();
     },
     complete: () => {
       this.isSubmitting = false;
+      this.resertForm();
+      this.uploadService.clearUploadedFile();
       this.router.navigate(['/']);
     }
   });

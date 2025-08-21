@@ -1,0 +1,100 @@
+<div class="main-container">
+    <div class="card-container">
+        <app-total-card
+            title="Users"
+            value="{{23}}"
+            icon="fa-users">
+        </app-total-card>
+
+        <app-total-card
+            title="Blocked"
+            value="{{5}}"
+            backGroundColor="#FF5733"
+            icon="fa-ban">
+        </app-total-card> 
+    </div>
+    <div class="users-moderation">
+        <table class="users-table">
+            <thead>
+                <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of userService.users()">
+                <!-- User Info -->
+                <td class="user-cell">
+                    <div class="user-info">
+                    <img 
+                        [src]="user.profilePictureUrl || 'assets/image/user_def.png'" 
+                        [alt]="user.firstName + ' ' + user.lastName"
+                        class="user-avatar">
+                    <div class="user-details">
+                        <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+                        <span class="username">{{ user.userName }}</span>
+                    </div>
+                    </div>
+                </td>
+
+                <!-- Email -->
+                <td class="email-cell">
+                    <span class="email">{{ user.email }}</span>
+                    <i *ngIf="!user.emailConfirmed" 
+                    class="fas fa-exclamation-triangle email-warning" 
+                    title="Email not confirmed"></i>
+                </td>
+
+                <!-- Role -->
+                <td class="role-cell">
+                    <span [class]="'role-badge '">
+                    {{ "Admin" }}
+                    </span>
+                </td>
+
+                <!-- Status -->
+                <td class="status-cell">
+                    <span [class]="'status-badge '">
+                    {{ "Active" }}
+                    </span>
+                </td>
+
+                <!-- Created Date -->
+                <td class="date-cell">
+                    <span class="date">{{ user.createdAt | date:'dd.MM.yyyy' }}</span>
+                    <span class="time">{{ user.createdAt | date:'HH:mm' }}</span>
+                </td>
+
+                <!-- Actions -->
+                <td class="actions-cell">
+                    <div class="action-buttons">
+                    <!-- Block/Unblock Button -->
+                    <button 
+                        class="action-btn"
+                        [class.block-btn]="user.isActive"
+                        [class.unblock-btn]="!user.isActive"
+                        (click)="blockUser(user)"
+                        [title]="user.isActive ? 'Block User' : 'Unblock User'">
+                        <i [class]="user.isActive ? 'fas fa-ban' : 'fas fa-check'"></i>
+                    </button>
+
+                    <!-- Admin Toggle Button -->
+                    
+
+                    <!-- More Options Button -->
+                    <button 
+                        class="action-btn more-btn"
+                        title="More Options">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    </div>
+                </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

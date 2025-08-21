@@ -44,7 +44,6 @@
         <div class="report-container">
             <h5>Active reports ({{reports.length}})</h5>
             <div *ngIf="reports.length > 0" class="report-cards-container">
-                <!-- Koristi samo jedan pristup -->
                 <app-report-card
                 *ngFor="let report of reports; trackBy: trackByReportId"
                 [report]="report"
@@ -62,7 +61,7 @@
   <app-report-preview
     *ngIf="activePreviewReport.active"
     (closeActiveReport)="closeActiveReport($event)"
-    (deleteReport)="deleteReport($event)"
+    (resolveReport)="resolveReport($event)"
     [report]="activePreviewReport.report">
   </app-report-preview>
 </div>

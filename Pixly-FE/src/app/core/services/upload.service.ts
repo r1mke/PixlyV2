@@ -13,7 +13,7 @@ export interface UploadedFile {
   providedIn: 'root'
 })
 export class UploadService {
-
+  
   private uploadedFileSubject = new BehaviorSubject<UploadedFile | null>(null);
   public uploadedFile$ = this.uploadedFileSubject.asObservable();
 
@@ -62,11 +62,11 @@ export class UploadService {
     }
 
     // Minimum veličina (100KB)
-    const minSize = 100 * 1024; // 100KB
+    const minSize = 1 * 1024 * 1024; // 1000KB
     if (file.size < minSize) {
       return {
         isValid: false,
-        error: 'File size must be at least 100KB'
+        error: 'File size must be at least 1MB'
       };
     }
 

@@ -15,6 +15,7 @@
         public string UserId { get; set; }
         public User? User { get; set; }
         public string State { get; set; }
+        public int? Price { get; set; }
         public int ViewCount { get; set; } = 0;
         public int LikeCount { get; set; } = 0;
         public int DownloadCount { get; set; } = 0;
