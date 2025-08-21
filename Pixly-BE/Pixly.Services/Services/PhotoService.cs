@@ -367,16 +367,22 @@ namespace Pixly.Services.Services
             await state.UnsavePhoto(photoId, userId);
         }
 
-        public async Task<PhotoDetail> GetBySlug(string slug)
+        public async Task<PhotoDetail> GetBySlug(string slug, string currentUserId)
         {
-            var cacheKey = $"photoSlug:{slug}";
+            var entity = await _context.Photos.Include(p => p.User).FirstOrDefaultAsync(p => p.Slug == slug);
+            if (entity == null) throw new NotFoundException($"Photo with slug {slug} not found");
+            var dto = Mapper.Map<PhotoDetail>(entity);
 
-            return await _cacheService.GetOrCreateAsync(cacheKey, async () =>
+            if (!string.IsNullOrEmpty(currentUserId))
             {
-                var entity = await _context.Photos.FirstOrDefaultAsync(p => p.Slug == slug);
-                if (entity == null) throw new NotFoundException($"Photo with slug {slug} not found");
-                return Mapper.Map<PhotoDetail>(entity);
-            }, TimeSpan.FromMinutes(30));
+                dto.IsCurrentUserLiked = await _context.Likes
+                    .AnyAsync(l => l.PhotoId == entity.PhotoId && l.UserId == currentUserId);
+
+                dto.IsCurrentUserSaved = await _context.Favorites
+                    .AnyAsync(f => f.PhotoId == entity.PhotoId && f.UserId == currentUserId);
+            }
+
+            return dto;
         }
 
         public async Task<List<string>> SearchSuggestions(string title)

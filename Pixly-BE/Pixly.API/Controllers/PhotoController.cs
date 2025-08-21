@@ -16,9 +16,9 @@ namespace Pixly.API.Controllers
         }
 
         [HttpGet("slug/{slug}")]
-        public async Task<ActionResult<ApiResponse<PhotoDetail>>> GetBySlug(string slug)
+        public async Task<ActionResult<ApiResponse<PhotoDetail>>> GetBySlug(string slug, [FromQuery] string? currentUserId = null)
         {
-            var result = await (_service as IPhotoService).GetBySlug(slug);
+            var result = await (_service as IPhotoService).GetBySlug(slug, currentUserId);
 
             if (result == null) return this.ApiNotFound<PhotoDetail>($"Resource with slug {slug} not found");
             return this.ApiSuccess(result);

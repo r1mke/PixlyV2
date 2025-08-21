@@ -1,12 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { PhotoBasic } from '../models/DTOs/PhotoBasic';
-import { Observable } from 'rxjs';
+import { PaginationResponse } from '../models/Pagination/PaginationResponse';
+import { signal } from '@angular/core';
+import { BehaviorSubject, catchError, EMPTY, Observable, of, Subject, switchMap, take } from 'rxjs';
+import { PaginationHeader } from '../models/Pagination/PaginationHeader';
 import { ApiResponse } from '../models/Response/api-response';
 import { PhotoSearchRequest } from '../models/SearchRequest/PhotoSarchRequest';
 import { AuthState } from '../state/auth.state';
 import { environment } from '../../../environments/environment';
 import { PhotoInsertRequest } from '../models/InsertRequest/PhotoInsertRequest';
+import { PhotoDetail } from '../models/DTOs/PhotoDetail';
+import { AuthService } from './auth.service';
 import { PaginationService } from './pagination.service';
 
 @Injectable({
@@ -14,6 +19,7 @@ import { PaginationService } from './pagination.service';
 })
 export class PhotoService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private apiUrl = `${environment.apiUrl}/photo`;
   private authState = inject(AuthState);
   private paginationService = inject(PaginationService<PhotoBasic, PhotoSearchRequest>);
@@ -59,8 +65,26 @@ export class PhotoService {
     return this.paginationService.getCurrentSearchRequest();
   }
 
-  clearPhotos(): void {
-    this.paginationService.clear();
+  getPhotoBySlug(slug: string): Observable<ApiResponse<PhotoDetail>> {
+  return this.authService.getCurrentUser().pipe(
+    catchError(() => of(null)),                    
+    take(1),
+    switchMap(() => {
+      const currentUserId = this.authState.currentUser?.id;
+
+      let params = new HttpParams();
+      if (currentUserId) params = params.set('currentUserId', currentUserId);
+
+      return this.http.get<ApiResponse<PhotoDetail>>(
+        `${this.apiUrl}/slug/${slug}`,
+        { params }
+      );
+    })
+  );}
+
+  getPagionationFromResponse(response: HttpResponse<any>): PaginationHeader | null {
+    const paginationHeader = response.headers.get('Pagination');
+    return paginationHeader ? JSON.parse(paginationHeader) : null;
   }
 
   // Photo actions

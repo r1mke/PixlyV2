@@ -10,6 +10,7 @@ import {AuthGuard} from './core/guards/auth.guard';
 import { UploadComponent } from './features/upload/upload.component';
 import { AdminComponent } from '../app/features/admin/admin.component';
 import { RoleGuard } from './core/guards/role.guard';
+import { PhotoPageComponent } from './features/photo-overview/photo-overview.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,6 +20,7 @@ export const routes: Routes = [
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
   {path: 'edit-profile', component: ProfileSettingsComponent, canActivate: [AuthGuard]},
+  {path: 'photo/:slug', component: PhotoPageComponent},
   { 
     path: 'upload', 
     component: UploadComponent, 

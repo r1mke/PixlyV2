@@ -12,6 +12,6 @@
         public bool IsCurrentUserLiked { get; set; }
         public bool IsCurrentUserSaved { get; set; }
         public DateTime UploadedAt { get; set; }
-
+        public int? Price { get; set; }
     }
 }

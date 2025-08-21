@@ -11,4 +11,5 @@ export interface PhotoBasic {
   isCurrentUserLiked: boolean;
   isCurrentUserSaved: boolean;
   uploadedAt: string;
+  price: number | null;
 }

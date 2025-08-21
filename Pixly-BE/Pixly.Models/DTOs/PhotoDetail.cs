@@ -2,7 +2,7 @@
 {
     public class PhotoDetail
     {
-
+        public int PhotoId { get; set; }
         public string Title { get; set; }
         public string? Description { get; set; }
         public string Url { get; set; }
@@ -20,6 +20,8 @@
         public int DownloadCount { get; set; }
         public string Orientation { get; set; }
         public ICollection<PhotoTag> PhotoTags { get; set; } = new List<PhotoTag>();
-
+        public bool IsCurrentUserLiked { get; set; }
+        public bool IsCurrentUserSaved { get; set; }
+        public int? Price { get; set; }
     }
 }
