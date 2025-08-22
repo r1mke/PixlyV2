@@ -11,6 +11,7 @@ import { UploadComponent } from './features/upload/upload.component';
 import { AdminComponent } from '../app/features/admin/admin.component';
 import { RoleGuard } from './core/guards/role.guard';
 import { GeneratePhotoComponent } from './features/generate-photo/generate-photo.component';
+import { PhotoPageComponent } from './features/photo-overview/photo-overview.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -34,6 +35,7 @@ export const routes: Routes = [
             allowAnonymous: false,
             redirectTo: '/' },
   },
+  {path: 'photo/:slug', component: PhotoPageComponent},
   { 
     path: 'upload', 
     component: UploadComponent, 

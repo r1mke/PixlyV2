@@ -1,6 +1,7 @@
 import { User } from "./User";
 
 export interface PhotoDetail {
+    photoId: number;
     title: string;
     description: string | null;
     url: string;
@@ -17,4 +18,7 @@ export interface PhotoDetail {
     likeCount: number;
     downloadCount: number;
     orientation: string;
+    isCurrentUserLiked: boolean; 
+    isCurrentUserSaved: boolean;
+    price: number | null;
 }

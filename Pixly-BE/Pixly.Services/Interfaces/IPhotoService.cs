@@ -9,7 +9,7 @@ namespace Pixly.Services.Interfaces
     {
         Task<List<string>> SearchSuggestions(string title);
         Task<Models.DTOs.Like> LikePhoto(int photoId, string userId);
-        Task<Models.DTOs.PhotoDetail> GetBySlug(string slug);
+        Task<Models.DTOs.PhotoDetail> GetBySlug(string slug, string currentUserId);
         Task UnlikePhoto(int photoId, string userId);
         Task<Models.DTOs.Favorite> SavePhoto(int photoId, string userId);
         Task UnsavePhoto(int photoId, string userId);
