@@ -1,0 +1,85 @@
+<app-nav-bar></app-nav-bar>
+<div class="generator-container">
+    <div class="container">
+        <div class="generator-info">
+            <div class="generator-headings">
+                <h2>AI image generator</h2>
+                <h6>Describe the image you want, define your style and get a high-quality
+                    AI-generated image in seconds—then tweak until it's perfect.</h6>
+            </div>
+            <div class="generator-input">
+                <input
+                    #promptInput
+                    type="text"
+                    placeholder="Describe your image..."
+                    (input)="onPromptChange(promptInput.value)"
+                    (keydown)="onEnterKey($event, promptInput.value)"
+                    [disabled]="isLoading">
+                <i
+                    *ngIf="promptValue.length > 0 && !isLoading"
+                    class="fa-solid fa-circle-xmark fa-xl clear-icon"
+                    (click)="clearPrompt(promptInput)"></i>
+                <button
+                    (click)="generateImage(promptInput.value)"
+                    [disabled]="!promptValue || isLoading"
+                    class="btn btn-primary">
+                    <span *ngIf="!isLoading">Generate</span>
+                    <span *ngIf="isLoading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Generating...
+                    </span>
+                </button>
+                <i
+                    (click)="generateImage(promptInput.value)"
+                    [class.disabled]="!promptValue || isLoading"
+                    class="fas fa-search fa-lg for-mobile"></i>
+            </div>
+            
+            
+            <div *ngIf="error" class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ error }}
+            </div>
+        </div>
+        
+        <div class="generator-content">
+            
+            <div *ngIf="isLoading" class="loading-container">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin fa-3x"></i>
+                </div>
+                <p>Creating your image...</p>
+            </div>
+            
+            
+            <div *ngIf="!isLoading" class="image-container">
+                <img 
+                    [src]="generatedImageUrl ? generatedImageUrl : 'assets/image/ai-generator-bg.webp'" 
+                    alt="Generated AI Image"
+                    class="generated-image">
+                
+                
+                <div *ngIf="generatedImageUrl" class="image-actions">
+                    <button 
+                        (click)="downloadImage()" 
+                        class="action-btn download-btn">
+                        <i class="fas fa-download"></i>
+                        <span class="btn-text">Download</span>
+                    </button>
+                    <button 
+                        (click)="shareImage()" 
+                        class="action-btn share-btn">
+                        <i class="fas fa-share-alt"></i>
+                        <span class="btn-text">Share</span>
+                    </button>
+                    <button 
+                        (click)="regenerateImage()" 
+                        class="action-btn regenerate-btn">
+                        <i class="fas fa-redo"></i>
+                        <span class="btn-text">Retry</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

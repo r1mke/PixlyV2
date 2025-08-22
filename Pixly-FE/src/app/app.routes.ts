@@ -10,23 +10,38 @@ import {AuthGuard} from './core/guards/auth.guard';
 import { UploadComponent } from './features/upload/upload.component';
 import { AdminComponent } from '../app/features/admin/admin.component';
 import { RoleGuard } from './core/guards/role.guard';
+import { GeneratePhotoComponent } from './features/generate-photo/generate-photo.component';
 import { PhotoPageComponent } from './features/photo-overview/photo-overview.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  {path: 'profile', component: ProfileComponent},
+  {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [RoleGuard],
+     data: { roles: ['User'],
+            allowAnonymous: false,
+            redirectTo: '/' },
+  },
   { path: 'search/:title', component: SearchComponent},
   {path: 'profile', component: ProfileComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'edit-profile', component: ProfileSettingsComponent, canActivate: [AuthGuard]},
+  {
+    path: 'edit-profile',
+    component: ProfileSettingsComponent,
+    canActivate: [RoleGuard],
+    data: { roles: ['User'],
+            allowAnonymous: false,
+            redirectTo: '/' },
+  },
   {path: 'photo/:slug', component: PhotoPageComponent},
   { 
     path: 'upload', 
     component: UploadComponent, 
     canActivate: [RoleGuard],
-    data: { roles: ['Admin'],
-            allowAnonymous: true,
+    data: { roles: ['User'],
+            allowAnonymous: false,
             redirectTo: '/' },
     children: [
       { path: '', redirectTo: 'select', pathMatch: 'full' },
@@ -67,6 +82,14 @@ export const routes: Routes = [
     //   loadComponent: () => import('./features/admin/settings/settings.component').then(c => c.SettingsComponent) 
     // }
   ]
+  },
+  {
+    path: 'generate-photo',
+    component: GeneratePhotoComponent,
+    canActivate: [RoleGuard],
+    data: { roles: ['User'],
+            allowAnonymous: true,
+            redirectTo: '/' },
   },
   {path: '**', redirectTo: ''}
 
