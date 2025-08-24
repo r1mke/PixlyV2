@@ -24,7 +24,7 @@ export const routes: Routes = [
             redirectTo: '/' },
   },
   { path: 'search/:title', component: SearchComponent},
-  {path: 'profile', component: ProfileComponent},
+  {path: 'profile/:username', component: ProfileComponent},
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
   {

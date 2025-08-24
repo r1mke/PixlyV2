@@ -46,6 +46,11 @@ export class UserService {
       });
   }
 
+  getUserByUsername(username: string) {
+    const params = new HttpParams().set('UserName', username);
+    return this.http.get<User>(this.baseUrl, { params });
+  }
+
   getUsers(searchRequest: Partial<UserSearchRequest>): Observable<HttpResponse<ApiResponse<User[]>>> {
       return this.paginationService.getItems(this.baseUrl, searchRequest);
   }

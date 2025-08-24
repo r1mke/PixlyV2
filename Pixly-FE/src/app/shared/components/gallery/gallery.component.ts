@@ -4,7 +4,7 @@ import { PhotoService } from '../../../core/services/photo.service';
 import { OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PhotoSearchRequest } from '../../../core/models/SearchRequest/PhotoSarchRequest';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {filter, take, takeUntil} from 'rxjs';
 import { Subject } from 'rxjs';
 import { SearchService } from '../../../core/services/search.service';
@@ -32,6 +32,7 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   searchService = inject(SearchService);
   photoService = inject(PhotoService);
   loadingService = inject(LoadingService);
+  router = inject(Router)
 
   ngOnInit(): void {
     this.loadingService.setLoading(true);
@@ -152,6 +153,10 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
         }));
       }
     });
+  }
+
+  goToUserProfile(username:any){
+    this.router.navigate([`/profile/${username}`])
   }
 
   ngOnDestroy(): void {

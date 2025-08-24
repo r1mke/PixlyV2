@@ -6,7 +6,7 @@
           <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
 
           <!-- Gornji lijevi ugao - korisnik -->
-          <div class="photo-user" (click)="$event.stopPropagation()">
+          <div class="photo-user" (click)="goToUserProfile(photo.user?.userName); $event.stopPropagation()">
             <img [src]="photo.user?.profilePictureUrl || 'assets/image/user_def.png'"
                  class="user-avatar"
                  alt="User avatar" />
@@ -39,7 +39,7 @@
           <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
 
           <!-- Gornji lijevi ugao - korisnik -->
-          <div class="photo-user" (click)="$event.stopPropagation()">
+          <div class="photo-user" (click)="goToUserProfile(photo.user?.userName); $event.stopPropagation()">
             <img [src]="photo.user?.profilePictureUrl || 'assets/image/user_def.png'"
                 class="user-avatar"
                 alt="User avatar" />
@@ -73,7 +73,7 @@
           <img [src]="photo.url" [alt]="photo.title" loading="lazy" class="gallery-img" />
 
           <!-- Gornji lijevi ugao - korisnik -->
-          <div class="photo-user" (click)="$event.stopPropagation()">
+          <div class="photo-user" (click)="goToUserProfile(photo.user?.userName); $event.stopPropagation()">
             <img [src]="photo.user?.profilePictureUrl || 'assets/image/user_def.png'"
                 class="user-avatar"
                 alt="User avatar" />
