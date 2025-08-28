@@ -8,6 +8,8 @@ namespace Pixly.Services.Interfaces
     public interface IPhotoService : ICRUDService<PhotoDetail, PhotoBasic, PhotoSearchRequest, PhotoInsertRequest, PhotoUpdateRequest, int>
     {
         Task<List<string>> SearchSuggestions(string title);
+        Task<string> GetPreviewLink(int id);
+        Task<string> GetOrginalLink(int id);
         Task<Models.DTOs.Like> LikePhoto(int photoId, string userId);
         Task<Models.DTOs.PhotoDetail> GetBySlug(string slug, string currentUserId);
         Task UnlikePhoto(int photoId, string userId);

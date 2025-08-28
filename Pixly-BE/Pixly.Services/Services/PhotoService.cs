@@ -192,6 +192,32 @@ namespace Pixly.Services.Services
             }
         }
 
+        public async Task<string> GetPreviewLink(int id)
+        {
+            var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
+
+            // Transformation za preview: smanjena kvaliteta + watermark
+            string transformation = entity.Orientation.ToLower() switch
+            {
+                "portrait" => "c_fit,w_1080,h_1620,f_auto,q_20,dpr_auto,fl_progressive",
+                "square" => "c_fit,w_1200,h_1200,f_auto,q_20,dpr_auto,fl_progressive",
+                "landscape" => "c_fit,w_1620,h_1080,f_auto,q_20,dpr_auto,fl_progressive",
+                _ => "c_fit,w_1600,h_1200,f_auto,q_20,dpr_auto,fl_progressive"
+            };
+
+            var previewUrl = TransformUrl(entity.Url, transformation, addWatermark: true, 100, "center");
+            return previewUrl;
+        }
+
+        public async Task<string> GetOrginalLink(int id)
+        {
+            var entity = await _context.Photos.FindAsync(id);
+            if (entity == null) throw new NotFoundException($"Photo with ID {id} not found");
+
+            return entity.Url;
+        }
+
         protected Task<PagedList<PhotoBasic>> AddTransformation(PagedList<PhotoBasic> photos, PhotoSearchRequest search)
         {
             if (search.State == "Approved" && search.isAdmin == false) TransformEntities(photos);
@@ -205,9 +231,9 @@ namespace Pixly.Services.Services
             {
                 string transformation = photo.Orientation.ToLower() switch
                 {
-                    "portrait" => "c_fill,w_200,h_300,f_auto,q_80,dpr_auto,fl_progressive",
-                    "square" => "c_fill,w_250,h_250,f_auto,q_80,dpr_auto,fl_progressive",
-                    "landscape" => "c_fill,w_300,h_200,f_auto,q_80,dpr_auto,fl_progressive",
+                    "portrait" => "c_fill,f_auto,q_80,dpr_auto,fl_progressive",
+                    "square" => "c_fill,f_auto,q_80,dpr_auto,fl_progressive",
+                    "landscape" => "c_fill,f_auto,q_80,dpr_auto,fl_progressive",
                     _ => "c_fill,w_250,h_250,f_auto,q_80,dpr_auto,fl_progressive"
                 };
 
@@ -230,7 +256,7 @@ namespace Pixly.Services.Services
                 photo.Url = TransformUrl(photo.Url, transformation, addWatermark: true);
             }
         }
-        private string TransformUrl(string url, string transformation, bool addWatermark = true)
+        private string TransformUrl(string url, string transformation, bool addWatermark = true, int fontSize = 20, string gravity = "south_east")
         {
             if (string.IsNullOrEmpty(url))
                 return url;
@@ -241,7 +267,7 @@ namespace Pixly.Services.Services
             string watermarkTransformation = "";
             if (addWatermark)
             {
-                watermarkTransformation = "l_text:Arial_20_bold:Pixly,co_white,o_40,g_south_east,x_20,y_20/";
+                watermarkTransformation = $"l_text:Arial_{fontSize}_bold:Pixly,co_white,o_40,g_{gravity},x_20,y_20/";
             }
 
             return url.Substring(0, uploadIndex + 7) + transformation + "/" + watermarkTransformation + url.Substring(uploadIndex + 7);
@@ -434,6 +460,7 @@ namespace Pixly.Services.Services
                 return allResults;
             }, TimeSpan.FromMinutes(5));
         }
+
 
     }
 }

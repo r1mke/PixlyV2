@@ -39,6 +39,22 @@ namespace Pixly.API.Controllers
             return this.ApiSuccess(result);
         }
 
+        [HttpGet("preview/{id}")]
+        public async Task<ActionResult<ApiResponse<string>>> GetPreviewLink(int id)
+        {
+            var result = await (_service as IPhotoService).GetPreviewLink(id);
+
+            return this.ApiSuccess(result);
+        }
+
+        [HttpGet("orginal/{id}")]
+        public async Task<ActionResult<ApiResponse<string>>> GetOrginalLink(int id)
+        {
+            var result = await (_service as IPhotoService).GetOrginalLink(id);
+
+            return this.ApiSuccess(result);
+        }
+
         [HttpPost("{photoId}/like")]
         public async Task<ActionResult<ApiResponse<Like>>> LikePhoto(int photoId, string userId)
         {
