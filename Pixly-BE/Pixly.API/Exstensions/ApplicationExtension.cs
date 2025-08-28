@@ -44,6 +44,7 @@ namespace Pixly.API.Exstensions
             services.AddScoped<ITwoFactorService, TwoFactorService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddSingleton<IEmailService, EmailService>();
+            services.AddScoped<StripeService>();
             return services;
         }
 

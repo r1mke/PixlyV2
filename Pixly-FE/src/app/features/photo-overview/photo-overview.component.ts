@@ -10,6 +10,7 @@ import { PhotoService } from '../../core/services/photo.service';
 import { AuthService } from '../../core/services/auth.service';
 import { PhotoBasic } from '../../core/models/DTOs/PhotoBasic';
 import { PhotoDetail } from '../../core/models/DTOs/PhotoDetail';
+import { StripeService } from '../../core/services/stripe.service';
 import { TagsShowComponent } from "../../shared/components/tags-show/tags-show.component";
 import { Tag } from '../../core/models/DTOs/Tag';
 import { CreateReportComponent } from "../../shared/components/create-report/create-report.component";
@@ -38,6 +39,7 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute, 
     private authService: AuthService, 
     private router: Router,
+    private stripeService: StripeService,
     private location: Location,private cdr: ChangeDetectorRef) {}
     
   ngOnInit(): void {
@@ -156,6 +158,30 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
           console.error('Error updating bookmark status:', err.error?.Message || err.message);
         },
       });
+  }
+
+  purchase() {
+    if (this.photo) {
+      this.isLoading = true;
+      const amount = this.photo.price ?? 0;
+      const currency = 'USD';
+      const photoImage = this.photo.url;
+      const photoDescription = this.photo.description ?? 'No description';
+      const photoId = this.photo.photoId;
+      this.stripeService.checkout(photoId, amount).subscribe({
+        next: (response) => {
+          this.stripeService.redirectToCheckout(response.sessionId);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error creating checkout session:', error);
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
   closeReportModal(event: boolean): void {

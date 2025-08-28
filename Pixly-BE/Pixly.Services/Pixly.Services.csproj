@@ -26,6 +26,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.5" />
     <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
+    <PackageReference Include="Stripe.net" Version="48.4.0" />
   </ItemGroup>
 
   <ItemGroup>

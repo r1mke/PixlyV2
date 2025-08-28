@@ -20,7 +20,7 @@ namespace Pixly.Services.Database
         public DbSet<Report> Reports { get; set; }
         public DbSet<ReportType> ReportTypes { get; set; }
         public DbSet<ReportStatus> ReportStatuses { get; set; }
-
+        public DbSet<Purchase> Purchases { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
