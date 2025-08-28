@@ -4,7 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { AuthState } from '../state/auth.state';
 import { Observable, of } from 'rxjs';
 import { map, take, switchMap } from 'rxjs/operators';
-
+import { RouterStateSnapshot } from '@angular/router';
 export interface RoleConfig {
   roles?: string[];           // Potrebne uloge (OR logika)
   requireAll?: boolean;       // Da li treba SVE uloge (AND logika)
@@ -25,7 +25,7 @@ export class RoleGuard implements CanActivate {
   ) { }
 
 
-   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
+   canActivate(route: ActivatedRouteSnapshot,state: RouterStateSnapshot): Observable<boolean> {
     const config: RoleConfig = {
       roles: [],
       requireAll: false,
@@ -42,7 +42,7 @@ export class RoleGuard implements CanActivate {
       take(1),
       switchMap(isAuthenticated => {
         if (!isAuthenticated) {
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
           return of(false);
         }
 

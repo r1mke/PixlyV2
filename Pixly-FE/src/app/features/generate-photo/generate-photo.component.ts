@@ -2,7 +2,8 @@ import { Component, inject } from '@angular/core';
 import { NavBarComponent } from '../../shared/components/nav-bar/nav-bar.component';
 import { CommonModule } from '@angular/common';
 import { AiGeneratorService, ImageGenerationRequest } from '../../core/services/ai-generator.service';
-
+import { AuthState } from '../../core/state/auth.state';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-generate-photo',
   standalone: true,
@@ -16,7 +17,8 @@ import { AiGeneratorService, ImageGenerationRequest } from '../../core/services/
 export class GeneratePhotoComponent {
   
   private imageGenerator = inject(AiGeneratorService);
-  
+  private authState = inject(AuthState);
+  private router = inject(Router);
   generatedImageUrl: string | null = null;
   promptValue: string = '';
   isLoading: boolean = false;
@@ -36,6 +38,9 @@ export class GeneratePhotoComponent {
   }
 
   generateImage(prompt: string): void {
+
+    if(!this.authState.currentUser) this.router.navigate(['/login'], { queryParams: { returnUrl: '/generate-photo' }});
+
     if (!prompt.trim()) {
       this.error = 'Please enter a description for your image';
       return;

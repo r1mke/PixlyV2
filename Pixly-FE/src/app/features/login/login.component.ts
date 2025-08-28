@@ -9,7 +9,7 @@ import {SubmitButtonComponent} from '../../shared/components/submit-button/submi
 import {PasswordInputComponent} from '../../shared/components/password-input/password-input.component';
 import {TextInputComponent} from '../../shared/components/text-input/text-input.component';
 import {LoginRequest} from '../../core/models/Request/LoginRequest';
-
+import {ActivatedRoute} from '@angular/router';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -30,16 +30,19 @@ export class LoginComponent implements OnInit {
   isLoading: boolean = false;
   emailError: string = '';
   usernameError: string = '';
-
+  returnUrl: string = '/home';
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     private toastService: ToastService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    console.log('Return URL:', this.returnUrl);
   }
 
   initForm(): void {
@@ -75,7 +78,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.markFormGroupTouched(this.loginForm);
-
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/home';
     if (this.loginForm.valid && !this.emailError && !this.usernameError) {
       this.isLoading = true;
 
@@ -90,7 +93,7 @@ export class LoginComponent implements OnInit {
         },
         complete: () => {
           this.isLoading = false;
-          this.router.navigate(['/home']);
+          this.router.navigateByUrl(this.returnUrl);
         }
       });
 

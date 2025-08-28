@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environments';
 import { DashboardOverviewSearchRequest } from '../models/SearchRequest/DashboardOverviewSearchRequest';
 import { Observable } from 'rxjs';
 import { inject } from '@angular/core';

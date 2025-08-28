@@ -163,7 +163,7 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
   }
 
   openReportModal(): void {
-    if(!this.currentUser) this.router.navigate(['/login']);
+    if(!this.currentUser) this.router.navigate(['/login'], { queryParams: { returnUrl: this.currentUrl }});
     this.showReportModal = true;
   }
 

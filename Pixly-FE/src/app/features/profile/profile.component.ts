@@ -6,8 +6,7 @@ import { GalleryComponent } from '../../shared/components/gallery/gallery.compon
 import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
 import { User } from '../../core/models/DTOs/User';
-
-
+import { SearchService } from '../../core/services/search.service';
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -34,15 +33,16 @@ export class ProfileComponent implements OnInit {
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
+    private searchService: SearchService
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.username = params.get('username');
-      if (this.username) this.getUserProfile();
+      if (this.username) 
+      this.getUserProfile();
     });
     this.getCurrentUser();
-
     // this.route.url.subscribe(urlSegments => {
     //   this.updateActiveTab(urlSegments);
     // });
@@ -64,6 +64,7 @@ export class ProfileComponent implements OnInit {
         next: (resp) => {
           this.profileUser = Array.isArray(resp.data) ? resp.data[0] : resp.data;
           if (this.currentUser) this.checkIfOwnProfile();
+          this.searchService.setUsername(this.username!);
         }
       });
     }
@@ -90,10 +91,14 @@ export class ProfileComponent implements OnInit {
 
   public setActive(item: any, event: Event): void {
 
+
     event.preventDefault();
     console.log(item);
     this.navItems.forEach((nav) => (nav.active = false));
     item.active = true;
+
+    this.setSearchObjectBasedOnTab(item);
+
     for(let i=0; i<this.navItems.length;i++){
       if(this.navItems[i].label === item.label)
       {
@@ -102,6 +107,15 @@ export class ProfileComponent implements OnInit {
       
       }
     }
+  }
+
+  setSearchObjectBasedOnTab(item: any) {
+    this.searchService.setSearchObject({
+      ...this.searchService.getSearchObject(),
+      username: this.username,
+      isLiked: item.label === 'Liked' ? true : false,
+      isSaved: item.label === 'Collections' ? true : false,
+    })
   }
 
 

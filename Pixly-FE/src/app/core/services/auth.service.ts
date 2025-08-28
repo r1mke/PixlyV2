@@ -4,7 +4,7 @@ import { RegisterRequest } from '../models/Request/RegisterRequest';
 import { Observable, tap, of } from 'rxjs';
 import { ApiResponse } from '../models/Response/api-response';
 import { AuthResponse } from '../models/Response/AuthResponse';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environments';
 import { User } from '../models/DTOs/User';
 import { AuthState } from '../state/auth.state';
 import { LoginRequest } from '../models/Request/LoginRequest';

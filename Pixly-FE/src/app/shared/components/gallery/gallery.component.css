@@ -3,12 +3,15 @@
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
+
 }
 
 /* Desktop & tablet columns */
 .desktop-columns {
   display: flex;
   gap: 16px;
+  width: 100%;
+  max-width: 1400px;
 }
 
 /* Mobile columns */
@@ -18,13 +21,19 @@
   gap: 16px;
 }
 
-/* Masonry layout s 3 kolone */
+/* Masonry layout s 3 kolone - KLJUČNO REŠENJE */
 .masonry-columns {
   width: 100%;
+  display: flex;
+  gap: 16px;
 }
 
 .masonry-column {
-  flex: 1;
+  /* FIKSIRANA ŠIRINA - ovo sprečava skupljanje grid-a */
+  width: calc(33.333% - 10.67px); /* 33.33% minus proporcionalni deo gap-a (16px / 3) */
+  min-width: calc(33.333% - 10.67px);
+  max-width: calc(33.333% - 10.67px);
+  flex: none; /* VAŽNO: sprečava flex grow/shrink */
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -246,7 +255,11 @@
     gap: 12px;
   }
 
+  /* Na tabletu imamo 2 kolone */
   .masonry-column {
+    width: calc(50% - 6px); /* 50% minus polovina gap-a */
+    min-width: calc(50% - 6px);
+    max-width: calc(50% - 6px);
     gap: 12px;
   }
 }
@@ -260,7 +273,11 @@
     gap: 10px;
   }
 
+  /* Na manjim tabletima i dalje 2 kolone */
   .masonry-column {
+    width: calc(50% - 5px); /* 50% minus polovina gap-a */
+    min-width: calc(50% - 5px);
+    max-width: calc(50% - 5px);
     gap: 10px;
   }
 

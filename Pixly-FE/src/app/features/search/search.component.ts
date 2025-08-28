@@ -78,17 +78,16 @@ export class SearchComponent implements OnInit, OnDestroy {
     selectedOption: "All Size"
   };
 
-  // ========== PRIVATE PROPERTIES ==========
+ 
   private destroy$ = new Subject<void>();
   private isUpdatingFromUrl = false;
 
-  // ========== INJECTED SERVICES ==========
+
   searchService = inject(SearchService);
   photoService = inject(PhotoService);
   route = inject(ActivatedRoute);
   router = inject(Router);
 
-  // ========== LIFECYCLE METHODS ==========
   ngOnInit() {
     this.initializeRouteSubscriptions();
   }
@@ -98,16 +97,15 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ========== INITIALIZATION METHODS ==========
+
   private initializeRouteSubscriptions() {
-    // Subscribe to route parameters
+
     this.route.paramMap.pipe(
       takeUntil(this.destroy$)
     ).subscribe((params: ParamMap) => {
       this.setParams(params);
     });
 
-    // Subscribe to query parameters
     this.route.queryParamMap.pipe(
       takeUntil(this.destroy$)
     ).subscribe(queryParams => {
@@ -115,7 +113,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ========== ROUTE PARAMETER HANDLING ==========
   setParams(params: ParamMap) {
     const title = params.get('title');
     if (title) {
@@ -132,19 +129,17 @@ export class SearchComponent implements OnInit, OnDestroy {
     const currentSearch = this.searchService.getSearchObject();
     const updatedSearch: Partial<PhotoSearchRequest> = { ...currentSearch };
 
-    // Handle orientation parameter
     const orientation = queryParams.get('orientation');
     if (orientation) {
       updatedSearch.orientation = orientation;
     }
 
-    // Handle size parameter
+  
     const size = queryParams.get('size');
     if (size) {
       updatedSearch.size = size;
     }
 
-    // Handle sort parameter
     const sort = queryParams.get('sort');
     if (sort) {
       switch (sort.toLowerCase()) {
@@ -162,12 +157,10 @@ export class SearchComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Update search object if any parameters were found
     if (orientation || size || sort) {
       this.searchService.setSearchObject(updatedSearch);
     }
 
-    // Subscribe to search object changes for URL updates
     this.searchService.getSearchObjectAsObservable().pipe(
       takeUntil(this.destroy$)
     ).subscribe(searchObject => {
@@ -177,23 +170,19 @@ export class SearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ========== URL UPDATE METHODS ==========
   private updateUrlFromSearchObject(searchObject: Partial<PhotoSearchRequest>) {
     this.isUpdatingFromUrl = true;
 
     const queryParams: any = {};
 
-    // Map orientation to query parameter
     if (searchObject.orientation) {
       queryParams.orientation = searchObject.orientation.toLowerCase();
     }
 
-    // Map size to query parameter
     if (searchObject.size) {
       queryParams.size = searchObject.size.toLowerCase();
     }
 
-    // Map sorting to query parameter
     if (searchObject.sorting) {
       switch (searchObject.sorting) {
         case 'Popular':
@@ -208,7 +197,6 @@ export class SearchComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Navigate with updated query parameters
     this.router.navigate(
       ['/search', searchObject.title || ''],
       {
@@ -220,7 +208,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ========== UI INTERACTION METHODS ==========
   toggleCollapse() {
     this.isCollapsed = !this.isCollapsed;
   }

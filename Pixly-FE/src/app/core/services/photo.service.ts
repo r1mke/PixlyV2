@@ -8,7 +8,7 @@ import { PaginationHeader } from '../models/Pagination/PaginationHeader';
 import { ApiResponse } from '../models/Response/api-response';
 import { PhotoSearchRequest } from '../models/SearchRequest/PhotoSarchRequest';
 import { AuthState } from '../state/auth.state';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environments';
 import { PhotoInsertRequest } from '../models/InsertRequest/PhotoInsertRequest';
 import { PhotoDetail } from '../models/DTOs/PhotoDetail';
 import { AuthService } from './auth.service';

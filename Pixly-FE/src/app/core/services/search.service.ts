@@ -77,6 +77,30 @@ export class SearchService {
     });
   }
 
+  setUsername(username: string) {
+    this.setSearchObject({
+      ...this.getSearchObject(),
+      username: username,
+      pageNumber: 1
+    });
+  }
+
+  setLiked(isLiked: boolean) {
+    this.setSearchObject({
+      ...this.getSearchObject(),
+      isLiked: isLiked,
+      pageNumber: 1
+    });
+  }
+
+  setCollection(isSaved: boolean) {
+    this.setSearchObject({
+      ...this.getSearchObject(),
+      isSaved: isSaved,
+      pageNumber: 1
+    });
+  }
+
    resetSearch() {
     this.setSearchObject({
       title: null,
