@@ -23,5 +23,7 @@
         public bool IsCurrentUserLiked { get; set; }
         public bool IsCurrentUserSaved { get; set; }
         public int? Price { get; set; }
+        public string? Location { get; set; }
+
     }
 }

@@ -6,7 +6,10 @@ button {
   transition: background-color 0.3s;
   font-weight: 500;
   height: 44px;
+  text-align: center;
 }
+
+
 
 button:hover:not(:disabled) {
   background-color: var(--pixly-color-hover);

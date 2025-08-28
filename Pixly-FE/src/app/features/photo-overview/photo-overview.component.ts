@@ -10,16 +10,18 @@ import { PhotoService } from '../../core/services/photo.service';
 import { AuthService } from '../../core/services/auth.service';
 import { PhotoBasic } from '../../core/models/DTOs/PhotoBasic';
 import { PhotoDetail } from '../../core/models/DTOs/PhotoDetail';
-
+import { TagsShowComponent } from "../../shared/components/tags-show/tags-show.component";
+import { Tag } from '../../core/models/DTOs/Tag';
+import { CreateReportComponent } from "../../shared/components/create-report/create-report.component";
 @Component({
   selector: 'app-photo-page',
   standalone: true,
   templateUrl: './photo-overview.component.html',
   styleUrls: ['./photo-overview.component.css'],
-  imports: [NavBarComponent, CommonModule],
+  imports: [NavBarComponent, CommonModule, TagsShowComponent, CreateReportComponent],
 })
 export class PhotoPageComponent implements OnInit, OnDestroy {
-  photo: PhotoDetail | undefined;
+  photo!: PhotoDetail;
   currentUser: any = null;
   currentUserId : number = 0;
   profileUserId: number = 0;
@@ -29,7 +31,8 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
   private ngOnDestory = new Subject<void>();
   currentUrl:string = '';
   private onDestroy$ = new Subject<void>();
-
+  photoTags : string[] = [];
+  showReportModal: boolean = false;
   constructor(
     private photoService: PhotoService, 
     private route: ActivatedRoute, 
@@ -96,6 +99,7 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
   this.photoService.getPhotoBySlug(photoSlug).subscribe({
     next: (resp) => {
       this.photo = resp.data;
+      this.photoTags = resp.data.photoTags.map(photoTag => photoTag.tag.name);
       this.checkIfOwnprofile();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
@@ -153,4 +157,14 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
         },
       });
   }
+
+  closeReportModal(event: boolean): void {
+    this.showReportModal = false;
+  }
+
+  openReportModal(): void {
+    if(!this.currentUser) this.router.navigate(['/login']);
+    this.showReportModal = true;
+  }
+
 }

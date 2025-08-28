@@ -7,12 +7,15 @@ import { Report } from '../models/DTOs/Report';
 import { ReportUpdateRequest } from '../models/UpdateRequest/ReportUpdateRequest';
 import { ApiResponse } from '../models/Response/api-response';
 import { ReportSearchRequest } from '../models/SearchRequest/ReportSearchRequest';
+import { ReportType } from '../models/DTOs/ReportType';
+import { ReportInsertRequest } from '../models/InsertRequest/ReportInsertRequest';
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/report`;
+  private apiUrl = `${environment.apiUrl}`;
+
 
   constructor() { }
 
@@ -25,12 +28,20 @@ export class ReportService {
       }
     });
 
-     return this.http.get<ApiResponse<Report[]>>(`${this.apiUrl}`, { params });
+     return this.http.get<ApiResponse<Report[]>>(`${this.apiUrl}/report`, { params });
   }
 
   updateReport(reportId : number,reportUpdateRequest : ReportUpdateRequest): Observable<ApiResponse<Report>> {
     console.log(reportId);
-    return this.http.patch<ApiResponse<Report>>(`${this.apiUrl}/${reportId}`, reportUpdateRequest);
+    return this.http.patch<ApiResponse<Report>>(`${this.apiUrl}/report/${reportId}`, reportUpdateRequest);
+  }
+
+  getReportTypes(): Observable<ApiResponse<ReportType[]>> {
+    return this.http.get<ApiResponse<ReportType[]>>(`${this.apiUrl}/report/reportTypes`);
+  }
+
+  createReport(formData: FormData): Observable<ApiResponse<Report>> {
+    return this.http.post<ApiResponse<Report>>(`${this.apiUrl}/report`, formData);
   }
 
 }

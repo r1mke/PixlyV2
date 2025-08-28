@@ -1,0 +1,96 @@
+<div class="create-report-modal">
+  <div class="modal-content">
+
+    <div [style.background]="helperService.getGradient('#FF4D4D')" class="modal-header">
+      <div class="modal-title">
+        <i class="fas fa-flag"></i>
+        Prijavite sadržaj
+      </div>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="photo-preview">
+      <img [src]="photo?.url" [alt]="photo?.title || 'Slika za prijavu'">
+      <div class="photo-overlay">
+        <span class="photo-title">{{ photo?.title || 'Bez naziva' }}</span>
+      </div>
+    </div>
+
+    <form [formGroup]="reportForm" class="report-form">
+      <!-- Loading indicator for report types -->
+      <div class="loading-types" *ngIf="isLoadingTypes">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Učitavanje tipova prijave...</span>
+      </div>
+
+      <!-- Report Message -->
+      <div class="form-group">
+
+        <label for="reportType">Report Type </label>
+        <div style="margin-bottom: 10px;" class="select-wrapper" [class.error]="isFieldInvalid('reportTypeId')">
+          <app-dropdown
+          [options]="dropdownReport"
+          (selectedValue)="selectReportType($event)"
+          >
+          </app-dropdown>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <app-text-input
+            formControlName="reportTitle"
+            [showLabel]="true"
+            [label]="'Report Title'"
+            [type]="'text'"
+            [isRequired]="true"
+            [minLength]="5"
+            [maxLength]="30"
+            [placeholder]="'Plase enter report title'"
+          >
+          </app-text-input>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <app-text-input
+            formControlName="reportMessage"
+            [showLabel]="true"
+            [label]="'Report Message'"
+            [type]="'text'"
+            [isRequired]="true"
+            [minLength]="10"
+            [maxLength]="500"
+            [placeholder]="'Plase enter report message'"
+          >
+          </app-text-input>
+        </div>
+      </div>
+
+      <!-- Warning Message -->
+      <div class="warning-message">
+        <i class="fas fa-info-circle"></i>
+        <p>False reports may result in your account being restricted. Please only report content that actually violates our terms of service.</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-actions">
+         <app-submit-button
+         (click)="closeModal()"
+          text="Cancle"
+          backGroundColor="#6c757d"
+          [isLoading]="false">
+          
+        </app-submit-button>
+        
+        <app-submit-button
+          [isDisabled]="reportForm.invalid || isSubmitting"
+          text="Submit report"
+          icon="fa-paper-plane"
+          backGroundColor="#FF4D4D"
+          [isLoading]="isSubmitting"
+          (click)="submitReport()">
+        </app-submit-button>
+      </div>
+    </form>
+  </div>
+</div>

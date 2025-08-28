@@ -62,6 +62,17 @@
           [placeholder]="'How much does your photo cost?'">
         </app-text-input>
       </div>
+
+      <div class="upload-submit-input">
+        <app-text-input
+          formControlName="location"
+          [showLabel]="true"
+          [label]="'Location'"
+          [isRequired]="false"
+          [type]="'string'"
+          [placeholder]="'Where was your photo taken?'">
+        </app-text-input>
+      </div>
         
       <!-- Tags Input -->
       <div class="upload-submit-input">
@@ -69,6 +80,7 @@
           formControlName="tags"
           [showLabel]="true"
           label="Tags"
+          [isRequired]="true"
           placeholder="Add tags to help people find your photo..."
           (tagAdded)="onTagAdded($event)">
         </app-tag-input>

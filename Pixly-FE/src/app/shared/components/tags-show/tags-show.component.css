@@ -3,7 +3,6 @@
 .tags-container {
   position: relative;
   max-width: 100%;
-  margin: 20px 0;
   /* DODANO: Minimum širina da se omogući overflow */
   min-width: 0;
 }

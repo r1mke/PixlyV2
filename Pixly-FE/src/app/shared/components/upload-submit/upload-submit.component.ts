@@ -59,6 +59,7 @@ export class UploadSubmitComponent implements OnInit, OnDestroy {
   private initForm(): void {
     this.photoUploadForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(30)]],
+      location: ['', [Validators.maxLength(100)]],
       description: ['', [Validators.maxLength(200)]],
       price: [null, [Validators.required, Validators.min(1)]],
       tags: [[], [Validators.required, Validators.minLength(1)]],
@@ -127,6 +128,7 @@ export class UploadSubmitComponent implements OnInit, OnDestroy {
   const formData = new FormData();
   formData.append("userId", currentUser.id);
   formData.append("title", this.photoUploadForm.get('title')?.value);
+  formData.append("location", this.photoUploadForm.get('location')?.value);
   formData.append("price", this.photoUploadForm.get('price')?.value);
   formData.append("description", this.photoUploadForm.get('description')?.value || '');
   formData.append("file", this.uploadedFile.file);

@@ -16,6 +16,14 @@ namespace Pixly.Services.Services
         {
         }
 
+        public async Task<List<Models.DTOs.ReportType>> GetAllReports()
+        {
+            var result = await _context.ReportTypes.ToListAsync();
+            if (result.Count == 0) { throw new ExternalServiceException("Error while fetching data"); }
+
+            return Mapper.Map<List<Models.DTOs.ReportType>>(result);
+        }
+
         public override async Task<PagedList<Models.DTOs.Report>> GetPaged(ReportSearchRequest search)
         {
             var query = _context.Set<Database.Report>().AsQueryable();
@@ -127,6 +135,7 @@ namespace Pixly.Services.Services
             if (request.IsDeleted != null) entity.IsDeleted = entity.IsDeleted;
             if (!string.IsNullOrWhiteSpace(request?.AdminNotes)) entity.AdminNotes = request.AdminNotes;
         }
+
 
     }
 }
