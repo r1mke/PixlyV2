@@ -1,6 +1,7 @@
 .container-fluid
 {
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .profile-img {
@@ -119,6 +120,11 @@ button:hover
   display: inline-block; 
   min-width: 10px; 
   text-align: center;
+}
+
+.tags-container h5{
+  margin-top: 20px;
+  color: var(--pixly-text-primary-color)
 }
 
 

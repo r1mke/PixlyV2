@@ -19,6 +19,9 @@ namespace Pixly.Models.InsertRequest
         [Required(ErrorMessage = "Price is required.")]
         public int Price { get; set; }
 
+        [StringLength(100, ErrorMessage = "Location cannot be longer than 1000 characters.")]
+        public string Location { get; set; }
+
         [Required(ErrorMessage = "File is required.")]
         public IFormFile File { get; set; }
 

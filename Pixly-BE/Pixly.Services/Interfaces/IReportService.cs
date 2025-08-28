@@ -6,6 +6,6 @@ namespace Pixly.Services.Interfaces
 {
     public interface IReportService : ICRUDService<Report, Report, ReportSearchRequest, ReportInsertRequest, ReportUpdateRequest, int>
     {
-
+        Task<List<ReportType>> GetAllReports();
     }
 }

@@ -14,7 +14,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrl: './tags-show.component.css'
 })
 export class TagsShowComponent implements AfterViewInit, OnDestroy, OnChanges {
- @Input() tags: string[] = [];
+  @Input() tags: string[] = [];
   @ViewChild('tagsContainer', { static: false }) tagsContainer!: ElementRef;
   
   router = inject(Router);

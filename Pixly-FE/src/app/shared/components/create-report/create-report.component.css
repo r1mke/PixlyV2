@@ -1,0 +1,368 @@
+/* create-report.component.css */
+.create-report-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.photo-preview {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  padding: 20px;
+  color: white;
+}
+
+.photo-title {
+  font-weight: 500;
+}
+
+.report-form {
+  padding: 20px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label::after {
+  content: "*";
+  color: #dc3545;
+  margin-left: 2px;
+}
+
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper select {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  border: 2px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.select-wrapper select:focus {
+  outline: none;
+  border-color: #02A388;
+}
+
+.select-wrapper.error select {
+  border-color: #FF4D4D;
+}
+
+.select-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  pointer-events: none;
+}
+
+.report-types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.report-type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 10px;
+  border: 2px solid #e1e1e1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+
+.report-type-card:hover {
+  border-color: #02A388;
+  background: #f0fffe;
+}
+
+.report-type-card.selected {
+  border-color: #02A388;
+  background: #02A388;
+  color: white;
+}
+
+.report-type-card i {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.report-type-card span {
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.loading-types {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  color: #666;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e1e1e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #02A388;
+}
+
+textarea.error {
+  border-color: #FF4D4D;
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.error-message {
+  color: #FF4D4D;
+  font-size: 12px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.error-message::before {
+  content: "⚠";
+}
+
+.warning-message {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.warning-message i {
+  color: #856404;
+  margin-top: 2px;
+}
+
+.warning-message p {
+  margin: 0;
+  font-size: 13px;
+  color: #856404;
+  line-height: 1.4;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e1e1e1;
+}
+
+.cancel-btn {
+  padding: 12px 24px;
+  border: 2px solid #e1e1e1;
+  background: white;
+  color: #666;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  border-color: #ccc;
+  color: #333;
+}
+
+.cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .modal-header {
+    padding: 15px;
+  }
+  
+  .modal-title {
+    font-size: 16px;
+  }
+  
+  .report-form {
+    padding: 15px;
+  }
+  
+  .report-types-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+  
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .cancel-btn,
+  ::ng-deep app-submit-button {
+    width: 100%;
+  }
+}
+
+/* Dodatni stilovi za animacije */
+.fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Hover efekti za bolje korisničko iskustvo */
+.report-type-card:active {
+  transform: scale(0.98);
+}
+
+.close-btn:active {
+  transform: scale(0.95);
+}
+
+/* Focus stilovi za accessibility */
+.close-btn:focus,
+.cancel-btn:focus,
+textarea:focus,
+select:focus,
+.report-type-card:focus {
+  outline: 2px solid #02A388;
+  outline-offset: 2px;
+}
+
+/* Stilizovanje scrollbar-a za formu */
+.report-form::-webkit-scrollbar {
+  width: 6px;
+}
+
+.report-form::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.report-form::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.report-form::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

@@ -1,3 +1,4 @@
+import { PhotoTag } from "./PhotoTag";
 import { User } from "./User";
 
 export interface PhotoDetail {
@@ -11,13 +12,14 @@ export interface PhotoDetail {
     fileSize: number;
     format: string;
     uploadedAt: string;
-    userId: number;
+    userId: string;
     user: User | null;
     state: string | null;
     viewCount: number;
     likeCount: number;
     downloadCount: number;
     orientation: string;
+    photoTags: PhotoTag[];
     isCurrentUserLiked: boolean; 
     isCurrentUserSaved: boolean;
     price: number | null;

@@ -1,7 +1,7 @@
 <div class="form-group">
   <label *ngIf="showLabel" [for]="label">
     {{ label }}
-    <span *ngIf="isRequired" class="required">*</span>
+    <span [ngStyle]="{ color: 'red' }" *ngIf="isRequired" class="required">*</span>
   </label>
 
   <input

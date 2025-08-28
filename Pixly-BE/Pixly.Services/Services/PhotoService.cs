@@ -369,7 +369,7 @@ namespace Pixly.Services.Services
 
         public async Task<PhotoDetail> GetBySlug(string slug, string currentUserId)
         {
-            var entity = await _context.Photos.Include(p => p.User).FirstOrDefaultAsync(p => p.Slug == slug);
+            var entity = await _context.Photos.Include(p => p.User).Include(photo => photo.PhotoTags).ThenInclude(photoTag => photoTag.Tag).FirstOrDefaultAsync(p => p.Slug == slug);
             if (entity == null) throw new NotFoundException($"Photo with slug {slug} not found");
             var dto = Mapper.Map<PhotoDetail>(entity);
 

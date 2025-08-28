@@ -9,7 +9,7 @@ namespace Pixly.Models.InsertRequest
         public string ReportTitle { get; set; }
 
         [Required(ErrorMessage = "Report message is required.")]
-        [StringLength(100, ErrorMessage = "Report message cannot be longer than 30 characters.")]
+        [StringLength(100, ErrorMessage = "Report message cannot be longer than 100 characters.")]
         public string ReportMessage { get; set; }
         [Required(ErrorMessage = "User ID is required.")]
         public string ReportedByUserId { get; set; }
