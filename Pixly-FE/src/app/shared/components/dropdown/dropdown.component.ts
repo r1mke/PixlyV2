@@ -25,7 +25,6 @@ export class DropdownComponent implements OnInit {
 
 
   selectTrending(option: string) {
-    console.log('Selected option:', option);
     this.selectedValue.emit(option);
 
     if (this.options && option !== this.options.selectedOption) {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, Output, ViewChild } from '@angular/core';
 import { PhotoBasic } from '../../../core/models/DTOs/PhotoBasic';
 import { PhotoService } from '../../../core/services/photo.service';
 import { OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
@@ -13,6 +13,7 @@ import isEqual from 'lodash.isequal';
 import {AuthState} from '../../../core/state/auth.state';
 import {switchMap} from 'rxjs/operators';
 import {LoadingService} from '../../../core/services/loading.service';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-gallery',
@@ -24,7 +25,7 @@ import {LoadingService} from '../../../core/services/loading.service';
 export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
   @Input() emptyStateMessage: string = 'No photos found';
   @ViewChild('sentinel') sentinel!: ElementRef;
-  
+  @Output() photoLink = new EventEmitter<string>();
   private onDestroy$ = new Subject<void>();
   private intersectionObserver?: IntersectionObserver;
 
@@ -73,7 +74,6 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy{
 
   setupIntersectionObserver(): void {
     if (!this.sentinel || !('IntersectionObserver' in window)) {
-      console.log('Sentinel element missing or IntersectionObserver not supported');
       return;
     }
 

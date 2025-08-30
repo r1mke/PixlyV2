@@ -21,19 +21,26 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
      data: { roles: ['User'],
             allowAnonymous: false,
-            redirectTo: '/' },
+            redirectTo: '/login' },
   },
   { path: 'search/:title', component: SearchComponent},
-  {path: 'profile/:username', component: ProfileComponent},
+  {
+    path: 'profile/:username',
+    component: ProfileComponent,
+    canActivate: [RoleGuard],
+    data: { roles: ['User'],
+            allowAnonymous: false,
+            redirectTo: '/login' },
+  },
   {path: 'register', component: RegisterComponent},
   {path: 'login', component: LoginComponent},
   {
     path: 'edit-profile',
     component: ProfileSettingsComponent,
     canActivate: [RoleGuard],
-    data: { roles: ['User'],
+    data: { roles: ['User, Admin'],
             allowAnonymous: false,
-            redirectTo: '/' },
+            redirectTo: '/login' },
   },
   {path: 'photo/:slug', component: PhotoPageComponent},
   { 
@@ -42,7 +49,7 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
     data: { roles: ['User'],
             allowAnonymous: false,
-            redirectTo: '/' },
+            redirectTo: '/login' },
     children: [
       { path: '', redirectTo: 'select', pathMatch: 'full' },
       { path: 'select', loadComponent: () => import('./shared/components/upload-preview/upload-preview.component').then(c => c.UploadPreviewComponent) },
@@ -53,9 +60,9 @@ export const routes: Routes = [
   path: 'admin',
   component: AdminComponent,
   canActivate: [RoleGuard],
-  data: { roles: ['User'],
+  data: { roles: ['Admin'],
           allowAnonymous: false,
-          redirectTo: '/' },
+          redirectTo: '/login' },
   children: [
     { path: '', redirectTo: 'overview', pathMatch: 'full' },
     { 
@@ -89,7 +96,7 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
     data: { roles: ['User'],
             allowAnonymous: true,
-            redirectTo: '/' },
+            redirectTo: '/login' },
   },
   {path: '**', redirectTo: ''}
 

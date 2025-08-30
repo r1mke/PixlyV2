@@ -35,4 +35,6 @@ export class HomeComponent{
   ngOnInit() {
     this.searchService.resetSearch();
   }
+
+  
 }

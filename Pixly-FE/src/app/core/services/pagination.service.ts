@@ -68,8 +68,7 @@ export class PaginationService<T, S = any>  {
       tap({
         
         next: (response: any) => this.handleSuccessResponse(response, searchRequest),
-        error: (err) => this.handleErrorResponse(err),
-        complete: () => console.log("iTEMS" + this.items)
+        error: (err) => this.handleErrorResponse(err)
       })
     );
   }

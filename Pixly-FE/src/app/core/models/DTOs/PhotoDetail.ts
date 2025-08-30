@@ -2,6 +2,7 @@ import { PhotoTag } from "./PhotoTag";
 import { User } from "./User";
 
 export interface PhotoDetail {
+
     photoId: number;
     title: string;
     description: string | null;
@@ -23,4 +24,5 @@ export interface PhotoDetail {
     isCurrentUserLiked: boolean; 
     isCurrentUserSaved: boolean;
     price: number | null;
+    location : string | null;
 }

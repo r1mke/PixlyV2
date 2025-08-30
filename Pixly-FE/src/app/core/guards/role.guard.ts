@@ -53,7 +53,6 @@ export class RoleGuard implements CanActivate {
 
         const currentUser = this.authState.currentUser;
         const userRoles = currentUser?.roles || [];
-        console.log(currentUser,userRoles);
         let hasAccess = false;
 
         if (config.requireAll) {

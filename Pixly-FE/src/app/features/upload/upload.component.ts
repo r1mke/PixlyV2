@@ -31,7 +31,6 @@ export class UploadComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToUploadState();
-    console.log('UploadComponent initialized, currentStep:', this.currentStep);
   }
 
   ngOnDestroy(): void {
@@ -43,40 +42,28 @@ export class UploadComponent implements OnInit, OnDestroy {
     this.uploadService.uploadedFile$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(file => {
-      console.log('Upload service file changed:', file);
       this.uploadedFile = file;
       
       // Automatically switch to submit step when file is uploaded
       if (file) {
-        console.log('Switching to submit step');
         this.currentStep = 'submit';
       } else {
-        console.log('Switching to preview step');
         this.currentStep = 'preview';
       }
     });
   }
 
   onStepChange(step: UploadStep): void {
-    console.log('Manual step change to:', step);
     this.currentStep = step;
   }
 
   onBackToPreview(): void {
-    console.log('Back to preview triggered');
     this.uploadService.clearUploadedFile();
     this.currentStep = 'preview';
   }
 
   onUploadComplete(): void {
-    console.log('Upload completed');
-    // Handle successful upload
     this.uploadService.clearUploadedFile();
     this.currentStep = 'preview';
-  }
-
-  onUploadError(error: any): void {
-    console.error('Upload error:', error);
-    // Handle upload error
   }
 }

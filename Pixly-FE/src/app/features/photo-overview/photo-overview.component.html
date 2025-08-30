@@ -4,45 +4,45 @@
   <div class="container">
     <div *ngIf="photo">
 
-      <div class="row">
+      <div class="main-row">
         <!-- Main section with the image and author -->
-        <div class="col-12 col-md-8 photo-info p-0 p-md-4 bg-white mb-4 mb-md-0">
-          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-center mb-4">
+        <div class="photo-main-section">
+          <div class="photo-header">
             <!-- Author section -->
-            <div (click)="goToAuthorProfile()" style="cursor: pointer;" class="d-flex align-items-center mb-3 mb-md-0">
+            <div (click)="goToAuthorProfile()" style="cursor: pointer;" class="author-section">
               <img [src]="photo.user?.profilePictureUrl || 'assets/image/user_def.png'"             
                 alt="Profile" 
-                class="profile-img rounded-circle me-3" 
+                class="profile-img" 
                 />
-              <div>
-                <h6 class="m-0">{{ photo.user?.firstName }} {{ photo.user?.lastName }}</h6>
-                <button class="btn-follow small p-0">Follow</button>
+              <div class="author-info">
+                <h6>{{ photo.user?.firstName }} {{ photo.user?.lastName }}</h6>
+                <button class="btn-follow">Follow</button>
               </div>
             </div>
           
             <!-- Action buttons -->
-            <div class="d-flex justify-content-center justify-content-md-start flex-wrap action-buttons">
+            <div class="action-buttons">
               <button 
-                class="btn btn-outline-secondary me-2 mb-2 bg-transparent text-black" 
+                class="action-btn bookmark-btn" 
                 (click)="toggleBookmark(photo, $event)"
                 [ngClass]="{'bookmarked': photo.isCurrentUserSaved}">
-                <i class="fa me-1" 
+                <i class="fa" 
                   [ngClass]="photo.isCurrentUserSaved? 'fa-solid far fa-bookmark text-danger' : 'fa-regular far fa-bookmark text-secondary'"></i> 
-                  <span class="hide-text ms-2">Collect</span>  
+                  <span class="hide-text">Collect</span>  
               </button>
 
               <button 
-                class="btn btn-outline-secondary me-2 mb-2 bg-transparent text-black" 
+                class="action-btn like-btn" 
                 (click)="toggleLike(photo, $event)"
                 [ngClass]="{'liked': photo.isCurrentUserLiked}">
-                <i class="fa me-1" 
+                <i class="fa" 
                   [ngClass]="photo.isCurrentUserLiked ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart text-secondary'"></i> 
-                <span class="hide-text ms-1 me-1">Like</span> 
-                <span class="like-count ms-1 text-secondary">{{ photo.likeCount }}</span>
+                <span class="hide-text">Like</span> 
+                <span class="like-count">{{ photo.likeCount }}</span>
               </button>
 
               <button 
-                class="btn btn-primary btn-outline-secondary text-white mb-2"  
+                class="action-btn primary-btn"  
                 (click)="isOwnProfile">
                 <i class="fas" [ngClass]="isOwnProfile ? 'fa-edit' : 'fa-download'"></i> 
                 {{ isOwnProfile ? 'Edit photo' : 'Try preview' }}
@@ -51,42 +51,40 @@
           </div>
 
           <!-- Image -->
-          <div class="text-center">
+          <div class="image-section">
             <div class="image-container">
-              <img [src]="photo.url" class="img-fluid rounded" alt="Main Image">
+                <img src="{{photo.url}}" alt="">
             </div>
           </div>
         </div>
 
         <!-- Purchase section -->
-        <div class="col-12 col-md-4 d-flex flex-column mt-5 bg-white justify-content-center p-4">
-          <p class="small fw-semibold text-center mt-3">Find the type and plan that works best for your needs.</p>
-          <div class="border rounded p-4">
-            <form class="w-100">
-              <label class="form-check-label w-100 d-flex align-items-center justify-content-start my-3 option-label fw-medium" style="cursor: pointer;">
-                <input type="radio" name="opcija" value="opcija1" class="me-2" checked>
-                <span class="bold-text">{{photo.price}}$ for this image</span>
+        <div class="purchase-section">
+          <p class="purchase-intro">Find the type and plan that works best for your needs.</p>
+          <div class="purchase-form">
+            <form>
+              <label class="price-option">
+                <input type="radio" name="opcija" value="opcija1" checked>
+                <span class="price-text">{{photo.price ? photo.price : 15}}$ for this image</span>
               </label>
             </form>
             <hr>
-            <button class="btn btn-purchase w-100 py-3 mb-2"
+            <button class="btn-purchase"
               (click)="purchase()" 
               [disabled]="isLoading"
             >
-              <span class="text-white" *ngIf="!isLoading">Continue with purchase</span>
-                <div *ngIf="isLoading" class="spinner-border spinner-border-sm text-light" role="status">
+              <span *ngIf="!isLoading">Continue with purchase</span>
+                <div *ngIf="isLoading" class="spinner-border" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
             </button>
           </div>
 
-          <div class="mt-4">
-            <p class="small mb-2">Includes our <a class="pixly">standard licence</a></p>
-            <p class="small mb-2 text-se">Stock photo ID: <span class="text-secondary">{{photo.photoId}}</span></p>
-            <p class="small mb-2 text-se">Upload date: <span class="text-secondary">{{photo.uploadedAt}}</span></p>
-            <p class="small mb-2 text-se">Location: <span class="text-secondary">{{photo.format}}</span></p>
-            <p class="small mb-2 text-se">Views: <span class="text-secondary">{{photo.viewCount}}</span></p>
-            <p class="small mb-2 text-se">Decription: <span class="text-secondary">{{photo.description}}</span></p>
+          <div class="photo-info">
+            <p>Upload date: {{helperService.normalizeDate(photo.uploadedAt.toString())}}</p>
+            <p *ngIf="photo.location">Location: {{photo.location}}</p>
+            <p>Views: {{photo.viewCount}}</p>
+            <p>Description: {{photo.description}}</p>
           </div>
           <div class="tags-container">
             <h5>Search similar images</h5>
@@ -97,22 +95,22 @@
       
 
       <!-- Description section -->
-      <div class="row">
-        <div class="col-12 col-md-8 px-3 px-md-4 d-flex flex-column flex-md-row justify-content-between align-items-center bg-white">
-          <div class="d-flex align-items-center mb-2 mb-md-0">
-            <i class="fa-brands fa-creative-commons text-secondary"></i>
-            <p class="mb-0 ms-2 text-secondary fw-normal">{{ photo?.title }}</p>
+      <div class="bottom-section">
+        <div class="photo-title-section">
+          <div class="title-info">
+            <i class="fa-brands fa-creative-commons"></i>
+            <p>{{ photo?.title }}</p>
           </div>
-          <div class="d-flex justify-content-around gap-2">
-            <button class="btn btn-outline-secondary bg-transparent text-black">
-              <i class="fa-solid fa-share me-1 text-secondary"></i> Share
+          <div class="photo-actions">
+            <button class="photo-action-btn">
+              <i class="fa-solid fa-share"></i> Share
             </button>
-            <button (click)="openReportModal()" class="btn btn-outline-secondary bg-transparent text-black">
-              <i class="fa-solid fa-flag me-1 text-secondary"></i> Report
+            <button (click)="openReportModal()" class="photo-action-btn">
+              <i class="fa-solid fa-flag"></i> Report
             </button>
             <!-- IisOwnProfile -->
-            <button *ngIf="isOwnProfile" class="btn btn-outline-secondary bg-transparent text-black">
-              <i class="fa-solid fa-trash me-1 text-secondary"></i> Delete
+            <button *ngIf="isOwnProfile" class="photo-action-btn delete-btn">
+              <i class="fa-solid fa-trash"></i> Delete
             </button>
           </div>
         </div>

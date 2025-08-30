@@ -71,7 +71,6 @@ export class ReportPreviewComponent {
 
   onImageError(event: any): void {
     event.target.src = '/assets/images/image-placeholder.png';
-    console.warn('Failed to load report image:', this.report?.photo?.url);
   }
 
  
@@ -84,7 +83,6 @@ export class ReportPreviewComponent {
       const photoUrl = `/photo/${this.report.photo.photoId}`;
       window.open(photoUrl, '_blank');
     } catch (error) {
-      console.error('Error viewing photo:', error);
     } finally {
       this.isViewingPhoto = false;
     }

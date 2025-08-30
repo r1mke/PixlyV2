@@ -106,8 +106,6 @@ export class UploadSubmitComponent implements OnInit, OnDestroy {
   }
 
  onSubmit(): void {
-  console.log(this.photoUploadForm.value);
-
   if (this.photoUploadForm.invalid) {
     this.markAllFieldsAsTouched();
     this.toastService.error('Please fill in all required fields correctly');  
@@ -142,10 +140,8 @@ export class UploadSubmitComponent implements OnInit, OnDestroy {
   this.photoService.uploadPhoto(formData).subscribe({
     next: (res: ApiResponse<PhotoBasic>) => {
       this.toastService.success(res.message);
-      console.log("Upload prošao");
     },
     error: (err) => {
-      console.error('Upload failed:', err);
       this.isSubmitting = false;
       this.uploadService.clearUploadedFile();
       this.resertForm();

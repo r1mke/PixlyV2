@@ -138,7 +138,7 @@ namespace Pixly.Services.Services
             TransformEntity(photo, addWatermark: true);
         }
 
-        private void TransformEntity(Database.Photo photo, bool addWatermark = true)
+        private void TransformEntity(Database.Photo photo, bool addWatermark = true, int fontSize = 20, string gravity = "south_east")
         {
             string transformation = photo.Orientation.ToLower() switch
             {
@@ -148,7 +148,7 @@ namespace Pixly.Services.Services
                 _ => "c_fit,w_1600,h_1200,f_auto,q_auto:good"
             };
 
-            photo.Url = TransformUrl(photo.Url, transformation, addWatermark);
+            photo.Url = TransformUrl(photo.Url, transformation, addWatermark, fontSize, gravity);
         }
 
         public override async Task<PagedList<PhotoBasic>> GetPaged(PhotoSearchRequest search)
@@ -397,6 +397,7 @@ namespace Pixly.Services.Services
         {
             var entity = await _context.Photos.Include(p => p.User).Include(photo => photo.PhotoTags).ThenInclude(photoTag => photoTag.Tag).FirstOrDefaultAsync(p => p.Slug == slug);
             if (entity == null) throw new NotFoundException($"Photo with slug {slug} not found");
+            TransformEntity(entity, true, 100, "center");
             var dto = Mapper.Map<PhotoDetail>(entity);
 
             if (!string.IsNullOrEmpty(currentUserId))
@@ -427,21 +428,15 @@ namespace Pixly.Services.Services
                     .Take(10)
                     .ToListAsync();
 
-                var tagResults = await _context.Tags
-                    .Where(t => t.Name.StartsWith(title))
-                    .Select(t => t.Name)
-                    .Take(5)
-                    .ToListAsync();
-
                 var descriptionResults = await _context.Photos
-                    .Where(p => p.Description != null && p.Description.Contains(title)
+                    .Where(p => p.Description != null && p.Description.StartsWith(title)
                           && p.State == "Approved" && !p.IsDeleted)
                     .Select(p => p.Title)
                     .Take(5)
                     .ToListAsync();
 
                 var allResults = titleResults
-                    .Concat(tagResults)
+                    .Concat(titleResults)
                     .Concat(descriptionResults)
                     .Distinct()
                     .Take(10)

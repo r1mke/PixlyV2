@@ -14,7 +14,8 @@ export const loadingInterceptorFn: HttpInterceptorFn = (req, next) => {
     '.png',
     '.jpg',
     '.jpeg',
-    '.gif'
+    '.gif',
+    'search-suggestion'
   ];
 
    const shouldExclude = excludedRoutes.some(route => 

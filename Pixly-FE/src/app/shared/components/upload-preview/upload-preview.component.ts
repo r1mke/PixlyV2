@@ -26,7 +26,6 @@ export class UploadPreviewComponent implements OnDestroy, OnInit {
     this.loadUploadedFile();
   }
 
-  // Drag and Drop event handlers
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
@@ -63,12 +62,10 @@ export class UploadPreviewComponent implements OnDestroy, OnInit {
     }
   }
 
-  // Browse button click handler
   onBrowseClick(): void {
     this.fileInput.nativeElement.click();
   }
 
-  // File input change handler
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -76,7 +73,6 @@ export class UploadPreviewComponent implements OnDestroy, OnInit {
     }
   }
 
-  // Main file handling logic
   private async handleFileSelection(file: File): Promise<void> {
     try {
       this.isUploading = true;
@@ -88,11 +84,8 @@ export class UploadPreviewComponent implements OnDestroy, OnInit {
         this.toastService.error(errorMessage);
         return;
       }
-
-      // Create preview
       const preview = await this.uploadService.createFilePreview(file);
 
-      // Create uploaded file object
       const uploadedFile: UploadedFile = {
         file,
         preview,
@@ -101,19 +94,16 @@ export class UploadPreviewComponent implements OnDestroy, OnInit {
         fileType: file.type
       };
 
-      // Save to service
       this.uploadService.setUploadedFile(uploadedFile);
 
-      // Show success message
       this.toastService.success('File uploaded successfully!');
 
     } catch (error) {
-      console.error('Error handling file:', error);
       const errorMessage = 'Error processing file. Please try again.';
       this.toastService.error(errorMessage);
     } finally {
       this.isUploading = false;
-      // Reset file input
+
       if (this.fileInput) {
         this.fileInput.nativeElement.value = '';
       }
@@ -121,6 +111,5 @@ export class UploadPreviewComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy(): void {
-    // Cleanup if needed
   }
 }
