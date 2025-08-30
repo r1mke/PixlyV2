@@ -140,18 +140,18 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleBookmark(photo: any, event: Event) {
+  toggleBookmark(photo: PhotoDetail, event: Event) {
     if(this.currentUser)
       this.currentUserId = this.currentUser.userId;
     else 
       this.router.navigate(['auth/login']);
 
       event.stopPropagation();
-      const action = photo.isBookmarked ? this.photoService.unsavePhoto(photo.photoId) : this.photoService.savePhoto(photo.photoId);
+      const action = photo.isCurrentUserSaved ? this.photoService.unsavePhoto(photo.photoId) : this.photoService.savePhoto(photo.photoId);
    
       action.subscribe({
         next: () => {
-          photo.isBookmarked = !photo.isBookmarked;
+          photo.isCurrentUserLiked = !photo.isCurrentUserSaved;
           this.getPhotoBySlug();
         },
         error: (err) => {
