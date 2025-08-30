@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { Subject,takeUntil } from 'rxjs';
+import {NgxImageZoomModule} from 'ngx-image-zoom';
 import { NavBarComponent } from '../../shared/components/nav-bar/nav-bar.component';
 import { PhotoService } from '../../core/services/photo.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -13,13 +14,14 @@ import { PhotoDetail } from '../../core/models/DTOs/PhotoDetail';
 import { StripeService } from '../../core/services/stripe.service';
 import { TagsShowComponent } from "../../shared/components/tags-show/tags-show.component";
 import { Tag } from '../../core/models/DTOs/Tag';
+import { HelperService } from '../../core/services/helper.service';
 import { CreateReportComponent } from "../../shared/components/create-report/create-report.component";
 @Component({
   selector: 'app-photo-page',
   standalone: true,
   templateUrl: './photo-overview.component.html',
   styleUrls: ['./photo-overview.component.css'],
-  imports: [NavBarComponent, CommonModule, TagsShowComponent, CreateReportComponent],
+  imports: [NgxImageZoomModule,NavBarComponent, CommonModule, TagsShowComponent, CreateReportComponent],
 })
 export class PhotoPageComponent implements OnInit, OnDestroy {
   photo!: PhotoDetail;
@@ -40,6 +42,7 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
     private authService: AuthService, 
     private router: Router,
     private stripeService: StripeService,
+    public helperService: HelperService,
     private location: Location,private cdr: ChangeDetectorRef) {}
     
   ngOnInit(): void {
@@ -85,7 +88,7 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
 
   goToAuthorProfile(): void {
     if (this.photo?.user) {
-      this.router.navigate([`/public/profile/user/${this.photo.user.userName}`]);
+      this.router.navigate([`/profile/${this.photo.user.userName}`]);
     } else {
       console.error('No user associated with this photo');
     }
@@ -122,6 +125,9 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
   toggleLike(photo: PhotoDetail, event: Event) {
     event.stopPropagation();
 
+     if(!this.currentUser)
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.currentUrl }});
+
     if (!photo.photoId) {
       return;
     }
@@ -141,10 +147,13 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
   }
 
   toggleBookmark(photo: PhotoDetail, event: Event) {
+
+     if(!this.currentUser)
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.currentUrl }});
+
     if(this.currentUser)
       this.currentUserId = this.currentUser.userId;
-    else 
-      this.router.navigate(['auth/login']);
+
 
       event.stopPropagation();
       const action = photo.isCurrentUserSaved ? this.photoService.unsavePhoto(photo.photoId) : this.photoService.savePhoto(photo.photoId);
@@ -161,6 +170,9 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
   }
 
   purchase() {
+
+    if(!this.currentUser)
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.currentUrl }});
     if (this.photo) {
       this.isLoading = true;
       const amount = this.photo.price ?? 0;

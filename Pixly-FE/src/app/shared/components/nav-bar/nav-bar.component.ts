@@ -61,7 +61,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout().subscribe(() => {
-      window.location.href = '/';
+      this.router.navigate(['/']);
     });
   }
 
