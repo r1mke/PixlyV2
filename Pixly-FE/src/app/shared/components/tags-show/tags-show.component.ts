@@ -54,8 +54,6 @@ export class TagsShowComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['tags']) {
-      console.log("Tags changed:", this.tags);
-      // Reset dimenzije kada se tagovi promijene
       this.lastScrollWidth = 0;
       this.lastClientWidth = 0;
     }
@@ -83,7 +81,6 @@ export class TagsShowComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private setupResizeObserver() {
     this.resizeObserver = new ResizeObserver(() => {
-      console.log('ResizeObserver triggered');
       this.checkArrows();
     });
 
@@ -93,38 +90,21 @@ export class TagsShowComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   private checkArrows() {
-    console.log("Checking arrows...");
-    
     if (!this.tagsContainer?.nativeElement) {
-      console.log("Container not available");
       return;
     }
     
     const container = this.tagsContainer.nativeElement;
-    
+
     // Ako nema tagova, sakrij strelice
     if (!this.tags || this.tags.length === 0) {
       this.updateArrowsState(false, false);
       return;
     }
 
-    // Debug informacije
-    console.log('Container dimensions:', {
-      scrollWidth: container.scrollWidth,
-      clientWidth: container.clientWidth,
-      scrollLeft: container.scrollLeft,
-      tagsCount: this.tags.length
-    });
-
     const hasOverflow = container.scrollWidth > container.clientWidth;
     const isAtStart = container.scrollLeft <= 1;
     const isAtEnd = Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 1;
-
-    console.log('Scroll states:', {
-      hasOverflow,
-      isAtStart,
-      isAtEnd
-    });
 
     const newShowLeftArrow = hasOverflow && !isAtStart;
     const newShowRightArrow = hasOverflow && !isAtEnd;
@@ -136,11 +116,6 @@ export class TagsShowComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (this.showLeftArrow !== showLeft || this.showRightArrow !== showRight) {
       this.showLeftArrow = showLeft;
       this.showRightArrow = showRight;
-      
-      console.log('Arrows updated:', {
-        showLeftArrow: this.showLeftArrow,
-        showRightArrow: this.showRightArrow
-      });
     }
   }
 }

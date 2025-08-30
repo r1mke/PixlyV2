@@ -93,7 +93,6 @@ export class ProfileComponent implements OnInit {
 
 
     event.preventDefault();
-    console.log(item);
     this.navItems.forEach((nav) => (nav.active = false));
     item.active = true;
 
