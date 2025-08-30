@@ -69,7 +69,8 @@
               </label>
             </form>
             <hr>
-            <button class="btn btn-purchase w-100 py-3" 
+            <button class="btn btn-purchase w-100 py-3 mb-2"
+              (click)="purchase()" 
               [disabled]="isLoading"
             >
               <span class="text-white" *ngIf="!isLoading">Continue with purchase</span>

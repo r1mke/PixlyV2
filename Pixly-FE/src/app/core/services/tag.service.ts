@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/Response/api-response';
 import { Tag } from '../models/DTOs/Tag';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
