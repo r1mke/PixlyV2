@@ -43,6 +43,7 @@ export class ProfileComponent implements OnInit {
       this.getUserProfile();
     });
     this.getCurrentUser();
+    this.searchService.setTitle('');
     // this.route.url.subscribe(urlSegments => {
     //   this.updateActiveTab(urlSegments);
     // });
@@ -112,6 +113,7 @@ export class ProfileComponent implements OnInit {
     this.searchService.setSearchObject({
       ...this.searchService.getSearchObject(),
       username: this.username,
+      title: '',
       isLiked: item.label === 'Liked' ? true : false,
       isSaved: item.label === 'Collections' ? true : false,
     })

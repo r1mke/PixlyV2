@@ -117,6 +117,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     const title = params.get('title');
     if (title) {
       this.searchService.setTitle(title);
+      this.searchService.setUsername('');
     } else {
       this.router.navigate(['/'], {
         replaceUrl: true,

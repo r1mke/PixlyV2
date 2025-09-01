@@ -105,12 +105,6 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
     next: (resp) => {
       this.photo = resp.data;
       this.photoTags = resp.data.photoTags.map(photoTag => photoTag.tag.name);
-      this.photoTags.push("Kerim");
-      this.photoTags.push("Kerim");
-      this.photoTags.push("Kerim");
-      this.photoTags.push("Kerim");
-      this.photoTags.push("Kerim");
-      this.photoTags.push("Kerim");
       this.checkIfOwnprofile();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
@@ -144,6 +138,8 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
     const action = wasLiked ?
       this.photoService.unlikePhoto(photo.photoId) :
       this.photoService.likePhoto(photo.photoId);
+    
+    this.getPhotoBySlug();
 
     action.pipe(takeUntil(this.onDestroy$)).subscribe({
       error: () => {
