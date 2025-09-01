@@ -105,6 +105,12 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
     next: (resp) => {
       this.photo = resp.data;
       this.photoTags = resp.data.photoTags.map(photoTag => photoTag.tag.name);
+      this.photoTags.push("Kerim");
+      this.photoTags.push("Kerim");
+      this.photoTags.push("Kerim");
+      this.photoTags.push("Kerim");
+      this.photoTags.push("Kerim");
+      this.photoTags.push("Kerim");
       this.checkIfOwnprofile();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },

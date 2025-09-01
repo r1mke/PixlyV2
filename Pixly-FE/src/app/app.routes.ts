@@ -38,7 +38,7 @@ export const routes: Routes = [
     path: 'edit-profile',
     component: ProfileSettingsComponent,
     canActivate: [RoleGuard],
-    data: { roles: ['User, Admin'],
+    data: { roles: ['User'],
             allowAnonymous: false,
             redirectTo: '/login' },
   },
@@ -60,7 +60,7 @@ export const routes: Routes = [
   path: 'admin',
   component: AdminComponent,
   canActivate: [RoleGuard],
-  data: { roles: ['Admin'],
+  data: { roles: ['User'],
           allowAnonymous: false,
           redirectTo: '/login' },
   children: [
