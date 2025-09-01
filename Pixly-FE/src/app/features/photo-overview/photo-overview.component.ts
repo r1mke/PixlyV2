@@ -138,6 +138,8 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
     const action = wasLiked ?
       this.photoService.unlikePhoto(photo.photoId) :
       this.photoService.likePhoto(photo.photoId);
+    
+    this.getPhotoBySlug();
 
     action.pipe(takeUntil(this.onDestroy$)).subscribe({
       error: () => {

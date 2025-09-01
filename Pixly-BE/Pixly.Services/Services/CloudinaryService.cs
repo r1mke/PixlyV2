@@ -38,7 +38,7 @@ namespace Pixly.Services.Services
             entity.FileSize = uploadResult.Bytes;
             entity.Format = uploadResult.Format;
             entity.Orientation = DetermineOrientation(uploadResult.Width, uploadResult.Height);
-
+            entity.UploadedAt = DateTime.Now;
             return entity;
         }
         public async Task<string> UploadProfilePhoto(IFormFile file)

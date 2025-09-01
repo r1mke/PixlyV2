@@ -65,7 +65,7 @@ export class PhotoCardComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
-    
+    console.log(this.photo);
   }
 
   ngOnDestroy(): void {

@@ -60,7 +60,7 @@ export const routes: Routes = [
   path: 'admin',
   component: AdminComponent,
   canActivate: [RoleGuard],
-  data: { roles: ['Admin'],
+  data: { roles: ['User'],
           allowAnonymous: false,
           redirectTo: '/login' },
   children: [

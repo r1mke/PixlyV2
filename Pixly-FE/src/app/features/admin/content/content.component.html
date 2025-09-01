@@ -39,6 +39,9 @@
                 (photoActionCompleted)="handlePhotoActionCompleted($event)">
                 </app-photo-card>
             </div>
+            <div *ngIf="photos.length === 0" class="no-photos-message">
+                <p style="text-align: center;">No photos available</p>
+            </div>
         </div>
         
         <div class="report-container">
@@ -49,6 +52,9 @@
                 [report]="report"
                 (reportPreviewActive)="handleReportPreviewActive($event)">
                 </app-report-card>
+            </div>
+            <div *ngIf="reports.length === 0" class="no-reports-message">
+                <p style="text-align: center;">No active reports</p>
             </div>
         </div>
     </div>
