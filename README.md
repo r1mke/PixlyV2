@@ -295,10 +295,6 @@ ng serve
 # Application: http://localhost:4200
 ```
 
-3. **Production Build:**
-```bash
-ng build --prod
-```
 
 ### Optional: RabbitMQ Setup
 
@@ -434,146 +430,10 @@ graph TD
 - **Service Workers** - Offline capabilities and caching
 - **Bundle Optimization** - Tree shaking and minification
 
-## 🧪 Testing Strategy
-
-### Backend Testing
-```bash
-# Unit tests for services
-dotnet test Pixly.Services.Tests
-
-# Integration tests for API
-dotnet test Pixly.API.Tests
-
-# Coverage report
-dotnet test --collect:"XPlat Code Coverage"
-```
-
-### Frontend Testing
-```bash
-# Unit tests
-ng test
-
-# End-to-end tests
-ng e2e
-
-# Coverage report
-ng test --code-coverage
-```
-
-## 🔮 Future Roadmap
-
-### Phase 1 - Enhanced User Experience (Q2 2024)
-- [ ] **User Profiles** - Public photographer portfolios with bio and stats
-- [ ] **Collections** - Organize saved photos into themed collections
-- [ ] **Advanced Search** - Visual similarity search using AI
-- [ ] **Download History** - Track user download history and preferences
-
-### Phase 2 - Social & Commerce (Q3 2024)
-- [ ] **Follow System** - Follow favorite photographers
-- [ ] **Comments & Reviews** - Community engagement features
-- [ ] **Enhanced Payment Features** - Subscription models and bulk purchases
-- [ ] **Photographer Earnings** - Revenue sharing system and analytics
-
-### Phase 3 - AI & Machine Learning (Q4 2024)
-- [ ] **AI Auto-Tagging** - Automatic image recognition and tagging
-- [ ] **Smart Recommendations** - Personalized photo suggestions
-- [ ] **Content Moderation AI** - Automated inappropriate content detection
-- [ ] **Trend Analysis** - AI-powered trending content identification
-
-### Phase 4 - Enterprise Features (2025)
-- [ ] **Team Accounts** - Organization management and shared libraries
-- [ ] **Advanced Analytics** - Detailed insights for photographers
-- [ ] **API for Developers** - Public API for third-party integrations
-- [ ] **White-label Solution** - Customizable platform for other businesses
-
-## 📈 Production Deployment
-
-### Backend Deployment (Azure/AWS)
-```bash
-# Docker deployment
-docker build -t pixly-api .
-docker run -p 8080:8080 pixly-api
-
-# Azure App Service
-az webapp deployment source config-zip \
-  --resource-group pixly-rg \
-  --name pixly-api \
-  --src release.zip
-```
-
-### Frontend Deployment (Vercel/Netlify)
-```bash
-# Build for production
-ng build --prod
-
-# Deploy to Vercel
-vercel --prod
-
-# Deploy to Netlify
-netlify deploy --prod --dir dist/pixly-fe
-```
-
-## 📚 Contributing
-
-We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
-
-### Development Workflow
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-### Code Standards
-- **Backend**: Follow .NET coding conventions and SOLID principles
-- **Frontend**: Adhere to Angular style guide and use TypeScript strictly
-- **Testing**: Maintain minimum 80% code coverage
-- **Documentation**: Update relevant documentation for new features
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Database Connection Issues:**
-```bash
-# Update connection string in .env
-# Ensure SQL Server is running
-# Check firewall settings
-```
-
-**Cloudinary Upload Failures:**
-```bash
-# Verify API credentials in .env
-# Check file size and format restrictions
-# Ensure network connectivity
-```
-
-**Stripe Payment Issues:**
-```bash
-# Verify Stripe keys (test/live environment)
-# Check webhook endpoint configuration
-# Ensure SSL certificate for production
-```
-
-**Email Not Sending:**
-```bash
-# Gmail: Use app passwords, enable less secure apps
-# Check SMTP settings and credentials
-# Verify RabbitMQ is running for queued emails
-```
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🏆 Acknowledgments
-
-- **Microsoft** - For the excellent .NET ecosystem
-- **Angular Team** - For the robust frontend framework
-- **Cloudinary** - For powerful image management capabilities
-- **Stripe** - For secure payment processing
-- **Community** - For open-source libraries and inspiration
-- **Contributors** - Everyone who helped make this project better
 
 ## 📞 Support
 
