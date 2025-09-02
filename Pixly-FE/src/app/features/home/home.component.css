@@ -3,13 +3,30 @@
     padding: 20px;
 }
 
-.filter{
+.filter {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: 20px 0;
 }
 
 .home-filter-title{
     display: flex;
     align-items: center;
+}
+
+.popular-section {
+    flex: 1;
+}
+
+.popular-section h3 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--pixly-text-primary-color);
+    margin-bottom: 8px;
+}
+
+
+app-dropdown {
+    margin-left: 20px;
 }

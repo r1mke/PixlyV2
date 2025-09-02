@@ -2,11 +2,12 @@
 <app-hero></app-hero>
 <div class="container">
     <div class="filter">
-        <h4>Free stock photos</h4>
+        <div class="popular-section">
+            <h4>Inspiration of the day: Most popular photos</h4>
+        </div>
         <app-dropdown
-        [options]="dropdownPopularity"
-        ></app-dropdown>
+            [options]="dropdownPopularity">
+        </app-dropdown>
     </div>
 </div>
-<app-gallery
-></app-gallery> 
+<app-gallery></app-gallery>
