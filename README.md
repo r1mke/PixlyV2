@@ -509,13 +509,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Documentation**: [Wiki](https://github.com/yourusername/pixly/wiki)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/pixly/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/pixly/discussions)
-- **Email**: support@pixly.com
+- **Email**: teampixly@gmail.com
 
 ---
 
 **Built with ❤️ by the Pixly Team**
 
 *This project demonstrates modern full-stack development practices, clean architecture principles, and production-ready features. Perfect for learning advanced .NET and Angular concepts or as a foundation for your own stock photo platform.*
+
+**Our gallery**
+
+<img width="1920" height="951" alt="RegistrationPage" src="https://github.com/user-attachments/assets/a919a975-9655-4827-aec0-dc9ce7d4c58f" />
+<img width="1920" height="951" alt="UploadPage-select" src="https://github.com/user-attachments/assets/64c93c11-804d-4bca-a08b-8eb845b1b57d" />
+<img width="1920" height="1016" alt="UploadPage-edit" src="https://github.com/user-attachments/assets/a283633a-a525-4017-aec6-0980b1805f5a" />
+<img width="1920" height="2012" alt="HomePage" src="https://github.com/user-attachments/assets/b21a500b-6c47-43cc-9dbe-0c3e2a0a9a5f" />
+<img width="1920" height="951" alt="SearchPage" src="https://github.com/user-attachments/assets/f5c3acf0-f006-492d-ab03-c7b034ec56ea" />
+<img width="1920" height="951" alt="EditProfilePage" src="https://github.com/user-attachments/assets/eec2b0a9-9fd8-4f66-a553-ad6b04ba79d2" />
+<img width="1920" height="951" alt="ContentAdministration" src="https://github.com/user-attachments/assets/db85a0c7-348b-4291-9174-6136cf712e20" />
+<img width="1920" height="951" alt="ReportExample" src="https://github.com/user-attachments/assets/326d35d6-11ff-423e-a791-202cd16c66e1" />
