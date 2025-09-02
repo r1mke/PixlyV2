@@ -43,7 +43,7 @@
 
               <button 
                 class="action-btn primary-btn"  
-                (click)="isOwnProfile">
+                (click)="onPrimaryAction()">
                 <i class="fas" [ngClass]="isOwnProfile ? 'fa-edit' : 'fa-download'"></i> 
                 {{ isOwnProfile ? 'Edit photo' : 'Try preview' }}
               </button>

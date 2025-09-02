@@ -12,9 +12,12 @@ import { AdminComponent } from '../app/features/admin/admin.component';
 import { RoleGuard } from './core/guards/role.guard';
 import { GeneratePhotoComponent } from './features/generate-photo/generate-photo.component';
 import { PhotoPageComponent } from './features/photo-overview/photo-overview.component';
+import { CheckoutSuccessComponent } from './features/checkout-success-component/checkout-success.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'public/checkout/success', component: CheckoutSuccessComponent },
+
   {
     path: 'profile',
     component: ProfileComponent,

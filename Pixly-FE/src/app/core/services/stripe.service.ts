@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { loadStripe } from '@stripe/stripe-js';
-import { Observable } from 'rxjs';
+import { from, map, Observable, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environments';
 
 export interface CreateCheckoutRequest {
@@ -28,7 +28,7 @@ export class StripeService {
     const body: CreateCheckoutRequest = {
       photoId,
       amount,
-      successUrl: `${window.location.origin}/public/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      successUrl: `${window.location.origin}/public/checkout/success?sid={CHECKOUT_SESSION_ID}&pid=${photoId}`,
       cancelUrl: `${window.location.origin}/public/checkout/cancel`,
     };
 
@@ -55,5 +55,19 @@ export class StripeService {
 
   getPurchases(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/purchases`);
+  }
+
+  downloadPhoto(photoId: number): Observable<Blob> {
+    return this.http
+      .get<{ data: string }>(`${environment.apiUrl}/photo/orginal/${photoId}`)
+      .pipe(
+        map(res => res.data),
+        switchMap((url) => from(fetch(url)).pipe(
+          switchMap(resp => {
+            if (!resp.ok) throw new Error('Download failed');
+            return resp.blob();
+          })
+        ))
+      );
   }
 }

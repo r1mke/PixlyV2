@@ -3,16 +3,16 @@ import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { PhotoBasic } from '../models/DTOs/PhotoBasic';
 import { PaginationResponse } from '../models/Pagination/PaginationResponse';
 import { signal } from '@angular/core';
-import { BehaviorSubject, catchError, EMPTY, Observable, of, Subject, switchMap, take } from 'rxjs';
+import { BehaviorSubject, catchError, EMPTY, map, Observable, of, Subject, switchMap, take } from 'rxjs';
 import { PaginationHeader } from '../models/Pagination/PaginationHeader';
 import { ApiResponse } from '../models/Response/api-response';
 import { PhotoSearchRequest } from '../models/SearchRequest/PhotoSarchRequest';
 import { AuthState } from '../state/auth.state';
-import { environment } from '../../../environments/environments';
 import { PhotoInsertRequest } from '../models/InsertRequest/PhotoInsertRequest';
 import { PhotoDetail } from '../models/DTOs/PhotoDetail';
 import { AuthService } from './auth.service';
 import { PaginationService } from './pagination.service';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
@@ -160,4 +160,10 @@ export class PhotoService {
   addPhotoToList(photo: PhotoBasic): void {
     this.paginationService.addItem(photo);
   }
+
+  getPreviewLink(photoId: number) {
+  return this.http
+    .get<{ data: string }>(`${this.apiUrl}/preview/${photoId}`)
+    .pipe(map(r => r.data));
+}
 }

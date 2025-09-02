@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { TagsShowComponent } from "../../shared/components/tags-show/tags-show.c
 import { Tag } from '../../core/models/DTOs/Tag';
 import { HelperService } from '../../core/services/helper.service';
 import { CreateReportComponent } from "../../shared/components/create-report/create-report.component";
+import { ToastService } from '../../core/services/toast.service';
 @Component({
   selector: 'app-photo-page',
   standalone: true,
@@ -24,6 +25,8 @@ import { CreateReportComponent } from "../../shared/components/create-report/cre
   imports: [NgxImageZoomModule,NavBarComponent, CommonModule, TagsShowComponent, CreateReportComponent],
 })
 export class PhotoPageComponent implements OnInit, OnDestroy {
+  private toast = inject(ToastService);
+  
   photo!: PhotoDetail;
   currentUser: any = null;
   currentUserId : number = 0;
@@ -207,4 +210,44 @@ export class PhotoPageComponent implements OnInit, OnDestroy {
     this.showReportModal = true;
   }
 
+  onPrimaryAction(): void {
+    if (this.isOwnProfile) {
+      this.router.navigate([`/private/photos/${this.photo.photoId}/edit`]);
+    } else {
+      this.tryPreview();
+    }
+}
+
+  tryPreview(): void {
+    if (!this.photo?.photoId) return;
+
+    this.isLoading = true;
+    this.photoService.getPreviewLink(this.photo.photoId).subscribe({
+      next: (url: any) => {
+        const opened = window.open(url as string, '_blank');
+        if (!opened) {
+          fetch(url as string)
+            .then(r => r.blob())
+            .then(blob => {
+              const obj = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = obj;
+              a.download = `preview-${this.photo.photoId}.jpg`;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              URL.revokeObjectURL(obj);
+            })
+            .catch(() => this.toast.error('Could not open preview.'));
+        }
+        this.toast.info('Opening preview…');
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Preview error:', err);
+        this.toast.error('Preview not available.');
+        this.isLoading = false;
+      }
+    });
+  }
 }
